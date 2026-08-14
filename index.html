@@ -729,26 +729,30 @@ const CLOUD = {
 };
 const FAMILY_KEY = "wb_family_code_v2";        // 家庭码存本地
 let CLOUD_READY = false;
+let CAN_PULL = false;   // 能否从云端读取（公开仓库无需 token 即可读）
+let CAN_PUSH = false;   // 能否写入云端（需要 token）
 
 function familyCode(){ return localStorage.getItem(FAMILY_KEY) || ""; }
 function setFamilyCode(c){ localStorage.setItem(FAMILY_KEY, c||""); }
 
 function initCloud(){
   if(CLOUD.provider==="leancloud"){
-    if(typeof AV==="undefined"){ console.warn("LeanCloud SDK 未加载（CDN 被拦），将仅用本地存储"); return false; }
-    if(!CLOUD.enabled || !CLOUD.appId || !CLOUD.appKey){ return false; }
-    try{ AV.init({ appId:CLOUD.appId, appKey:CLOUD.appKey, serverURLs:CLOUD.server||undefined }); CLOUD_READY=true; }
-    catch(e){ console.warn("AV.init 失败", e); CLOUD_READY=false; }
+    if(typeof AV==="undefined"){ console.warn("LeanCloud SDK 未加载（CDN 被拦），将仅用本地存储"); CAN_PULL=CAN_PUSH=false; return false; }
+    if(!CLOUD.enabled || !CLOUD.appId || !CLOUD.appKey){ CAN_PULL=CAN_PUSH=false; return false; }
+    try{ AV.init({ appId:CLOUD.appId, appKey:CLOUD.appKey, serverURLs:CLOUD.server||undefined }); CLOUD_READY=CAN_PULL=CAN_PUSH=true; }
+    catch(e){ console.warn("AV.init 失败", e); CLOUD_READY=CAN_PULL=CAN_PUSH=false; }
     return CLOUD_READY;
   }
-  // github 模式：原生 fetch，无需外部 SDK
-  if(!CLOUD.ghRepo || !CLOUD.ghToken){ CLOUD_READY=false; return false; }
-  CLOUD_READY=true; return true;
+  // github 模式：公开仓库“读”无需 token；只有“写”需要 token
+  CAN_PULL = !!CLOUD.ghRepo;
+  CAN_PUSH = !!(CLOUD.ghRepo && CLOUD.ghToken);
+  CLOUD_READY = CAN_PULL || CAN_PUSH;
+  return CLOUD_READY;
 }
 
 /* 云端读写：以“家庭码”为唯一键，4 台设备共享同一份数据 */
 async function cloudLoad(code){
-  if(!CLOUD_READY) return null;
+  if(!CAN_PULL) return null;
   try{
     if(CLOUD.provider==="leancloud"){
       const q=new AV.Query("FamilyState"); q.equalTo("code", code);
@@ -756,7 +760,9 @@ async function cloudLoad(code){
     }
     const path="state/"+encodeURIComponent(code)+".json";
     const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}?ref=${encodeURIComponent(CLOUD.ghBranch)}`;
-    const r=await fetch(url,{headers:{Authorization:"Bearer "+CLOUD.ghToken, Accept:"application/vnd.github+json"}});
+    const headers={Accept:"application/vnd.github+json"};
+    if(CLOUD.ghToken) headers.Authorization="Bearer "+CLOUD.ghToken;   // 有 token 才带，公开读可不带
+    const r=await fetch(url,{headers});
     if(r.status===404) return null;
     if(!r.ok){ console.warn("cloudLoad 失败", r.status); return null; }
     const j=await r.json();
@@ -765,7 +771,7 @@ async function cloudLoad(code){
   }catch(e){ console.warn("cloudLoad 失败", e); return null; }
 }
 async function cloudSave(code, state){
-  if(!CLOUD_READY) return false;
+  if(!CAN_PUSH) return false;
   try{
     if(CLOUD.provider==="leancloud"){
       const q=new AV.Query("FamilyState"); q.equalTo("code", code);
@@ -1114,9 +1120,10 @@ let S = applyDefaults(loadLocal());
 
 /* 保存：先写本地缓存，再异步推云端（开启的情况下） */
 function save(o){
+  o._ts=Date.now();                 // 同步版本戳：用于判断哪份更新
   saveLocal(o);
   const code=familyCode();
-  if(CLOUD_READY && code){
+  if(CAN_PUSH && code){
     cloudSave(code, o).then(ok=>{ if(!ok) console.warn("云同步未成功，已用本地备份"); });
   }
 }
@@ -1742,6 +1749,24 @@ $("#btnEye").onclick=()=>{S.eye=!S.eye;save(S);applyEye();};
 $("#btnFsU").onclick=()=>{S.fs=Math.min(22,S.fs+1);save(S);applyFs();};
 $("#btnFsD").onclick=()=>{S.fs=Math.max(13,S.fs-1);save(S);applyFs();};
 
+/* 同步状态 & 手动同步 */
+function updateSyncStatus(){
+  const el=document.getElementById("syncStatus"); if(!el) return;
+  const code=familyCode(); let s;
+  if(!code) s="未设置家庭码（本机模式）";
+  else if(CAN_PUSH) s="已连接 ✓ 可双向同步（"+code+"）";
+  else if(CAN_PULL) s="只读已连 ✓ 能看云端（"+code+"），填 Token 后可打卡同步";
+  else s="未连接云端（请填同步 Token + 家庭码）";
+  el.textContent=s;
+}
+async function doSyncNow(){
+  initCloud();
+  if(!familyCode()){ toast("请先填家庭码"); return; }
+  if(!CAN_PULL && !CAN_PUSH){ toast("未配置云端：请填同步 Token"); return; }
+  toast("正在同步…"); await pullCloud();
+  if(CAN_PUSH){ save(S); toast("已同步 ✓"); } else { toast("已拉取云端（只读）"); }
+  updateSyncStatus();
+}
 /* 设置 */
 $("#btnSet").onclick=()=>{
   let mp='<div class="mascot-pick">';
@@ -1759,9 +1784,11 @@ $("#btnSet").onclick=()=>{
   '<div class="set-row"><span>家长密码(4位)</span><input type="password" id="suPw" value="'+S.parent_pw+'"></div>'+
   '<div class="set-row"><button class="tbtn" onclick="S.parent_pw=document.getElementById(\'suPw\').value.trim()||\'1234\';save(S);toast(\'已保存\');closeSheet();">保存密码</button></div>'+
   '<div class="set-row"><span>奖励目录</span><button class="tbtn" onclick="openRewardEditor()">管理奖励目录</button></div>'+
-  '<div class="set-row"><span>同步 Token</span><input type="text" id="suTok" value="'+escapeHtml(localStorage.getItem(GH_TOKEN_KEY)||"")+'" placeholder="github_pat_..."><button class="tbtn" onclick="localStorage.setItem(GH_TOKEN_KEY,document.getElementById(\'suTok\').value.trim());CLOUD.ghToken=localStorage.getItem(GH_TOKEN_KEY);if(initCloud()&&familyCode()){cloudSave(familyCode(),S);}toast(\'同步 Token 已保存，\'+(CLOUD_READY?\'云端已开启 ✓\':\'未开启(先填家庭码)\'))">保存</button></div>'+
-  '<div class="set-row"><span>家庭码</span><input type="text" id="suCode" value="'+escapeHtml(familyCode())+'" placeholder="未设置"><button class="tbtn" onclick="setFamilyCode(document.getElementById(\'suCode\').value.trim());if(familyCode()){S=applyDefaults(loadLocal());renderAll();}toast(\'家庭码已保存，重新打开以同步\')">保存</button></div>'+
-  '<div class="hint" style="margin-top:10px">手机使用：浏览器打开本页 → 点右上角 ⋮ → 「添加到主屏幕」，即可像 APP 一样使用。<br>多设备同步：4 台设备输入<strong>同一个家庭码</strong>，并在「设置 → 同步 Token」粘贴一次 GitHub 令牌后自动云端同步（令牌仅存本机，不会上传）。</div>');};
+  '<div class="set-row"><span>同步 Token</span><input type="text" id="suTok" value="'+escapeHtml(localStorage.getItem(GH_TOKEN_KEY)||"")+'" placeholder="github_pat_..."><button class="tbtn" onclick="localStorage.setItem(GH_TOKEN_KEY,document.getElementById(\'suTok\').value.trim());CLOUD.ghToken=localStorage.getItem(GH_TOKEN_KEY);initCloud();if(CAN_PUSH&&familyCode()){pullCloud();}updateSyncStatus();toast(\'同步 Token 已保存，\'+(CAN_PUSH?\'可写入云端 ✓\':\'未开启(需家庭码)\'))">保存</button></div>'+
+  '<div class="set-row"><span>家庭码</span><input type="text" id="suCode" value="'+escapeHtml(familyCode())+'" placeholder="未设置"><button class="tbtn" onclick="setFamilyCode(document.getElementById(\'suCode\').value.trim());initCloud();if(familyCode()){if(CAN_PULL){pullCloud();}else{S=applyDefaults(loadLocal());renderAll();}}updateSyncStatus();toast(\'家庭码已保存，\'+(CAN_PULL?\'已同步云端 ✓\':\'未配置 Token，仅本机\'))">保存</button></div>'+
+  '<div class="set-row"><span>同步状态</span><span id="syncStatus" style="flex:1;font-size:13px;color:#0a7">—</span></div>'+
+  '<div class="set-row"><button class="tbtn" onclick="doSyncNow()">立即同步</button><button class="tbtn" onclick="updateSyncStatus()">刷新状态</button></div>'+
+  '<div class="hint" style="margin-top:10px">手机使用：浏览器打开本页 → 点右上角 ⋮ → 「添加到主屏幕」，即可像 APP 一样使用。<br>多设备同步：4 台设备输入<strong>同一个家庭码</strong>。打卡的设备在「设置 → 同步 Token」粘贴一次 GitHub 令牌即可自动同步（令牌仅存本机，不会上传）。<strong>即使没填 Token，也能读取云端查看进度</strong>。</div>');setTimeout(updateSyncStatus,30);};
 
 /* 家长视图 */
 $("#btnParent").onclick=openParentView;
@@ -1998,15 +2025,29 @@ function delEgg(id){S.eggs=S.eggs.filter(x=>x.id!==id);save(S);renderReward();}
 function hideLogin(){const el=$("#loginScreen");if(el)el.style.display="none";}
 function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();tshow();
   if($("#sec-reward").classList.contains("active"))renderReward();}
+/* 自动拉取：定时 + 切回页面时，从云端取最新（以 _ts 判断，仅当云端更新才覆盖本机） */
+async function pullCloud(){
+  const code=familyCode();
+  if(!CAN_PULL || !code) return;
+  const remote=await cloudLoad(code);
+  if(remote && (remote._ts||0) > (S._ts||0)){
+    S=applyDefaults(remote); saveLocal(S); renderAll();
+    toast("已同步云端 ✓");
+  }
+}
 async function boot(){
   initCloud();
   const code=familyCode();
   if(code){
     hideLogin();
-    if(CLOUD_READY){
+    if(CAN_PULL){
       const remote=await cloudLoad(code);
       if(remote&&Object.keys(remote).length){S=applyDefaults(remote);saveLocal(S);renderAll();toast("已从云端同步 ✓");}
     }
+  }
+  if(!window.__syncTimer){            // 自动同步：每 25 秒 + 切回页面时拉取
+    window.__syncTimer=setInterval(pullCloud,25000);
+    document.addEventListener("visibilitychange",()=>{ if(!document.hidden) pullCloud(); });
   }
 }
 async function setupFamily(){
@@ -2014,10 +2055,11 @@ async function setupFamily(){
   if(!v){$("#loginNote").textContent="请输入家庭码";return;}
   setFamilyCode(v);$("#loginNote").textContent="正在连接…";
   initCloud();
-  if(CLOUD_READY){
+  if(CAN_PULL){
     const remote=await cloudLoad(v);
     if(remote&&Object.keys(remote).length){S=applyDefaults(remote);saveLocal(S);renderAll();toast("已从云端同步 ✓");}
-    else{save(S);toast("已创建家庭："+v);}
+    else if(CAN_PUSH){ save(S); toast("已创建家庭："+v); }
+    else { S=applyDefaults(loadLocal()); renderAll(); toast("已连云端（只读），打卡设备填 Token 后才会同步"); }
   }else{
     S=applyDefaults(loadLocal());renderAll();
     $("#loginNote").textContent="未配置云端，已用本机存储（家庭码："+v+"）";
