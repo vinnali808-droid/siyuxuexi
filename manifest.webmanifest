@@ -1,0 +1,14 @@
+{
+  "name": "邓斯予 · 小升初暑假学习台",
+  "short_name": "学习台",
+  "description": "邓斯予暑假作业学习打卡工作台（多端同步）",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f3ec",
+  "theme_color": "#9bb88c",
+  "icons": [
+    { "src": "oc_xianyang_q.png", "sizes": "any", "type": "image/png", "purpose": "any" }
+  ]
+}
