@@ -759,7 +759,7 @@ async function cloudLoad(code){
       const obj=await q.first(); return obj ? obj.get("state") : null;
     }
     const path="state/"+encodeURIComponent(code)+".json";
-    const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}?ref=${encodeURIComponent(CLOUD.ghBranch)}`;
+    const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}`;   // 与 PUT 一致，均用默认分支，避免 ?ref 分支歧义导致读不到刚写的内容
     const headers={Accept:"application/vnd.github+json"};
     if(CLOUD.ghToken) headers.Authorization="Bearer "+CLOUD.ghToken;   // 有 token 才带，公开读可不带
     const r=await fetch(url,{headers});
@@ -770,8 +770,24 @@ async function cloudLoad(code){
     return JSON.parse(txt);
   }catch(e){ console.warn("cloudLoad 失败", e); return null; }
 }
-async function cloudSave(code, state){
-  if(!CAN_PUSH) return false;
+/* 写入串行 + 合并 + 退避重试：避免 boot/打卡/定时拉取回写 并发 PUT 抢 sha 引发 409 风暴（GitHub 高频写竞态） */
+let _saveChain = Promise.resolve();
+let _savePending = null;
+function cloudSave(code, state){
+  if(!CAN_PUSH) return Promise.resolve(false);
+  _savePending = state;                          // 合并：以最新一次的状态为准写入
+  const run = _saveChain.catch(()=>{}).then(async ()=>{
+    const st = _savePending; _savePending = null;
+    for(let i=0;i<6;i++){
+      if(await _putOnce(code, st)) return true;
+      await new Promise(r=>setTimeout(r, 250*(i+1)));   // 退避，避开 GitHub 写竞态
+    }
+    console.warn("cloudSave 重试耗尽"); return false;
+  });
+  _saveChain = run.catch(()=>{});
+  return run;
+}
+async function _putOnce(code, state){
   try{
     if(CLOUD.provider==="leancloud"){
       const q=new AV.Query("FamilyState"); q.equalTo("code", code);
@@ -780,16 +796,21 @@ async function cloudSave(code, state){
       obj.set("state", state); await obj.save(); return true;
     }
     const path="state/"+encodeURIComponent(code)+".json";
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(state))));
     const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}`;
     const headers={Authorization:"Bearer "+CLOUD.ghToken, Accept:"application/vnd.github+json", "Content-Type":"application/json"};
+    let data=state;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
     let sha=null;
-    const getR=await fetch(url+"?ref="+encodeURIComponent(CLOUD.ghBranch),{headers});
-    if(getR.ok){ const gj=await getR.json(); sha=gj.sha; }
+    const g=await fetch(url,{headers}); if(g.ok){ const j=await g.json(); sha=j.sha; }
     const body={message:"sync "+code+" "+new Date().toISOString(), content, branch:CLOUD.ghBranch};
     if(sha) body.sha=sha;
-    const putR=await fetch(url,{method:"PUT",headers,body:JSON.stringify(body)});
-    return putR.ok;
+    const put=await fetch(url,{method:"PUT",headers,body:JSON.stringify(body)});
+    if(put.ok) return true;
+    if(put.status===409 || put.status===422){           // 并发冲突：拉云端最新，与本机合并后再推
+      const cur=await cloudLoad(code);
+      if(cur) data=mergeCloudIntoLocal(cur, data).state;  // 本机为基底，保留本机改动 + 他人打卡
+    }
+    return false;
   }catch(e){ console.warn("cloudSave 失败", e); return false; }
 }
 
@@ -1085,6 +1106,7 @@ function wearOutfit(id){const o=OC_OUTFITS.find(x=>x.id===id);if(!o)return;S.wea
 function applyDefaults(o){
   o=o||{};
   o.checked = o.checked||{};
+  for(const _k in o.checked){ if(typeof o.checked[_k]!=="object" || !("on" in o.checked[_k])) o.checked[_k]={on:!!o.checked[_k], t:0}; }
   o.math_url = o.math_url||"";
   o.eye = o.eye||false;
   o.fs = o.fs||16;
@@ -1130,14 +1152,14 @@ function save(o){
 
 /* 任务 id */
 function taskId(day,task){return day+"#"+task.time+"#"+task.task;}
-function isDone(day,task){return !!S.checked[taskId(day,task)];}
+function isDone(day,task){const c=S.checked[taskId(day,task)];return !!(c&&c.on);}
 
 /* 奖励积分：基础分 + 提前打卡双倍 */
 const POINT_BASE = 10;
 function earlyDay(day){const t=dateObj(day),n=dateObj(todayStr());return !!(t&&n&&t>n);} /* 完成“未来某天”的任务 = 提前 */
 function taskPoints(day,task){return POINT_BASE*(earlyDay(day)?2:1);}
 function setDone(id,day,task,on){
-  S.checked[id]=on;
+  S.checked[id]={on:on, t:Date.now()};
   if(on){
     const pts=taskPoints(day,task);
     S.points+=pts;S.awarded[id]=pts;
@@ -1258,9 +1280,9 @@ function taskRow(day,task,over,refreshHome){
     '<button class="gostudy" type="button">去学习 ›</button>';
   const span=div.querySelector(".chk");
   const label=div.querySelector("label");
-  function update(){const on=S.checked[id];span.className="chk"+(on?" on":"");span.innerHTML=on?checkSvg:"";div.classList.toggle("done",on);}
+  function update(){const on=!!(S.checked[id]&&S.checked[id].on);span.className="chk"+(on?" on":"");span.innerHTML=on?checkSvg:"";div.classList.toggle("done",on);}
   function toggle(ev){if(ev)ev.stopPropagation();
-    const on=!S.checked[id];setDone(id,day,task,on);update();
+    const on=!(S.checked[id]&&S.checked[id].on);setDone(id,day,task,on);update();
     if(on&&earlyDay(day))toast("✨ 发现隐藏加成 ×2 🌟");
     feedbackAfterToggle(day);if(refreshHome)renderHome();
   }
@@ -1317,7 +1339,7 @@ function toggleCurrentTaskDetail(){
   if(!_detailTask)return;
   const {day,task}=_detailTask;
   const id=taskId(day,task);
-  const on=!S.checked[id];
+  const on=!(S.checked[id]&&S.checked[id].on);
   setDone(id,day,task,on);
   closeSheet();
   if(on&&earlyDay(day))toast("✨ 发现隐藏加成 ×2 🌟");
@@ -1689,7 +1711,7 @@ function openDay(dateStr,subj){
       const id=taskId(day.date,t);const row=tf.children[ti];
       const span=row.querySelector(".chk");const label=row.querySelector("label");
       function update(){const on=S.checked[id];span.className="chk"+(on?" on":"");span.innerHTML=on?checkSvg:"";row.classList.toggle("done",on);}
-      function toggle(ev){if(ev)ev.stopPropagation();const on=!S.checked[id];setDone(id,day.date,t,on);update();if(on&&earlyDay(day.date))toast("✨ 发现隐藏加成 ×2 🌟");feedbackAfterToggle(day.date);}
+      function toggle(ev){if(ev)ev.stopPropagation();const on=!(S.checked[id]&&S.checked[id].on);setDone(id,day.date,t,on);update();if(on&&earlyDay(day.date))toast("✨ 发现隐藏加成 ×2 🌟");feedbackAfterToggle(day.date);}
       span.onclick=toggle;label.onclick=()=>toggle();
       const g=row.querySelector(".gostudy");const tg=taskTarget(t);if(tg)g.onclick=e=>{e.stopPropagation();tg();};
     });
@@ -1713,7 +1735,7 @@ function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");cl
 
 /* 撒花 */
 function maybeConfetti(){
-  const total=Object.keys(S.checked).filter(k=>S.checked[k]).length;
+  const total=Object.keys(S.checked).filter(k=>S.checked[k]&&S.checked[k].on).length;
   if(total>0 && total%10===0)confetti();
 }
 function confetti(){const cv=$("#confetti");cv.width=innerWidth;cv.height=innerHeight;const x=cv.getContext("2d");
@@ -1896,7 +1918,7 @@ function saveRewards(){
 function resetPoints(){if(!confirm("确定把积分清零？（已兑换记录保留）"))return;S.points=0;S.awarded={};save(S);renderPoints();toast("积分已清零");openRewardEditor();}
 
 /* ===== 奖励页增强：成就/成长/周报/梦想/彩蛋 ===== */
-function doneDates(){const set={};Object.keys(S.checked).forEach(k=>{if(S.checked[k])set[k.split("#")[0]]=true;});return set;}
+function doneDates(){const set={};Object.keys(S.checked).forEach(k=>{if(S.checked[k]&&S.checked[k].on)set[k.split("#")[0]]=true;});return set;}
 function currentStreak(){
   const set=doneDates();
   let d=dateObj(todayStr());
@@ -2026,16 +2048,30 @@ function hideLogin(){const el=$("#loginScreen");if(el)el.style.display="none";}
 function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();renderMath();tshow();
   if($("#sec-reward").classList.contains("active"))renderReward();}
 /* 自动拉取：定时 + 切回页面时，从云端取最新（以 _ts 判断，仅当云端更新才覆盖本机） */
-/* 云端合并：配置类字段（数学链接/OC/装扮等）以云端为准；打卡/积分做并集，谁都不丢 */
+/* 归一化单条打卡：旧布尔 true/false -> {on,t:0}；已是对象则原样 */
+function normCheck(v){ if(v==null) return null; if(typeof v==="object" && "on" in v) return v; return {on:!!v, t:0}; }
+/* 打卡按 key 最后写入者胜出（取消 = on:false 带新时间戳，可跨设备传播） */
+function mergeChecked(local, remote){
+  const out={};
+  const keys=new Set([...Object.keys(local||{}), ...Object.keys(remote||{})]);
+  for(const k of keys){
+    const lv=normCheck(local&&local[k]), rv=normCheck(remote&&remote[k]);
+    let sel;
+    if(!lv) sel=rv; else if(!rv) sel=lv; else sel=(lv.t>=rv.t)?lv:rv;
+    if(sel) out[k]=sel;
+  }
+  return out;
+}
+/* 云端合并：配置类（数学链接/OC/装扮/密码）以远端为准；打卡按条目 last-write-wins；积分取并集 */
 function mergeCloudIntoLocal(local, remote){
-  const out = applyDefaults(remote);   // 云端为基底
+  const out = applyDefaults(remote);                 // 云端为基底（配置类以云端为准）
+  out.checked = mergeChecked(local&&local.checked, remote&&remote.checked);
   let localHadExtra=false;
-  const lc = (local&&local.checked)||{}, oc = out.checked = out.checked||{};
-  for(const k in lc){ if(lc[k] && !oc[k]){ oc[k]=true; localHadExtra=true; } }
-  if((local&&local.points||0) > (out.points||0)){ out.points=local.points; localHadExtra=true; }
-  const la = (local&&local.awarded)||{}, oa = out.awarded = out.awarded||{};
-  for(const k in la){ if(la[k] && !oa[k]){ oa[k]=la[k]; localHadExtra=true; } }
-  if((local&&local.dayPoints||0) > (out.dayPoints||0)){ out.dayPoints=local.dayPoints; localHadExtra=true; }
+  const lc = (local&&local.checked)||{}, rc = (remote&&remote.checked)||{};
+  for(const k in lc){ const lv=normCheck(lc[k]), rv=normCheck(rc[k]); if(lv && (!rv || lv.t>rv.t)) localHadExtra=true; }
+  out.awarded = Object.assign({}, remote&&remote.awarded||{}, local&&local.awarded||{});
+  out.dayPoints = Object.assign({}, remote&&remote.dayPoints||{}, local&&local.dayPoints||{});
+  out.points = Math.max(local&&local.points||0, remote&&remote.points||0);
   return {state:out, localHadExtra};
 }
 async function pullCloud(){
