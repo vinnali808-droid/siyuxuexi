@@ -2023,7 +2023,7 @@ function delEgg(id){S.eggs=S.eggs.filter(x=>x.id!==id);save(S);renderReward();}
 
 /* 登录 / 云端引导 */
 function hideLogin(){const el=$("#loginScreen");if(el)el.style.display="none";}
-function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();tshow();
+function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();renderMath();tshow();
   if($("#sec-reward").classList.contains("active"))renderReward();}
 /* 自动拉取：定时 + 切回页面时，从云端取最新（以 _ts 判断，仅当云端更新才覆盖本机） */
 /* 云端合并：配置类字段（数学链接/OC/装扮等）以云端为准；打卡/积分做并集，谁都不丢 */
