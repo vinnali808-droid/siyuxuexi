@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>邓斯予 · 小升初暑假作业学习台</title>
+<meta name="theme-color" content="#9bb88c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="oc_xianyang_q.png">
+<style>
+:root{
+  --cream:#f6f3ec;
+  --cream-2:#e5e1d8;
+  --card:#ffffff;
+  --green:#9bb88c;
+  --green-d:#7a9e6b;
+  --green-l:#e6eedf;
+  --beige:#e8dcc6;
+  --pink:#e8a8b8;
+  --pink-d:#c98a9a;
+  --ink:#3d3d3d;
+  --sub:#8a8a8a;
+  --line:#e8e4da;
+  --ok:#8fb881;
+  --warn:#e8b87d;
+  --red:#d67a7a;
+  --shadow:0 2px 12px rgba(61,61,61,.06);
+  --shadow-h:0 8px 24px rgba(61,61,61,.08);
+  --blue:#8fa8d6; --purple:#b79fd8;
+  --fs:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,"Microsoft YaHei",sans-serif;
+  font-size:var(--fs);color:var(--ink);background:var(--cream);min-height:100vh;line-height:1.55}
+body.eye{--cream:#f4f1e8;--card:#fffaf2;--line:#e5e0d2;--green:#8fa880}
+a{color:var(--green-d);text-decoration:none}
+html,body{overflow-x:clip}
+.app{display:flex;min-height:100vh;min-width:0}
+
+/* 左侧图标导航轨 */
+.sidebar{width:88px;flex:0 0 88px;background:linear-gradient(168deg,#eef4e7 0%,#e4eee1 60%,#dde9da 100%);border-right:1px solid rgba(122,158,107,.20);
+  display:flex;flex-direction:column;align-items:center;padding:16px 0 12px;position:sticky;top:0;height:100vh;z-index:20}
+.avatar-top{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,#ffd6dc,#c9e0bc);
+  display:grid;place-items:center;box-shadow:var(--shadow);margin-bottom:18px}
+.nav-rail{display:flex;flex-direction:column;gap:8px;width:100%;align-items:center}
+.nav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:68px;padding:10px 2px;
+  border-radius:16px;border:none;background:transparent;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;transition:.15s}
+.nav-btn .ic{width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:transparent}
+.nav-btn:hover{background:rgba(122,158,107,.14)}
+.nav-btn.active{background:#fff;color:var(--green-d);font-weight:800;box-shadow:var(--shadow)}
+.nav-btn.active .ic{background:linear-gradient(135deg,#9bb88c,#7a9e6b);box-shadow:var(--shadow)}
+.nav-btn.active .ic svg{stroke:#fff}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;align-items:center}
+.mini-btn{font-size:11px;color:var(--sub);background:none;border:none;cursor:pointer;padding:6px;font-family:inherit}
+.mini-btn:hover{color:var(--green-d)}
+
+/* 内容区 */
+.content{flex:1;min-width:0;padding:16px 18px 90px;max-width:1100px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.topbar h1{font-size:19px;margin:0;font-weight:800}
+.topbar .sub{flex:1;font-size:12px;color:var(--sub);white-space:nowrap}
+.tbtn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:7px 12px;cursor:pointer;font-size:13px;
+  color:var(--ink);box-shadow:var(--shadow);font-family:inherit}
+.tbtn:active{transform:scale(.96)}
+.clock-pill{font-variant-numeric:tabular-nums;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:7px 12px;font-size:13px;box-shadow:var(--shadow);color:var(--green-d);font-weight:800}
+
+.section{display:none;animation:fade .22s ease}
+.section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h2{margin:0 0 12px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--ink)}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* 首页 hero 并排 */
+.hero-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin-bottom:14px}
+.home-head{flex:1;min-width:0;display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px 16px;box-shadow:var(--shadow)}
+.home-head .ava{display:none}
+.home-head .titles{flex:1;min-width:0}
+.home-head .titles h1{font-size:22px;font-weight:900;color:#3d5a3a;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.5px}
+.home-head .titles p{display:none}
+.wave{display:none}
+
+/* 首页时钟（紧凑） */
+.hero-clock-card{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#e6eedf,#f3eee6);border-radius:20px;padding:10px 14px;
+  box-shadow:var(--shadow);border:1px solid var(--line)}
+.hero-clock-card .hc-ic{width:34px;height:34px;border-radius:11px;background:#fff;display:grid;place-items:center;flex:0 0 34px;box-shadow:var(--shadow)}
+.big-clock{font-variant-numeric:tabular-nums;font-size:21px;font-weight:800;color:var(--ink);letter-spacing:1px;line-height:1}
+.clock-meta{font-size:11px;color:var(--sub);margin-top:2px}
+
+/* 好朋友金句气泡 */
+.buddy{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid #ecdce3;border-radius:20px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:14px}
+.buddy .face{width:48px;height:48px;border-radius:50%;flex:0 0 48px;display:grid;place-items:center;background:linear-gradient(135deg,#ffd9e2,#cfe6c4);box-shadow:var(--shadow);overflow:hidden}
+.buddy .btxt{flex:1;min-width:0}
+.buddy .bwho{font-size:12px;font-weight:800;color:var(--pink-d);margin-bottom:2px}
+.buddy .bubble{background:#fff;border:1px solid #f1e3ea;border-radius:14px;padding:10px 12px;margin-top:5px;position:relative}
+.buddy .bubble::before{content:"";position:absolute;left:18px;top:-7px;border:7px solid transparent;border-bottom-color:#f1e3ea;border-top:0}
+.buddy .bmsg{font-size:14px;color:var(--ink);line-height:1.65}
+
+/* 二级页按科目分组 */
+.subjgrp{margin-bottom:14px}
+.subjgrp .gh{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;margin-bottom:8px}
+.subjgrp .gh .gd{width:10px;height:10px;border-radius:50%}
+.subjgrp.yu .gd{background:var(--green-d)} .subjgrp.yu .gh{color:var(--green-d)}
+.subjgrp.ma .gd{background:var(--blue)} .subjgrp.ma .gh{color:var(--blue)}
+.subjgrp.en .gd{background:var(--pink-d)} .subjgrp.en .gh{color:var(--pink-d)}
+
+.count-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between}
+.count-card .cd-num{font-size:30px;font-weight:800;color:var(--green-d)}
+.count-card .cd-lab{font-size:12px;color:var(--sub)}
+.count-card .cd-icon{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#fff0e3,#e6eedf);display:grid;place-items:center}
+
+.progress-bar{height:8px;border-radius:10px;background:var(--cream-2);overflow:hidden;margin-top:10px}
+.progress-bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#b8d4aa);border-radius:10px;transition:width .4s ease}
+
+.stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stat{flex:1;min-width:90px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 10px;box-shadow:var(--shadow);text-align:center}
+.stat .num{font-size:24px;font-weight:800;color:var(--green-d)}
+.stat .lab{font-size:11px;color:var(--sub);margin-top:3px}
+.ring{width:70px;height:70px;display:block;margin:0 auto}
+
+/* 学习日历横条 */
+.dtable{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
+.dtable::-webkit-scrollbar{height:5px}
+.dtable::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+.dcell{flex:0 0 auto;width:86px;border-radius:16px;padding:10px 6px;text-align:center;cursor:pointer;border:1.5px solid var(--line);background:var(--card);transition:.15s;position:relative}
+.dcell:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
+.dcell .d{font-size:12px;font-weight:800}
+.dcell .w{font-size:10px;color:var(--sub)}
+.dcell .p{height:5px;border-radius:5px;background:var(--cream-2);margin-top:7px;overflow:hidden}
+.dcell .p>i{display:block;height:100%;background:var(--green);border-radius:5px}
+.dcell.done{border-color:var(--ok)}
+.dcell.todo{border-color:var(--green)}
+.dcell.over{border-color:var(--red)}
+.dcell .badge{position:absolute;top:5px;right:5px;font-size:9px;padding:1px 5px;border-radius:6px;color:#fff}
+.badge.b-done{background:var(--ok)}.badge.b-todo{background:var(--green)}.badge.b-over{background:var(--red)}
+
+/* 任务 */
+.tfocus .task{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--cream);margin-bottom:8px;border:1px solid var(--line)}
+.tfocus .task.over{border-color:var(--red);background:#fff5f5}
+.tfocus label{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--green);background:#fff;flex:0 0 26px;
+  display:grid;place-items:center;color:#fff;transition:.2s;cursor:pointer}
+.chk.on{background:var(--green);border-color:var(--green);transform:scale(1.06)}
+.chk.on svg{animation:popc .25s ease}
+@keyframes popc{from{transform:scale(0) rotate(-25deg)}to{transform:scale(1) rotate(0)}}
+.task.done{background:var(--green-l);border-color:var(--green)}
+.task.done label{opacity:.6}
+.task .meta{color:var(--sub);font-size:12px}
+.tag{font-size:11px;padding:2px 8px;border-radius:8px;background:var(--green-l);color:var(--green-d);margin-left:6px}
+
+/* 模块列表 */
+.mlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.mitem{border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--card);cursor:pointer;box-shadow:var(--shadow);transition:.15s}
+.mitem:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:var(--shadow-h)}
+.mitem .t{font-weight:800;font-size:15px}
+.mitem .s{font-size:12px;color:var(--sub);margin-top:3px}
+.mitem .go{margin-top:8px;font-size:12px;color:var(--green-d);font-weight:700}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(61,61,61,.35);display:none;align-items:flex-start;justify-content:center;padding:24px 16px;z-index:50;overflow:auto}
+.modal.show{display:flex}
+.sheet{background:var(--card);border-radius:24px;max-width:680px;width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.18);animation:pop .2s ease}
+@keyframes pop{from{transform:scale(.95);opacity:.6}to{transform:scale(1);opacity:1}}
+.sheet h3{margin:0 0 6px;font-size:19px}
+.sheet .au{color:var(--sub);font-size:13px;margin-bottom:12px}
+.sheet .close{float:right;border:none;background:var(--green-l);color:var(--green-d);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px}
+.sheet .back{display:inline-block;border:none;background:#eef3ff;color:var(--blue);font-size:13px;font-weight:700;padding:6px 13px;border-radius:20px;cursor:pointer;margin:0 8px 6px 0;font-family:inherit}
+.sheet .back:active{transform:scale(.96)}
+.vsec{margin-top:12px;background:#fafcff;border:1px solid #e7edf7;border-radius:14px;padding:12px}
+.vsec .vt{font-size:12px;color:var(--sub);margin-bottom:8px}
+.poem{white-space:pre-wrap;font-size:17px;line-height:1.9;background:var(--cream);border-radius:14px;padding:14px;font-family:"Kaiti SC","STKaiti",serif}
+.note{background:var(--green-l);border-radius:14px;padding:12px;margin-top:12px;font-size:14px}
+.note b{color:var(--green-d)}
+.hard{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:14px;cursor:pointer}
+.chip ruby{font-size:16px}
+.chip .py{color:var(--green-d);font-size:12px}
+.ipa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:8px}
+.ipa-cell{border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center;cursor:pointer;background:var(--card);transition:.15s}
+.ipa-cell:hover{border-color:var(--green);background:var(--green-l)}
+.ipa-cell .sym{font-size:22px;font-weight:700;color:var(--ink)}
+.ipa-cell .ex{font-size:12px;color:var(--sub)}
+.ipa-cell .spk{font-size:11px;color:var(--green-d)}
+.mindmap{width:100%;overflow:auto}
+.tree{list-style:none;padding-left:0;margin:0}
+.tree li{margin:6px 0}
+.tnode{display:inline-block;background:var(--green);color:#fff;padding:6px 12px;border-radius:10px;font-size:14px;font-weight:600}
+.tnode.b{background:#8fa8d6}
+.tnode.c{background:#e8b87d}
+.tnode.d{background:#9ccca0}
+.tchildren{padding-left:22px;border-left:2px dashed var(--line);margin-left:12px}
+.fday{border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;background:var(--card)}
+.fday .dt{font-weight:800;color:var(--green-d)}
+.rec-pill{display:inline-block;background:var(--green-l);color:var(--green-d);border-radius:10px;padding:5px 10px;margin:4px 4px 0 0;font-size:13px;cursor:pointer}
+.rec-pill:hover{background:var(--green);color:#fff}
+/* 内置视频卡片（不跳B站，iframe 播放） */
+.vcard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:12px;box-shadow:var(--shadow)}
+.vcap{background:var(--green-l);color:var(--green-d);font-size:12px;font-weight:800;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.vcap svg{width:14px;height:14px}
+.bili{width:100%;aspect-ratio:16/9;display:block;border:none;background:#000}
+.vfoot{padding:9px 12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--cream)}
+.vfoot span{color:var(--sub);font-size:12px}
+.vfoot a{color:var(--blue);font-size:12px;text-decoration:none;font-weight:700}
+.vfoot a:hover{text-decoration:underline}
+.vhint{font-size:12px;color:var(--sub);margin-top:6px}
+.timer{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.timer .big{font-size:40px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--green-d)}
+.timer button{font-family:inherit}
+.set-row{display:flex;align-items:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+.set-row input[type=text]{flex:1;min-width:180px;padding:10px;border:1px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit;background:var(--card)}
+.set-row input[type=password]{width:120px;padding:10px;border:1px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit;background:var(--card)}
+.hint{background:var(--green-l);border-radius:14px;padding:12px;font-size:13px;color:var(--green-d);margin-bottom:12px}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;
+  padding:10px 18px;border-radius:30px;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:55}
+
+/* 移动端始终显示左侧导航轨 */
+@media(max-width:820px){
+  .sidebar{width:72px;padding:12px 0 10px}
+  .avatar-top{width:40px;height:40px;border-radius:13px;margin-bottom:14px}
+  .nav-btn{width:58px;padding:8px 1px;font-size:10px}
+  .nav-btn .ic{width:26px;height:26px;border-radius:10px}
+  .content{padding:12px 12px 80px}
+  .big-clock{font-size:18px;letter-spacing:1px}
+  .home-head .titles h1{font-size:18px}
+  .buddy .face{width:42px;height:42px;flex:0 0 42px}
+  .stat{min-width:80px;padding:12px 6px}
+  .ring{width:56px;height:56px}
+}
+
+.celebrate{display:none;background:linear-gradient(135deg,#9bb88c,#b8d4aa);color:#fff;border-radius:18px;padding:14px 16px;margin-bottom:14px;
+  box-shadow:var(--shadow);align-items:center;gap:12px;animation:fade .3s ease}
+.celebrate.show{display:flex}
+.celebrate .em{width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:0 0 42px}
+.celebrate b{font-size:15px;display:block}
+.celebrate p{margin:2px 0 0;font-size:12px;opacity:.94}
+.today-ring-wrap{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.today-ring{width:62px;height:62px;flex:0 0 62px}
+.today-info .tv{font-size:23px;font-weight:800;color:var(--green-d);line-height:1.1}
+.today-info .tl{font-size:12px;color:var(--sub);margin-top:2px}
+.task.now{border-color:var(--pink);background:linear-gradient(90deg,#fff,#fff5f7);position:relative}
+.task.now::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:4px;border-radius:0 3px 3px 0;background:var(--pink)}
+.task.now .meta::before{content:"进行中 · ";color:var(--pink-d);font-weight:700}
+
+/* 音标：紧凑网格 + 今日跟读 */
+.ipa-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:6px}
+.ipa-cell{padding:6px 4px;border-radius:11px}
+.ipa-cell .sym{font-size:19px}
+.ipa-cell .ex{font-size:11px}
+.ipa-cell .spk{font-size:10px}
+.readcard{background:linear-gradient(135deg,#eef6e8,#eaf1fb);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:6px}
+.readrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.readpill{border:1px solid #cfe0c2;background:#fff;border-radius:14px;padding:10px 6px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;transition:.15s}
+.readpill:active{transform:scale(.96)}
+.readpill b{font-size:18px;color:var(--green-d)}
+.readpill span{font-size:13px;color:var(--ink)}
+.readpill i{font-style:normal;font-size:11px;color:#fff;background:var(--green);border-radius:8px;padding:1px 8px;margin-top:2px}
+@media(max-width:380px){.readrow{grid-template-columns:repeat(2,1fr)}}
+
+/* 语法点列表 */
+.glist{display:flex;flex-direction:column;gap:8px}
+.gitem{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;cursor:pointer;box-shadow:var(--shadow)}
+.gitem:active{background:var(--green-l)}
+.gitem b{flex:1;font-size:14px}
+.gdot{width:12px;height:12px;border-radius:50%;flex:0 0 12px;display:inline-block}
+.gdot.yu{background:#8fa8d6}.gdot.ma{background:#9ccca0}.gdot.en{background:#e8b87d}.gdot.b{background:#8fa8d6}.gdot.c{background:#e8b87d}.gdot.d{background:#9ccca0}
+.garrow{font-size:12px;color:var(--sub)}
+
+/* 首页任务时间轴色块 */
+.tpill-wrap{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.tpill{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;transition:.15s}
+.tpill:hover{transform:translateY(-1px);box-shadow:var(--shadow-h);border-color:var(--green)}
+.tpill.done{background:var(--green-l);border-color:var(--green);opacity:.8}
+.tpill.over{border-color:var(--red);background:#fff5f5}
+.tpill.rest{opacity:.65}
+.tpill.rest .tp-title{font-weight:500}
+.tp-time{font-size:12px;font-weight:800;color:var(--sub);width:44px;flex:0 0 44px;white-space:nowrap}
+.tp-dot{width:10px;height:10px;border-radius:50%;flex:0 0 10px}
+.tp-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.tp-title{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-sub{font-size:11px;color:var(--sub)}
+.tp-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:#fff;flex:0 0 22px;background:transparent}
+.tp-chk.on{background:var(--green);border-color:var(--green)}
+.tpill.rest .tp-chk{visibility:hidden}
+.tp-oh{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;margin-top:8px;padding-left:4px}
+
+/* 任务详情弹层 */
+.task-detail-card{background:var(--cream);border-radius:16px;padding:14px;margin-top:10px}
+.td-row{margin-bottom:12px}
+.td-row:last-child{margin-bottom:0}
+.td-row b{font-size:12px;color:var(--green-d);display:block;margin-bottom:4px}
+.td-row p{margin:0;font-size:14px;color:var(--ink);line-height:1.6}
+.td-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.td-head .tp-dot{width:12px;height:12px;flex:0 0 12px}
+.td-head .au{margin:0}
+
+/* 去学习按钮（任务跳转内容） */
+.gostudy{margin-left:auto;flex:0 0 auto;border:none;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;
+  font-size:12px;font-weight:700;padding:7px 13px;border-radius:20px;cursor:pointer;font-family:inherit;white-space:nowrap;box-shadow:var(--shadow)}
+.gostudy:active{transform:scale(.96)}
+
+/* 视频跳转按钮（替代内置黑屏播放） */
+.vjk{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:12px;box-shadow:var(--shadow)}
+.dhx-list{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.dhx-item{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:14px}
+.dhx-t{font-weight:600;margin-bottom:10px;color:var(--ink)}
+.vjk-t{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.vjk-btns{display:flex;gap:10px;flex-wrap:wrap}
+.vbtn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:13px;padding:10px 17px;border-radius:14px;cursor:pointer;font-family:inherit;border:none;color:#fff;transition:.15s}
+.vbtn.bz{background:linear-gradient(135deg,#fb7299,#e85d8a)}
+.vbtn.wb{background:linear-gradient(135deg,#8fa8d6,#6f8fc4)}
+.vbtn.bz:hover,.vbtn.wb:hover{filter:brightness(1.06)}
+.vbtn.rate{flex:1;justify-content:center;border-radius:12px;padding:11px}
+.vbtn.rate.forgot{background:linear-gradient(135deg,#e6a0a0,#d67a7a)}
+.vbtn.rate.blur{background:linear-gradient(135deg,#e8b87d,#d59a55)}
+.vbtn.rate.know{background:linear-gradient(135deg,#9bb88c,#7a9e6b)}
+
+/* 每日打卡导航条（各科目页顶部） */
+.dailybar{background:linear-gradient(135deg,#e6eedf,#f3eee6);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow)}
+.dailybar .db-h{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--green-d);margin-bottom:8px}
+.dailybar .db-h .db-num{margin-left:auto;font-size:12px;color:var(--sub)}
+
+/* Anki 记忆卡 */
+.anki-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px}
+.chip-type{font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px}
+.chip-type.t-fill{background:var(--green-l);color:var(--green-d)}
+.chip-type.t-char{background:#fdeef3;color:var(--pink-d)}
+.anki-prog{font-size:12px;color:var(--sub)}
+.anki-q{font-size:18px;font-weight:700;line-height:1.7;background:var(--cream);border-radius:14px;padding:16px}
+.anki-back{margin-top:12px;background:#eef3ff;border-radius:14px;padding:14px;font-size:15px;line-height:1.7}
+.anki-rate{display:flex;gap:8px;margin-top:12px}
+
+/* 设置：形象选择 */
+.sub{font-size:13px;color:var(--sub);margin:10px 0 6px}
+.mascot-pick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px}
+.mp{border:2px solid var(--line);border-radius:14px;padding:8px;background:var(--card);cursor:pointer;text-align:center;font-size:11px;color:var(--sub);transition:.15s}
+.mp svg,.mp img{width:54px;height:54px;display:block;margin:0 auto 4px;object-fit:cover;border-radius:50%}
+.mp.on{border-color:var(--green);background:var(--green-l)}
+.mp.on span{color:var(--green-d);font-weight:700}
+
+/* 积分徽章（顶栏） */
+.pts-pill{margin-left:auto;background:linear-gradient(135deg,#ffe7a8,#ffd27a);color:#7a5a16;font-weight:800;border-radius:999px;padding:5px 12px;font-size:14px;box-shadow:var(--shadow)}
+/* 我的奖励卡片 */
+.reward-card{background:linear-gradient(135deg,#fff7e6,#fdeede)}
+.rw-head{display:flex;align-items:center;gap:14px;margin:6px 0 12px}
+.rw-pts{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:78px;height:64px;border-radius:16px;background:linear-gradient(135deg,#ffe7a8,#ffd27a);color:#7a5a16;box-shadow:var(--shadow)}
+.rw-pts span{font-size:26px;font-weight:900;line-height:1}
+.rw-pts small{font-size:12px;margin-top:2px}
+.rw-hint{font-size:13px;color:var(--ink);line-height:1.5}
+.rw-hint b{color:#c98a2a}
+.rw-go{width:100%;background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff;border:none;font-weight:700}
+/* 奖励柜 */
+.rs-top{font-size:15px;margin-bottom:6px}
+.rs-top b{font-size:22px;color:#c98a2a;margin:0 4px}
+.rs-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.rs-item{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.rs-name{flex:1;font-weight:600}
+.rs-cost{color:var(--sub);font-size:13px;white-space:nowrap}
+.rs-cost b{color:#c98a2a;font-size:16px}
+.rs-btn{background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff;border:none;white-space:nowrap}
+.rs-btn.off{background:#e3ded3;color:#a89;cursor:not-allowed}
+.rs-hist{margin-top:14px;font-size:12px;color:var(--sub);line-height:1.6}
+/* 奖励目录编辑 */
+.rs-edit{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.re-row{display:flex;align-items:center;gap:8px}
+.re-name{flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px}
+.re-cost{width:74px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px}
+.re-row>span{color:var(--sub);font-size:13px}
+.re-del{width:30px;height:30px;border:none;border-radius:8px;background:#f3dede;color:var(--red);font-size:16px;cursor:pointer}
+/* OC 角色与装扮 */
+.avatar-top,.buddy .face{position:relative;overflow:hidden;border-radius:50%}
+.avatar-top img,.buddy .face img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.buddy .face{width:48px;height:48px;flex:0 0 48px}
+.oc-wrap{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+.oc-wrap>svg,.oc-wrap>img{width:100%;height:100%;display:block;border-radius:50%}
+.oc-outfit{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+/* 衔阳成长 */
+.oc-grow{background:linear-gradient(135deg,#eaf3ff,#f3eefe)}
+.og-top{display:flex;align-items:center;gap:12px}
+.og-avatar{width:54px;height:54px;border-radius:50%;overflow:hidden;flex:0 0 54px;box-shadow:var(--shadow);background:#fff}
+.og-avatar img,.og-avatar svg{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.og-info{flex:1;min-width:0}
+.og-name{font-weight:800;font-size:15px;color:var(--ink)}
+.og-tag{display:inline-block;background:#d9c8ff;color:#5a3ea8;font-size:11px;padding:1px 8px;border-radius:999px;margin-left:4px;vertical-align:middle}
+.og-mood{font-size:13px;color:var(--sub);margin-top:2px}
+.lv-bar{height:12px;border-radius:999px;background:#e6e0f2;overflow:hidden;margin:10px 0 6px}
+.lv-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#7aa7ff,#a98bff);transition:width .4s}
+.og-next{font-size:12px;color:var(--sub)}
+.og-next b{color:#7a5a16}
+/* 徽章 */
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-top:6px}
+.badge{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;opacity:.55;filter:grayscale(.5)}
+.badge.on{opacity:1;filter:none;background:linear-gradient(135deg,#fff6da,#ffe9c2);border-color:#ffd27a;box-shadow:var(--shadow)}
+.b-icon{font-size:26px;line-height:1}
+.b-name{font-size:13px;font-weight:700;margin-top:4px;color:var(--ink)}
+.b-desc{font-size:11px;color:var(--sub);margin-top:2px;line-height:1.4}
+/* 周回顾 */
+.wk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.wk-item{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px 4px;text-align:center}
+.wk-val{font-size:20px;font-weight:900;color:var(--green-d)}
+.wk-val small{font-size:11px;font-weight:600;color:var(--sub);margin-left:1px}
+.wk-lab{font-size:11px;color:var(--sub);margin-top:2px}
+.wk-bar{height:10px;border-radius:999px;background:#e6efe2;overflow:hidden;margin:10px 0 6px}
+.wk-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#7ec46a);transition:width .4s}
+.wk-cap{font-size:12px;color:var(--sub)}
+.wk-empty{font-size:13px;color:var(--sub);line-height:1.7}
+/* 梦想板 */
+.dm-inputs{margin-bottom:10px}
+.dm-inputs .re-name{width:100%}
+.dm-bar{height:14px;border-radius:999px;background:#f0e6f7;overflow:hidden;margin:6px 0}
+.dm-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#ff9ec7,#c89bff);transition:width .4s}
+.dm-cap{font-size:12px;color:var(--sub)}
+/* 彩蛋 */
+.egg-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.egg-item{display:flex;align-items:center;gap:8px;background:var(--cream);border:1px dashed #d9b3d6;border-radius:14px;padding:10px 12px;cursor:pointer;transition:.15s}
+.egg-item:hover{transform:translateY(-1px);box-shadow:var(--shadow-h)}
+.egg-item.done{opacity:.6;border-style:solid;border-color:var(--line);cursor:default}
+.egg-ic{font-size:18px}
+.egg-t{flex:1;font-weight:600}
+.egg-p{color:#c98a2a;font-weight:700;font-size:13px;white-space:nowrap}
+.egg-ok{color:var(--green);font-weight:900}
+.egg-x{color:var(--red);font-weight:900;cursor:pointer;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#f3dede}
+/* 换装页预览（全身/Q版切换） */
+.oc-view-toggle{display:flex;gap:8px;margin:6px 0 10px}
+.oc-view-toggle .tbtn{flex:1;border:1px solid var(--line);background:var(--card);color:var(--sub);font-weight:700}
+.oc-view-toggle .tbtn.on{background:linear-gradient(135deg,#7aa7ff,#a98bff);color:#fff;border-color:transparent}
+.oc-prev{display:flex;justify-content:center;margin:4px 0 10px}
+.oc-full-wrap{position:relative;width:min(240px,68%);aspect-ratio:832/1216;max-width:260px}
+.oc-full-wrap img{width:100%;height:100%;object-fit:cover;display:block;border-radius:16px;box-shadow:var(--shadow)}
+.oc-full-wrap .oc-outfit-full{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.oc-prev.qprev{position:relative;width:130px;height:130px;border-radius:50%;overflow:hidden;box-shadow:var(--shadow)}
+
+/* 家庭码登录浮层 */
+.login-screen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:linear-gradient(160deg,#eef3e8,#f6efe6)}
+.login-card{background:var(--card);border-radius:24px;box-shadow:var(--shadow-h);max-width:340px;width:100%;
+  padding:26px 22px;text-align:center;border:1px solid var(--line)}
+.login-ava{width:84px;height:84px;border-radius:50%;overflow:hidden;margin:0 auto 12px;box-shadow:var(--shadow);background:#f3eee6}
+.login-ava img{width:100%;height:100%;object-fit:cover}
+.login-card h2{margin:0 0 8px;font-size:21px;color:#3d5a3a}
+.login-tip{font-size:13px;color:var(--sub);line-height:1.7;margin:0 0 16px}
+.login-tip strong{color:var(--green-d)}
+.login-input{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;
+  font-size:16px;font-family:inherit;text-align:center;outline:none;margin-bottom:12px}
+.login-input:focus{border-color:var(--green)}
+.login-go{width:100%;padding:13px;font-size:16px;font-weight:800;border:none;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;box-shadow:var(--shadow)}
+.login-go:active{transform:scale(.98)}
+.login-skip{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--sub);font-size:13px;
+  text-decoration:underline;cursor:pointer;font-family:inherit}
+.login-note{font-size:12px;color:var(--red);min-height:16px;margin:8px 0 0}
+
+/* 家长视图 */
+.pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.pv-stat{background:var(--green-l);border-radius:14px;padding:12px;text-align:center}
+.pv-stat b{display:block;font-size:24px;color:var(--green-d);font-weight:900}
+.pv-stat span{font-size:12px;color:var(--sub)}
+.pv-bar{height:12px;border-radius:8px;background:var(--cream-2);overflow:hidden;margin:6px 0}
+.pv-bar>i{display:block;height:100%;background:linear-gradient(135deg,var(--green),var(--green-d))}
+.pv-row{display:flex;justify-content:space-between;font-size:14px;padding:7px 0;border-bottom:1px solid var(--line)}
+.pv-code{font-size:12px;color:var(--sub);text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-ava"><img src="oc_xianyang_q.png" alt="衔阳"></div>
+    <h2>邓斯予的学习台</h2>
+    <p class="login-tip">输入「家庭码」即可在手机 / 电脑之间同步打卡进度。<br>家长和孩子用<strong>同一个家庭码</strong>，数据自动共享。</p>
+    <input id="familyInput" class="login-input" placeholder="例如：siyu2026" maxlength="20" autocomplete="off">
+    <button class="tbtn login-go" onclick="setupFamily()">进入学习台 ›</button>
+    <button class="login-skip" onclick="skipFamily()">本机先用，暂不同步</button>
+    <p class="login-note" id="loginNote"></p>
+  </div>
+</div>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+  <div class="avatar-top"><svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+  <circle cx="50" cy="50" r="45" fill="#fff"/>
+  <circle cx="35" cy="42" r="5" fill="#3d3d3d"/>
+  <circle cx="65" cy="42" r="5" fill="#3d3d3d"/>
+  <path d="M40 62q10 8 20 0" stroke="#e8a8b8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M22 34c-5-8-3-15 4-13 3 1 5 5 5 8z" fill="#e8a8b8"/>
+  <path d="M78 34c5-8 3-15-4-13-3 1-5 5-5 8z" fill="#e8a8b8"/>
+</svg></div>
+  <div class="nav-rail">
+    <button class="nav-btn active" data-sec="home"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span>首页</button>
+    <button class="nav-btn" data-sec="chinese"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>语文</button>
+    <button class="nav-btn" data-sec="math"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span>数学</button>
+    <button class="nav-btn" data-sec="english"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></span>英语</button>
+    <button class="nav-btn" data-sec="reward"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>奖励</button>
+  </div>
+  <div class="side-foot">
+    <button class="mini-btn" id="btnParent">家长</button>
+    <button class="mini-btn" id="btnSet">设置</button>
+  </div>
+</aside>
+  <main class="content">
+    <div class="topbar">
+      <h1 id="pageTitle">今日概览</h1>
+      <span class="sub" id="pageSub"></span>
+      <span class="clock-pill" id="clock">--:--</span>
+      <span class="pts-pill" id="ptsPill">🌟 0</span>
+      <button class="tbtn" id="btnEye">护眼</button>
+      <button class="tbtn" id="btnFsD">A−</button>
+      <button class="tbtn" id="btnFsU">A+</button>
+    </div>
+
+    <!-- 首页 -->
+    <section class="section active" id="sec-home">
+      <div class="hero-row">
+        <div class="home-head">
+          <div class="titles">
+            <h1 id="heroDate">Hi，邓斯予</h1>
+          </div>
+        </div>
+
+        <div class="hero-clock-card">
+          <div class="hc-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7a9e6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div>
+            <div class="big-clock" id="bigClock">--:--:--</div>
+            <div class="clock-meta" id="clockMeta">--月--日</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="buddy" id="buddyCard">
+        <div class="face"><svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+  <circle cx="50" cy="50" r="45" fill="#fff"/>
+  <circle cx="37" cy="43" r="4.5" fill="#3d3d3d"/>
+  <circle cx="63" cy="43" r="4.5" fill="#3d3d3d"/>
+  <path d="M38 60q12 9 24 0" stroke="#e8a8b8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M24 36c-6-9-3-17 5-14 4 1 6 6 6 10z" fill="#e8a8b8"/>
+  <path d="M76 36c6-9 3-17-5-14-4 1-6 6-6 10z" fill="#e8a8b8"/>
+</svg></div>
+        <div class="btxt">
+          <div class="bwho" id="buddyWho">今日金句</div>
+          <div class="bubble"><div class="bmsg" id="buddyMsg">——</div></div>
+        </div>
+      </div>
+
+      <div class="celebrate" id="celebrate">
+        <div class="em"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17.8 5.9 20.6l1.5-6.7L2.3 8.9l6.8-.6z"/></svg></div>
+        <div><b>今天的作业全部完成啦！</b><p>太棒了，邓斯予完成了今日所有任务，去放松一下吧～</p></div>
+      </div>
+
+      <div class="card tfocus">
+        <h2><span class="dot"></span>今日学习清单</h2>
+        <div class="today-ring-wrap">
+          <svg class="today-ring" id="todayRing" viewBox="0 0 120 120"></svg>
+          <div class="today-info"><div class="tv" id="todayCount">0/0</div><div class="tl" id="todayStatus">今天还没开始哦</div></div>
+        </div>
+        <div id="todayList"></div>
+      </div>
+
+      <div class="count-card">
+        <div>
+          <div class="cd-num" id="countNum">0</div>
+          <div class="cd-lab" id="countLab">载入中…</div>
+        </div>
+        <div class="cd-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7a9e6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>学习进度</h2>
+        <div class="progress-bar"><i id="progressI" style="width:0%"></i></div>
+        <div class="stat-row" style="margin-top:12px;margin-bottom:0">
+          <div class="stat"><div class="num" id="stDone">0</div><div class="lab">已完成</div></div>
+          <div class="stat"><div class="num" id="stStreak">0</div><div class="lab">连续打卡</div></div>
+          <div class="stat"><div class="num" id="stPct">0%</div><div class="lab">总进度</div></div>
+          <div class="stat"><svg class="ring" id="ring" viewBox="0 0 120 120"></svg></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>学习日历</h2>
+        <div class="dtable" id="dtable"></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>《如果国宝会说话》观看安排</h2>
+        <div id="filmBox"></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>数据备份</h2>
+        <div style="font-size:13px;color:var(--sub);margin-bottom:10px">点击导出把学习进度存成 JSON 文件，换设备或误清数据后可导入恢复。</div>
+        <div class="row">
+          <button class="tbtn" onclick="exportData()">导出 JSON 备份</button>
+          <button class="tbtn" onclick="importData()">导入 JSON</button>
+          <button class="tbtn" style="color:var(--red)" onclick="resetData()">清空进度</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 语文 -->
+    <section class="section" id="sec-chinese">
+      <div class="card">
+        <h2><span class="dot"></span>每日语文任务（今日打卡）</h2>
+        <div id="cnTasks"></div>
+      </div>
+      <div class="card">
+        <h2><span class="dot"></span>语文学习模块（点开看内容）</h2>
+        <div class="mlist" id="cnModules"></div>
+      </div>
+    </section>
+
+    <!-- 数学 -->
+    <section class="section" id="sec-math">
+      <div class="card">
+        <h2><span class="dot"></span>每日数学任务（今日打卡）</h2>
+        <div id="mathTasks"></div>
+      </div>
+      <div class="card">
+        <h2><span class="dot"></span>数学课（点击跳转上课网页）</h2>
+        <div class="hint">家长可在「设置」里粘贴数学课网址，这里一键打开。</div>
+        <div class="set-row">
+          <input type="text" id="mathUrlInput" placeholder="在此粘贴数学课网址，例如 https://...">
+          <button class="tbtn" id="mathUrlSave">保存</button>
+        </div>
+        <button class="tbtn" id="mathGo" style="background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none">▶ 打开数学课网页</button>
+      </div>
+      <div class="card">
+        <h2><span class="dot"></span>口算打卡（番茄钟）</h2>
+        <div class="timer">
+          <span class="big" id="timer">25:00</span>
+          <button class="tbtn" id="tStart">开始</button>
+          <button class="tbtn" id="tReset">重置</button>
+          <span class="meta">数学作业＝每天口算1h，可用番茄钟分段专注</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 英语 -->
+    <section class="section" id="sec-english">
+      <div class="card">
+        <h2><span class="dot"></span>每日英语任务（今日打卡）</h2>
+        <div id="enTasks"></div>
+      </div>
+      <div class="card">
+        <h2><span class="dot"></span>英语学习模块（点开学习）</h2>
+        <div class="mlist" id="enModules"></div>
+      </div>
+    </section>
+
+    <!-- 奖励 -->
+    <section class="section" id="sec-reward">
+      <div class="card reward-card">
+        <h2><span class="dot"></span>我的奖励 🌟</h2>
+        <div class="rw-head">
+          <div class="rw-pts"><span id="rwPoints">0</span><small>积分</small></div>
+          <div class="rw-hint">攒够积分，能换喜欢的东西，也能给 <b id="rwOcName">衔阳</b> 换新装备～ 🌟</div>
+        </div>
+        <button class="tbtn rw-go" onclick="openRewardStore()">去奖励柜兑换 ›</button>
+      </div>
+
+      <div class="card oc-grow" id="ocGrowCard"></div>
+
+      <div class="card">
+        <h2><span class="dot"></span>成就徽章 🏅</h2>
+        <div id="badgeGrid" class="badge-grid"></div>
+      </div>
+
+      <div class="card weekly">
+        <h2><span class="dot"></span>周回顾小报 📰</h2>
+        <div id="weeklyCard"></div>
+      </div>
+
+      <div class="card dream">
+        <h2><span class="dot"></span>梦想板 ✨</h2>
+        <div id="dreamCard"></div>
+      </div>
+
+      <div class="card egg">
+        <h2><span class="dot"></span>彩蛋任务 🥚</h2>
+        <div class="hint">家长悄悄设置的隐藏任务，完成就有惊喜积分！（点一下就完成）</div>
+        <div id="eggList" class="egg-list"></div>
+        <button class="tbtn" style="margin-top:10px" onclick="addEgg()">＋ 添加彩蛋任务</button>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>兑换记录</h2>
+        <div id="rewardHistory" style="font-size:14px;color:var(--sub)">还没有兑换记录哦～</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+
+<!-- modal -->
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+<canvas class="confetti" id="confetti"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.3/dist/leancloud-storage.js"></script>
+<script>
+const DATA = {"doc_title":"邓斯予 · 小升初暑假作业学习台","start_date":"2026-08-17","end_date":"2026-08-28","plan":[{"date":"8月17日","week":"周一","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"新背：①《观沧海》","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第1篇《狗·猫·鼠》（全书第一篇，从开篇读到《狗·猫·鼠》结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《狗·猫·鼠》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:15","type":"核心B","subject":"语文","task":"文言文逐词翻译：①郑人买履、②道旁苦李","standard":"完成两篇逐词翻译，字字落实","duration":"45min","note":"参考《答案与辅导参考》"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"名词单复数专项练习","standard":"完成练习并对照答案订正","duration":"30min","note":"规则见答案参考"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"默写：①《观沧海》并订正错字","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月18日","week":"周二","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"新背：②《闻王昌龄左迁龙标遥有此寄》","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第2篇《阿长与〈山海经〉》（全书第二篇，从《阿长与〈山海经〉》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《阿长与〈山海经〉》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:15","type":"核心B","subject":"语文","task":"文言文逐词翻译：③枭逢鸠、④神农尝百草","standard":"完成两篇逐词翻译，字字落实","duration":"45min","note":"参考《答案与辅导参考》"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"代词专项练习","standard":"完成练习并对照答案订正","duration":"30min","note":"规则见答案参考"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"默写：②《闻王昌龄左迁龙标遥有此寄》并订正错字","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月19日","week":"周三","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"新背：③《次北固山下》","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第3篇《〈二十四孝图〉》（全书第三篇，从《〈二十四孝图〉》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《〈二十四孝图〉》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:15","type":"核心B","subject":"语文","task":"文言文逐词翻译：⑤画蛇添足、⑥自相矛盾","standard":"完成两篇逐词翻译，字字落实","duration":"45min","note":"参考《答案与辅导参考》"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"一般现在时专项练习","standard":"完成练习并对照答案订正","duration":"30min","note":"标志词：every day, often, usually"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"默写：③《次北固山下》并订正错字","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月20日","week":"周四","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"新背：④《天净沙·秋思》","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第4篇《五猖会》（全书第四篇，从《五猖会》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《五猖会》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:15","type":"核心B","subject":"语文","task":"文言文逐词翻译：⑦买椟还珠、⑧望梅止渴","standard":"完成两篇逐词翻译，字字落实","duration":"45min","note":"参考《答案与辅导参考》"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"一般过去时专项练习","standard":"完成练习并对照答案订正","duration":"30min","note":"标志词：yesterday, last week, ago"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"默写：④《天净沙·秋思》并订正错字","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月21日","week":"周五","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"新背：⑤《论语》十二章","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第5篇《无常》（全书第五篇，从《无常》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《无常》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:15","type":"核心B","subject":"语文","task":"《西游记》：看动画/听书版 + 画取经闯关图初稿","standard":"完成路线图草图，标出长安→西天主要节点","duration":"45min","note":"答案参考里有简化版路线图"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"现在进行时专项练习","standard":"完成练习并对照答案订正","duration":"30min","note":"标志词：now, look, listen"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"默写：⑤《论语》十二章（抽默3-4则）并订正","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月24日","week":"周一","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"新背：⑥《世说新语》二则","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第6篇《从百草园到三味书屋》（全书第六篇，从《从百草园到三味书屋》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《从百草园到三味书屋》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:15","type":"核心B","subject":"语文","task":"《西游记》：完善取经闯关图","standard":"A4横版地图定稿，标注主要劫难","duration":"45min","note":"用彩笔区分师徒四人路线"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"完型填空练习","standard":"完成1篇并订正","duration":"30min","note":"先通读全文再选"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"默写：⑥《世说新语》二则（《咏雪》）并订正","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月25日","week":"周二","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"轮读熟练：①②两篇","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第7篇《父亲的病》（全书第七篇，从《父亲的病》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《父亲的病》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:00","type":"核心B","subject":"语文","task":"作文《我的自画像》","standard":"完成作文提纲+正文，400字以上","duration":"30min","note":"不代笔，给框架见辅导参考"},{"time":"20:00-20:15","type":"纪录片","subject":"语文","task":"《如果国宝会说话》看2集（约10分钟）","standard":"看完记录1个触动点，备用写推荐","duration":"15min","note":"每集5分钟，共100集；选看即可"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"阅读理解练习","standard":"完成1篇并订正","duration":"30min","note":"先读题再定位"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"抽默：①或②中1篇，错字订正","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月26日","week":"周三","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"轮读熟练：③④两篇","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第8篇《琐记》（全书第八篇，从《琐记》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《琐记》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:00","type":"核心B","subject":"语文","task":"《初中生活计划书》","standard":"完成计划书，目标具体、可执行","duration":"30min","note":"不代笔，给模板见辅导参考"},{"time":"20:00-20:15","type":"纪录片","subject":"语文","task":"《如果国宝会说话》看2集（约10分钟）","standard":"看完记录1个触动点，备用写推荐","duration":"15min","note":"每集5分钟，共100集；选看即可"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"词与短语填空练习","standard":"完成练习并订正","duration":"30min","note":"注意词形变化"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"抽默：③或④中1篇，错字订正","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月27日","week":"周四","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"轮读熟练：⑤⑥两篇","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第9篇《藤野先生》（全书第九篇，从《藤野先生》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《藤野先生》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:00","type":"核心B","subject":"语文","task":"写《如果国宝会说话》影片推荐（200字）","standard":"结合这几晚看的集数，写推荐理由200字","duration":"30min","note":"每集仅5分钟，看3-5集即可写"},{"time":"20:00-20:15","type":"纪录片","subject":"语文","task":"《如果国宝会说话》看1集（约5分钟）","standard":"看完记录1个触动点，备用写推荐","duration":"15min","note":"每集5分钟，共100集；选看即可"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"综合填空练习","standard":"完成练习并订正","duration":"30min","note":"综合运用语法"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"抽默：⑤或⑥中1篇，错字订正","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]},{"date":"8月28日","week":"周五","tasks":[{"time":"10:30-11:30","type":"固定","subject":"英语","task":"背单词 + 48个国际音标跟读","standard":"完成当日单词量，音标开口读","duration":"1h","note":"英语音标每天早上读"},{"time":"11:30-12:00","type":"上午读背","subject":"语文","task":"轮读熟练：全六篇","standard":"朗读3遍，理解诗意/文意","duration":"30min","note":"每日语文读背（控制0.5h）"},{"time":"12:00-14:00","type":"午休","subject":"—","task":"午饭+休息","standard":"","duration":"2h","note":"必须保证"},{"time":"14:00-15:30","type":"数学课","subject":"数学","task":"数学课 + 课后习题","standard":"完成课堂练习与当日习题","duration":"1.5h","note":"【新增】每天1节数学课+习题"},{"time":"15:30-15:45","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"15:45-16:45","type":"核心A","subject":"语文","task":"朝花夕拾：读第10篇《范爱农》（全书第十篇，从《范爱农》开始并结束）+ 概括主要内容，梳理主要人物性格","standard":"完成当日篇目的概括与人物性格","duration":"1h","note":"压缩：原1.5h→1h｜《范爱农》"},{"time":"16:45-17:00","type":"休息","subject":"—","task":"15分钟休息/换脑","standard":"","duration":"15min","note":""},{"time":"17:00-18:00","type":"固定","subject":"数学","task":"口算","standard":"计时完成，错题重算","duration":"1h","note":"数学=口算"},{"time":"18:00-19:30","type":"晚饭休息","subject":"—","task":"晚饭+自由活动","standard":"","duration":"1.5h","note":""},{"time":"19:30-20:15","type":"核心B","subject":"语文","task":"弹性缓冲/当日收尾","standard":"补齐当天未完成项，不新增复习任务","duration":"45min","note":"这是计划内的缓冲，非检查日"},{"time":"20:15-20:45","type":"英语","subject":"英语","task":"音标拼读综合 + 七上单词抽检","standard":"跟读48个音标，抽查20个单词","duration":"30min","note":"利用背单词时段巩固"},{"time":"20:45-21:00","type":"晚上默写","subject":"语文","task":"抽默：六篇中自选1篇，错字订正","standard":"默写正确率≥90%","duration":"15min","note":"上午读背，晚上默写（长诗日可延至21:10）"},{"time":"21:00","type":"结束","subject":"—","task":"","standard":"","duration":"","note":""}]}],"readback":{"8月17日":{"am":"新背：①《观沧海》","am_req":"朗读3遍，标出生字词，理解大意","pm":"默写：①《观沧海》并订正错字","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月18日":{"am":"新背：②《闻王昌龄左迁龙标遥有此寄》","am_req":"朗读3遍，标出生字词，理解大意","pm":"默写：②《闻王昌龄左迁龙标遥有此寄》并订正错字","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月19日":{"am":"新背：③《次北固山下》","am_req":"朗读3遍，标出生字词，理解大意","pm":"默写：③《次北固山下》并订正错字","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月20日":{"am":"新背：④《天净沙·秋思》","am_req":"朗读3遍，标出生字词，理解大意","pm":"默写：④《天净沙·秋思》并订正错字","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月21日":{"am":"新背：⑤《论语》十二章","am_req":"朗读3遍，标出生字词，理解大意","pm":"默写：⑤《论语》十二章（抽默3-4则）并订正","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月24日":{"am":"新背：⑥《世说新语》二则","am_req":"朗读3遍，标出生字词，理解大意","pm":"默写：⑥《世说新语》二则（《咏雪》）并订正","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月25日":{"am":"轮读熟练：①②两篇","am_req":"朗读3遍，标出生字词，理解大意","pm":"抽默：①或②中1篇，错字订正","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月26日":{"am":"轮读熟练：③④两篇","am_req":"朗读3遍，标出生字词，理解大意","pm":"抽默：③或④中1篇，错字订正","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月27日":{"am":"轮读熟练：⑤⑥两篇","am_req":"朗读3遍，标出生字词，理解大意","pm":"抽默：⑤或⑥中1篇，错字订正","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"},"8月28日":{"am":"轮读熟练：全六篇","am_req":"朗读3遍，标出生字词，理解大意","pm":"抽默：六篇中自选1篇，错字订正","pm_req":"先背诵再默写，错字红笔订正3遍","note":"读背是每日熟练过程，不在于一次完美"}},"zhax":{"8月17日":{"idx":"第1篇","title":"《狗·猫·鼠》","range":"全书第一篇，从开篇读到《狗·猫·鼠》结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月18日":{"idx":"第2篇","title":"《阿长与〈山海经〉》","range":"全书第二篇，从《阿长与〈山海经〉》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月19日":{"idx":"第3篇","title":"《〈二十四孝图〉》","range":"全书第三篇，从《〈二十四孝图〉》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月20日":{"idx":"第4篇","title":"《五猖会》","range":"全书第四篇，从《五猖会》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月21日":{"idx":"第5篇","title":"《无常》","range":"全书第五篇，从《无常》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月24日":{"idx":"第6篇","title":"《从百草园到三味书屋》","range":"全书第六篇，从《从百草园到三味书屋》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月25日":{"idx":"第7篇","title":"《父亲的病》","range":"全书第七篇，从《父亲的病》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月26日":{"idx":"第8篇","title":"《琐记》","range":"全书第八篇，从《琐记》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月27日":{"idx":"第9篇","title":"《藤野先生》","range":"全书第九篇，从《藤野先生》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"},"8月28日":{"idx":"第10篇","title":"《范爱农》","range":"全书第十篇，从《范爱农》开始并结束","homework":"概括主要内容，梳理主要人物性格","dur":"1h（压缩）"}},"poems":[{"title":"《观沧海》","author":"曹操","text":"东临碣石，以观沧海。水何澹澹，山岛竦峙。\n树木丛生，百草丰茂。秋风萧瑟，洪波涌起。\n日月之行，若出其中；星汉灿烂，若出其里。\n幸甚至哉，歌以咏志。","hard":[["碣","jié","山名"],["澹","dàn","水波荡漾"],["竦","sǒng","高起"],["峙","zhì","直立"],["汉","hàn","银河"]],"notes":["写于北征乌桓得胜途中，借大海抒发统一中原的抱负。","‘日月/星汉’四句用想象写大海包容天地，是千古名句。","澹澹(dàn dàn)：水波摇动的样子。"]},{"title":"《闻王昌龄左迁龙标遥有此寄》","author":"李白","text":"杨花落尽子规啼，闻道龙标过五溪。\n我寄愁心与明月，随君直到夜郎西。","hard":[["啼","tí","鸣叫"],["溪","xī","溪流"],["郎","láng","夜郎，古地名"]],"notes":["左迁：贬官（古人以右为尊）。","子规：杜鹃鸟，啼声似‘不如归去’，常表哀伤。","把‘愁心’托付明月，想象奇特，表达对友人的牵挂。"]},{"title":"《次北固山下》","author":"王湾","text":"客路青山外，行舟绿水前。潮平两岸阔，风正一帆悬。\n海日生残夜，江春入旧年。乡书何处达？归雁洛阳边。","hard":[["固","gù","北固山，地名"],["悬","xuán","挂"],["雁","yàn","大雁"]],"notes":["次：停泊（诗题指泊船）。","‘海日生残夜，江春入旧年’写时序交替，蕴含新生希望，为唐人名句。","乡书：家信。归雁传书，寄托思乡。"]},{"title":"《天净沙·秋思》","author":"马致远","text":"枯藤老树昏鸦，小桥流水人家，古道西风瘦马。\n夕阳西下，断肠人在天涯。","hard":[["藤","téng","藤蔓"],["鸦","yā","乌鸦"],["瘦","shòu","瘦弱"]],"notes":["天净沙：曲牌名；秋思：题目。","前三句列九种景物，不加动词，画面并置成‘秋景图’。","断肠人：漂泊天涯、极度思乡的游子。"]},{"title":"《论语》十二章","author":"孔子及其弟子","text":"1. 学而时习之，不亦说乎？有朋自远方来，不亦乐乎？人不知而不愠，不亦君子乎？\n2. 吾日三省吾身：为人谋而不忠乎？与朋友交而不信乎？传不习乎？\n3. 吾十有五而志于学，三十而立，四十而不惑……\n4. 温故而知新，可以为师矣。\n5. 学而不思则罔，思而不学则殆。\n6. 贤哉，回也！一箪食，一瓢饮，在陋巷，人不堪其忧，回也不改其乐。\n7. 知之者不如好之者，好之者不如乐之者。\n8. 饭疏食，饮水，曲肱而枕之，乐亦在其中矣。\n9. 三人行，必有我师焉。择其善者而从之，其不善者而改之。\n10. 逝者如斯夫，不舍昼夜。\n11. 三军可夺帅也，匹夫不可夺志也。\n12. 博学而笃志，切问而近思，仁在其中矣。","hard":[["愠","yùn","生气"],["省","xǐng","反省"],["罔","wǎng","迷惑"],["殆","dài","疑惑"],["箪","dān","竹制盛饭器"],["肱","gōng","胳膊"],["笃","dǔ","坚定"]],"notes":["说(yuè)通‘悦’；古今字。","三省(xǐng)：多次反省。","罔：迷惑而无所得；殆：精神疲倦而无所得。","箪(dān)食瓢饮：形容安贫乐道。","择善而从、温故知新、逝者如斯等皆出自此。"]},{"title":"《世说新语》二则","author":"刘义庆","text":"【咏雪】谢太傅寒雪日内集，与儿女讲论文义。俄而雪骤，公欣然曰：‘白雪纷纷何所似？’兄子胡儿曰：‘撒盐空中差可拟。’兄女曰：‘未若柳絮因风起。’公大笑乐。\n【陈太丘与友期行】陈太丘与友期行，期日中。过中不至，太丘舍去，去后乃至。元方时年七岁，门外戏。客问元方：‘尊君在不？’答曰：‘待君久不至，已去。’友人便怒曰：‘非人哉！与人期行，相委而去。’元方曰：‘君与家君期日中。日中不至，则是无信；对子骂父，则是无礼。’友人惭，下车引之。元方入门不顾。","hard":[["骤","zhòu","急，大"],["拟","nǐ","相比"],["奕","yì","谢无奕，人名"],["凝","níng","王凝之，人名"],["委","wěi","丢弃"],["顾","gù","回头看"]],"notes":["内集：家庭聚会。俄而：不久。","未若：不如。因：趁、乘。","期行：约定同行；日中：正午。","尊君：称对方父亲；家君：称自己父亲。","引：拉（表歉意）；顾：回头。元方年仅七岁而明辨信礼，为典范。"]}],"essays":[{"title":"郑人买履","from":"先秦·韩非","orig":"郑人有欲买履者，先自度其足，而置之其坐。至之市，而忘操之。已得履，乃曰：‘吾忘持度。’反归取之。及反，市罢，遂不得履。人曰：‘何不试之以足？’曰：‘宁信度，无自信也。’","trans":"有个郑国人想买鞋，先量好脚的尺寸放在座位上；到集市却忘带尺码，拿到鞋才想起返回取，等回来集市已散，终未买到。人问为何不用脚试，他说：‘宁可信尺码，也不信自己的脚。’","moral":"讽刺墨守成规、迷信教条而脱离实际的人。"},{"title":"道旁苦李","from":"《世说新语》","orig":"王戎七岁，尝与诸小儿游。看道边李树多子折枝，诸儿竞走取之，唯戎不动。人问之，答曰：‘树在道边而多子，此必苦李。’取之，信然。","trans":"王戎七岁和小孩玩耍，见路边李树果实压弯枝，孩子们争去摘，唯王戎不动。人问，答：‘树在路边却结满果，必是苦李。’摘来一尝，果然。","moral":"遇事善于观察、独立思考，不盲目跟从。"},{"title":"枭逢鸠","from":"两汉·刘向","orig":"鸠曰：‘子将安之？’枭曰：‘我将东徙。’鸠曰：‘何故？’枭曰：‘乡人皆恶我鸣，以故东徙。’鸠曰：‘子能更鸣，可矣；不能更鸣，东徙，犹恶子之声。’","trans":"斑鸠问猫头鹰去哪，答要东迁，因乡人厌其鸣。斑鸠说：‘你能改鸣声便好；若不能，东迁人们仍厌你声。’","moral":"解决问题要从根本入手，逃避不能消除问题。"},{"title":"神农尝百草","from":"清·吴乘权《纲鉴易知录》","orig":"民有疾，未知药石。炎帝始草木之滋，察其寒温平热之性，辨其君臣佐使之义。尝一日而遇七十毒，神而化之。遂作文书上以疗民疾，而医道自此始矣。","trans":"百姓有病不知用药。炎帝尝草木滋味，辨寒热温平之性与配伍之义；一日遇七十毒皆化解。于是写书治病，医学自此始。","moral":"赞扬勇于探索、造福百姓的精神。"},{"title":"画蛇添足","from":"两汉·刘向","orig":"楚有祠者，赐其舍人卮酒……一人蛇先成，引酒且饮之，乃左手持卮，右手画蛇，曰：‘吾能为之足。’未成，一人之蛇成，夺其卮曰：‘蛇固无足，子安能为之足？’遂饮其酒。为蛇足者，终亡其酒。","trans":"楚人祭祀赐门客酒，约定画蛇先成者饮。一人先画成拿起酒，却左手持壶右手添蛇脚；另一人蛇成夺壶：‘蛇本无脚，你怎添脚？’遂饮其酒。添足者终失酒。","moral":"多此一举，反弄巧成拙。"},{"title":"自相矛盾","from":"先秦·韩非","orig":"楚人有鬻盾与矛者，誉之曰：‘吾盾之坚，物莫能陷也。’又誉其矛曰：‘吾矛之利，于物无不陷也。’或曰：‘以子之矛陷子之盾，何如？’其人弗能应也。","trans":"楚人卖盾矛，夸盾坚无可刺穿，又夸矛利无物不穿。人问：‘以子之矛陷子之盾如何？’其人不能答。","moral":"说话做事要前后一致，不能互相抵触。"},{"title":"买椟还珠","from":"《韩非子》","orig":"楚人有卖其珠于郑者，为木兰之椟，薰以桂椒，缀以珠玉，饰以玫瑰，辑以翡翠。郑人买其椟而还其珠。","trans":"楚人卖珠给郑，用木兰做匣，熏香缀玉饰翠。郑人买匣却退珠。","moral":"不要只重外表形式，忽视真正有价值的内容。"},{"title":"望梅止渴","from":"南北朝·《世说新语》","orig":"魏武行役，失汲道，军皆渴，乃令曰：‘前有大梅林，饶子，甘酸可以解渴。’士卒闻之，口皆出水，乘此得及前源。","trans":"曹操行军失水源，兵渴，乃令：‘前有大梅林，多梅甘酸可解渴。’士兵口生唾液，趁势赶到前源。","moral":"积极心理暗示可暂缓解困难，但真正解决仍需行动。"}],"ipa":{"vowels":["iː","ɪ","e","æ","ɑː","ɒ","ɔː","ʊ","uː","ʌ","ɜː","ə","eɪ","aɪ","ɔɪ","aʊ","əʊ","ɪə","eə","ʊə"],"consonants":["p","b","t","d","k","g","f","v","s","z","θ","ð","ʃ","ʒ","tʃ","dʒ","tr","dr","ts","dz","m","n","ŋ","h","l","r","w","j"],"examples":{"iː":"sheep","ɪ":"ship","e":"bed","æ":"cat","ɑː":"car","ɒ":"hot","ɔː":"door","ʊ":"book","uː":"food","ʌ":"cup","ɜː":"bird","ə":"about","eɪ":"name","aɪ":"bike","ɔɪ":"boy","aʊ":"house","əʊ":"go","ɪə":"ear","eə":"hair","ʊə":"tour","p":"pen","b":"bag","t":"tea","d":"dog","k":"cat","g":"go","f":"fish","v":"van","s":"sun","z":"zoo","θ":"think","ð":"this","ʃ":"she","ʒ":"vision","tʃ":"chair","dʒ":"jump","tr":"tree","dr":"draw","ts":"cats","dz":"beds","m":"man","n":"no","ŋ":"sing","h":"hat","l":"leg","r":"red","w":"we","j":"yes"},"words":{"iː":["sheep","see","tree"],"ɪ":["ship","sit","big"],"e":["bed","red","pen"],"æ":["cat","map","apple"],"ɑː":["car","star","park"],"ɒ":["hot","dog","box"],"ɔː":["door","four","horse"],"ʊ":["book","good","look"],"uː":["food","blue","zoo"],"ʌ":["cup","bus","sun"],"ɜː":["bird","girl","nurse"],"ə":["about","teacher","mother"],"eɪ":["name","cake","day"],"aɪ":["bike","time","my"],"ɔɪ":["boy","toy","oil"],"aʊ":["house","out","cow"],"əʊ":["go","no","boat"],"ɪə":["ear","here","near"],"eə":["hair","chair","bear"],"ʊə":["tour","sure","poor"],"p":["pen","pig","map"],"b":["bag","big","box"],"t":["tea","ten","cat"],"d":["dog","day","red"],"k":["cat","key","cake"],"g":["go","big","egg"],"f":["fish","fine","off"],"v":["van","very","love"],"s":["sun","sea","bus"],"z":["zoo","zero","nose"],"θ":["think","three","bath"],"ð":["this","that","mother"],"ʃ":["she","ship","fish"],"ʒ":["vision","usual","pleasure"],"tʃ":["chair","watch","teacher"],"dʒ":["jump","orange","age"],"tr":["tree","train","try"],"dr":["draw","dream","drink"],"ts":["cats","seats","hats"],"dz":["beds","birds","cards"],"m":["man","map","come"],"n":["no","net","sun"],"ŋ":["sing","song","ring"],"h":["hat","hot","house"],"l":["leg","like","ball"],"r":["red","run","read"],"w":["we","wet","win"],"j":["yes","you","yellow"]}},"xiyouji":[{"n":1,"name":"长安出发","event":"唐僧出世，立志西天取经"},{"n":2,"name":"两界山","event":"收孙悟空为徒"},{"n":3,"name":"高老庄","event":"收猪八戒"},{"n":4,"name":"流沙河","event":"收沙僧"},{"n":5,"name":"五庄观","event":"人参果，悟空偷果闯祸"},{"n":6,"name":"白虎岭","event":"三打白骨精"},{"n":7,"name":"火云洞","event":"红孩儿，险被蒸吃"},{"n":8,"name":"车迟国","event":"与虎鹿羊三仙斗法"},{"n":9,"name":"通天河","event":"灵感大王，观音收金鱼"},{"n":10,"name":"女儿国","event":"唐僧拒婚，情关考验"},{"n":11,"name":"火焰山","event":"三借芭蕉扇"},{"n":12,"name":"小雷音寺","event":"黄眉怪假佛"},{"n":13,"name":"盘丝洞","event":"蜘蛛精"},{"n":14,"name":"天竺国","event":"假公主（玉兔）"},{"n":15,"name":"灵山","event":"取得真经"}],"grammar":{"nouns":"名词单复数：一般加 -s；以 s/x/sh/ch 结尾加 -es；辅音+y 结尾变 y 为 i 加 -es；o 结尾常加 -es（如 tomatoes）。不规则：man-men, woman-women, child-children, foot-feet, tooth-teeth, mouse-mice, person-people。","pronouns":"人称代词主格 I/you/he/she/it/we/they；宾格 me/you/him/her/it/us/them；形容词性物主代词 my/your/his/her/its/our/their；名词性物主代词 mine/yours/his/hers/its/ours/theirs。","tenses":[{"name":"一般现在时","sign":"every day / often / usually / always","struct":"动词原形；三单加 -s/-es"},{"name":"一般过去时","sign":"yesterday / last week / ago / in 2020","struct":"规则加 -ed；不规则需记（go-went, eat-ate）"},{"name":"现在进行时","sign":"now / look / listen / at the moment","struct":"am/is/are + doing"}]},"zhax_book":[{"n":1,"title":"狗·猫·鼠","guide":"借仇猫清算'正人君子'，也忆隐鼠之死。","gai":"写自己'仇猫'的缘由：猫折磨弱者、一副媚态，实借猫讽刺当时扮'正人君子'的文人；又回忆童年救养的隐鼠被摧残，以及渴望'老鼠成亲'的童趣。","hexin":"借对猫的厌恶与对隐鼠的怜爱，表现对弱小者的同情、对暴虐与虚伪的憎恶，隐晦批判社会上虚伪的'正人君子'。","renwu":"童年鲁迅：爱憎分明、有童真、同情弱小。","kaodian":"①'猫'的象征（压迫者/伪君子）；②借物喻人、对比手法；③'正人君子'的反语讽刺。"},{"n":2,"title":"阿长与《山海经》","guide":"粗俗的长妈妈，却买来了最珍贵的《山海经》。","gai":"回忆保姆长妈妈：粗俗、迷信、规矩多，却真心关爱'我'；重点是她设法为'我'买来渴求已久的《山海经》（'三哼经'）。","hexin":"先抑后扬（欲扬先抑）：前面写她的缺点，后面写买书的可贵，表达对底层劳动妇女的敬意与怀念。","renwu":"阿长：粗俗迷信、善良朴实、真诚关爱孩子。","kaodian":"①欲扬先抑的写作手法；②买《山海经》的温情段落（人物高频考点）；③结合事例分析人物。"},{"n":3,"title":"二十四孝图","guide":"儿时读《二十四孝图》的反感。","gai":"写儿时读《二十四孝图》的感受，重点反感'老莱娱亲''郭巨埋儿'，揭露封建孝道的虚伪与残酷。","hexin":"批判旧孝道残酷虚伪；以'肉麻当有趣'的反讽语气表达不满。","renwu":"—（以议论批判为主，无主要正面人物）。","kaodian":"①批判旧孝道；②反讽手法。"},{"n":4,"title":"五猖会","guide":"盼了很久的赛会，被一句背书浇灭了兴致。","gai":"热盼看迎神赛会，父亲却逼'我'背熟《鉴略》才能去；背完再去看会，兴致已大减。","hexin":"用背书记前后心情的对比，批判封建家长制压抑儿童天性。","renwu":"父亲：严厉专制、不懂儿童心理。","kaodian":"①前后心情对比；②批判旧教育/封建家长制。"},{"n":5,"title":"无常","guide":"一个有人情味的'鬼'。","gai":"描写民间迎神赛会中的'无常'鬼，公正又有人情味；借无常讽刺现实中'正人君子'的虚伪。","hexin":"以鬼的公正、善良反衬人的不公，讽刺所谓'正人君子'。","renwu":"无常：公正、善良、富人情味（'鬼而人，理而情'）。","kaodian":"①鬼有人情、讽刺；②无常'鬼而人，理而情'的名句。"},{"n":6,"title":"从百草园到三味书屋","guide":"自由的百草园 vs 刻板的书屋。","gai":"写童年乐园百草园的自由快乐，对比三味书屋枯燥刻板的学习，穿插寿镜吾先生与读书场景。","hexin":"表达对自由童年、热爱自然天性的眷恋，以及对刻板旧式教育的淡淡批评。","renwu":"寿镜吾：方正、质朴、博学、严而不厉。","kaodian":"①百草园↔三味书屋对比；②寿镜吾形象（人物高频）；③热爱自然的天性。"},{"n":7,"title":"父亲的病","guide":"稀奇的药引，误了父亲的命。","gai":"父亲重病，两位'名医'开奇特药引（如'原配蟋蟀一对'）草菅人命；也写衍太太让'我'大声呼喊父亲。","hexin":"批判庸医故弄玄虚、草菅人命；也写对父亲临终的愧疚。","renwu":"庸医（陈莲河等）：故作高深、草菅人命；衍太太：表里不一（此处初现）。","kaodian":"①讽刺庸医、封建迷信；②对父亲愧疚的情感。"},{"n":8,"title":"琐记","guide":"离开家，去寻新的学问。","gai":"写离家求学前的生活，邻居衍太太虚伪教唆；后入南京矿路学堂求学，接触新学，探求真理。","hexin":"表现青年鲁迅冲破束缚、探求真理；继续批判衍太太的虚伪。","renwu":"衍太太：自私自利、爱搬弄是非、表里不一。","kaodian":"①衍太太形象；②'求新知'的成长线索。"},{"n":9,"title":"藤野先生","guide":"一位没有民族偏见的恩师。","gai":"仙台学医，藤野悉心指导；因'匿名信事件''看电影事件'深受刺激，决定弃医从文。","hexin":"藤野无民族偏见；弃医从文的原因与爱国情怀（必考重点）。","renwu":"藤野先生：治学严谨、正直热忱、无民族偏见。","kaodian":"①人物高频；②弃医从文的原因（匿名信+看电影事件）与爱国情怀（必考）。"},{"n":10,"title":"范爱农","guide":"觉醒却彷徨的同乡好友。","gai":"同乡范爱农，初识有误会，后成挚友；辛亥革命中兴奋又失望，终潦倒溺水而死。","hexin":"写范爱农觉醒却彷徨的悲剧，表达作者对革命不彻底的失望。","renwu":"范爱农：孤傲倔强、正直觉醒、命运悲凉。","kaodian":"①辛亥革命反思；②人物分析（结合事例）。"}],"zhax_guide":"作者 鲁迅（周树人）｜体裁 回忆性散文集｜原名《旧事重提》｜共 10 篇｜写于 1926 年。贯穿两大主线：『温馨的回忆』（对亲友、故土的眷恋）与『理性的批判』（对封建礼教、迷信、庸医、旧教育的反思）——这是中考名著阅读最常考的主题词。","zhax_mnemonic":"十篇顺序口诀：狗猫鼠 → 阿长山 → 二十四孝 → 五猖会 → 无常 → 百草园 → 父亲病 → 琐记 → 藤野 → 范爱农。","zhax_chars":[{"name":"阿长（长妈妈）","role":"保姆","traits":"粗俗、迷信、规矩多；善良朴实、真诚关爱孩子","eg":"为'我'买《山海经》"},{"name":"藤野先生","role":"恩师（日本）","traits":"治学严谨、认真批改笔记；正直热忱、关爱学生；无民族偏见（最可贵）","eg":"悉心指导、修改笔记"},{"name":"范爱农","role":"同乡好友","traits":"孤傲、倔强、正直；觉醒却彷徨；不为黑暗社会所容，悲凉收场","eg":"反对发电报、终潦倒"},{"name":"父亲","role":"家长","traits":"严厉、专制（《五猖会》逼背书）；传统家长，不懂儿童心理；被庸医误治，作者深怀愧疚","eg":"逼背《鉴略》"},{"name":"衍太太","role":"邻居","traits":"表面和蔼、实为虚伪；自私自利、爱搬弄是非；教唆孩子做危险/坏事","eg":"教唆、呼喊父亲"},{"name":"寿镜吾先生","role":"私塾老师","traits":"方正、质朴、博学；严而不厉、有开明一面","eg":"三味书屋读书"},{"name":"无常","role":"民间鬼物","traits":"'鬼而人，理而情'；公正、善良、富人情味；反衬'正人君子'虚伪","eg":"迎神赛会"},{"name":"陈莲河等庸医","role":"'名医'","traits":"故作高深、开古怪药引；故弄玄虚、勒索钱财；草菅人命、误治父亲","eg":"原配蟋蟀一对"}],"zhax_exam":[{"type":"文学常识填空","how":"作者原名？体裁？原名《旧事重提》？共几篇？","key":"鲁迅=周树人；回忆性散文集；10 篇；写于 1926 年。"},{"type":"人物性格分析","how":"结合事例分析阿长/藤野/范爱农","key":"先定性格词，再举事例（买《山海经》、改笔记、反对发电报）。"},{"type":"主题思想","how":"'温馨的回忆与理性的批判'指什么","key":"回忆=对亲友故土眷恋；批判=讽刺礼教、迷信、庸医、旧教育。"},{"type":"写作手法","how":"对比 / 反讽 / 欲扬先抑 / 白描","key":"百草园↔书屋、背书前后用对比；阿长欲扬先抑；无常以鬼讽人。"},{"type":"情节复述","how":"弃医从文的原因？父亲病中的事？","key":"弃医从文=匿名信+看电影事件；父亲病=庸医误治+衍太太呼喊。"}],"doc_film":{"name":"《如果国宝会说话》","note":"共100集，每集5分钟，每集独立讲一件国宝，无需连看。看6–9集即可写推荐。","schedule":[{"date":"8月25日","time":"20:00–20:15","what":"看 2–3 集（放松收尾）","rec":["后母戊鼎","越王勾践剑"]},{"date":"8月26日","time":"20:00–20:15","what":"看 2–3 集","rec":["兵马俑","三星堆青铜面具"]},{"date":"8月27日","time":"20:00–20:45","what":"看 1–2 集，随后写 200 字推荐","rec":["何尊（宅兹中国）","击鼓说唱俑"]}],"rec_bilibili":[["后母戊鼎","https://search.bilibili.com/all?keyword=如果国宝会说话%20后母戊鼎"],["越王勾践剑","https://search.bilibili.com/all?keyword=如果国宝会说话%20越王勾践剑"],["兵马俑","https://search.bilibili.com/all?keyword=如果国宝会说话%20兵马俑"],["三星堆青铜面具","https://search.bilibili.com/all?keyword=如果国宝会说话%20三星堆"],["何尊 宅兹中国","https://search.bilibili.com/all?keyword=如果国宝会说话%20何尊"]]},"grammar_topics":[{"name":"名词（单复数·所有格）","cls":"b","summary":"可数变复数有规律，所有格表'谁的'。","detail":"名词分可数/不可数。可数名词有单复数；不可数（water、rice、bread）无复数，表数量要用量词。","change":["一般加 -s：book→books，dog→dogs","s/x/ch/sh 加 -es：bus→buses，watch→watches","辅音+y 变 i 加 -es：baby→babies；元音+y 直接加 s：boy→boys","f/fe 变 v 加 -es：knife→knives，leaf→leaves","o 结尾：有生命加 -es（hero/potato/tomato），无生命加 -s（photo/piano/radio）","不规则：man→men，woman→women，foot→feet，tooth→teeth，child→children，mouse→mice","单复同形：sheep、deer、fish、Chinese、Japanese","永远复数：scissors、trousers、glasses","所有格：有生命加 's（Tom's）；复数带 s 只加 '（the students'）"],"mnemonic":"名词复数有规律，一般词尾加 s；辅音+y变i加es；ch/sh/s/x真有趣，es在后别忘记；f/fe变v加es；o结尾有生命es、无生命s。不规则：中日好友(sheep/deer/fish/Chinese)单复同形，男士女士a变e，牙脚oo变ee，孩子加ren，老鼠变mice。","eg":"There are two books on the desk. / This is Tom's cat."},{"name":"代词","cls":"c","summary":"主格作主语，宾格作宾语；形物/名物表'谁的'。","detail":"人称代词分主格（作主语）和宾格（作宾语）；物主代词分形容词性（后接名词）和名词性（独立使用）。","change":["主格：I/you/he/she/it/we/they","宾格：me/you/him/her/it/us/them","形物：my/your/his/her/its/our/their（+名词）","名物：mine/yours/his/hers/ours/theirs（不接名词）","指示：this/that/these/those；不定：some/any/much/many"],"mnemonic":"人称代词分两格，主格宾格来分说；主格用来作主语，宾语用的是宾格；主格用在动词前，动词介词后用宾。","eg":"He helps me. / This book is mine."},{"name":"冠词 a / an / the","cls":"d","summary":"a/an 泛指，the 特指；看'音素'不选'字母'。","detail":"a/an 表示泛指（'一个'），the 表示特指（双方都知道的）。用 a 还是 an 看单词开头的发音（音素），不是字母。","change":["元音音素开头用 an：an apple、an hour","辅音音素开头用 a：a book、a university","the 用于特指：the book on the desk","乐器前加 the：play the piano"],"mnemonic":"a,an,the是冠词，就像帽子扣名词；元音音素要扣an，辅音音素要扣a；an/a用来泛泛指，the是特指常牢记。","eg":"She is an honest girl. / I have a cat."},{"name":"一般现在时","cls":"yu","summary":"经常发生或习惯；三单动词加 s/es。","detail":"表示经常性、习惯性的动作或客观真理。主语是第三人称单数（he/she/it 等）时，动词加 -s/-es。","change":["标志词：every day、often、usually、always、sometimes","结构：主语+动词原形（三单+s/es）","否定/疑问用 do/does，动词还原","客观真理永远用一般现在时：The sun rises in the east."],"mnemonic":"一般现在时态中，动词一般用原形；表述事实讲真理，习惯动作常发生；动词词尾加-s(es)，只表单数三人称；若变疑问，do/does莫忘用。","eg":"He often goes to school by bike. / The earth goes around the sun."},{"name":"一般过去时","cls":"ma","summary":"动作在过去；规则加 -ed，不规则硬记。","detail":"表示过去某个时间发生的动作，已经结束。动词用过去式；过去式无人称和数的变化。","change":["标志词：yesterday、last week、ago、in 2020、just now","规则：直接加 -ed；y结尾变 i 加 -ed（study→studied）；不发音e加 -d（live→lived）；重读闭音节双写加 -ed（stop→stopped）","不规则：go→went，eat→ate，see→saw（需硬记）","否定/疑问用 did，动词还原"],"mnemonic":"一般过去时，动作状态在过去；动词要用过去式，时间状语句末站；be用was/were，have/has变had；否定didn't添，疑问did提前，动词须还原。","eg":"I played football yesterday. / She went to the park last Sunday."},{"name":"现在进行时","cls":"en","summary":"此时此刻正在发生；be + 动词 ing。","detail":"表示说话时正在发生的动作。结构：主语 + be(am/is/are) + 动词 -ing。","change":["标志词：now、look、listen、at the moment","be 随主语：I am，He/She/it is，We/you/they are","ing 构成：直接加；去 e 加（make→making）；重读闭音节双写（run→running、sit→sitting）"],"mnemonic":"Look,Listen是标志，现在进行正发生；be后动词加ing，He/She is，I am，We/you/they are；一般问句be提前，be后加not否定成。","eg":"Look! The children are playing football. / I am reading now."},{"name":"一般将来时","cls":"yu","summary":"将要发生；will + 动原 / be going to。","detail":"表示将来要发生的动作或状态。两种说法：will + 动词原形（通用）；be going to + 动词原形（计划、打算）。","change":["标志词：tomorrow、next week、in the future","will + 动词原形：It will rain.","be going to：I'm going to study.（计划好的事）","否定：will not / be not going to；疑问：will/be 提前"],"mnemonic":"一般将来很简单，will后面动原加；be going to表打算，计划将要一定行；第一人称可用shall。","eg":"I will call you tomorrow. / We are going to visit grandma."},{"name":"be 动词","cls":"b","summary":"am/is/are 随主语变；提前表疑问，后加 not 表否定。","detail":"be 动词（am/is/are）用于时态、There be、进行/将来时等。位置随主语变化。","change":["I 用 am；you 用 are；he/she/it 用 is","单数名词用 is；复数名词全用 are","变疑问：be 提前；变否定：be 后加 not","过去式：am/is→was，are→were"],"mnemonic":"我用am，你用are；is用于他、她、它；单数名词用is，复数名词全用are；变疑问be提前，变否定not加上去。","eg":"She is a student. / They are not here."},{"name":"形容词/副词比较级·最高级","cls":"c","summary":"两者比用比较级，三者以上用最高级（前加 the）。","detail":"比较级用于两者比较（…than），最高级用于三者及以上（前通常加 the）。","change":["一般加 -er/-est：tall→taller→tallest","e 结尾加 -r/-st：nice→nicer→nicest","辅音+y 变 i 加 -er/-est：happy→happier","重读闭音节双写：big→bigger，hot→hotter","多音节词前加 more/most：beautiful→more beautiful","不规则：good/well→better→best；bad/ill→worse→worst；many/much→more→most；little→less→least；far→farther/further"],"mnemonic":"比较级要变化，一般词尾加-er；重读闭音节，末尾字母先双写；辅音加y结尾，把y变i再加-er；最高级加-est，前面不忘加the。特殊：两好(better/best)俩坏(worse/worst)俩多(more/most)一少(less/least)一远(far)。","eg":"He is taller than me. / She is the best student."},{"name":"介词（常考）","cls":"d","summary":"in/on/at 表时间方位；under/behind/with/for 等。","detail":"介词不单独作谓语，后接名词/代词。常考时间、方位、方式。","change":["时间：in 年/月/上午，on 具体某天，at 时刻/noon/night","方位：in 在里，on 在上，under 在下，behind 在后，between 在之间","方式：with 用/和，by 乘(车)/被，for 为了","固定搭配：at home、in the morning、on foot"],"mnemonic":"时间介词记口诀：in 年月季，on 某天，at 时刻；方位：in 里 on 上 under 下。","eg":"I get up at 7. / The book is on the desk."},{"name":"There be 句型","cls":"ma","summary":"某处有某物；就近原则 is/are。","detail":"表示'某处存在某物'。be 动词的单复数由最靠近的名词决定（就近原则）。","change":["结构：There is + 单数/不可数；There are + 复数","就近原则：There is a book and two pens.","变疑问：be 提前；变否定：be 后加 not（any 替换 some）"],"mnemonic":"There be句型真奇妙，主语跟在be后跑；就近原则要记牢，单数is复数are。","eg":"There is a cat under the chair. / There are many students in the classroom."}],"quotes":[{"who":"衔阳","t":"有些题就是会卡住你，这很正常，我们慢慢来就好。"},{"who":"衔阳","t":"你不用一直当第一名，做个不轻易放弃的自己就够好了。"},{"who":"衔阳","t":"今天有点累也没关系，你已经比昨天的自己多走了一步。"},{"who":"衔阳","t":"作业写不完别慌，我们一小块一小块啃，总会写完的。"},{"who":"衔阳","t":"心里闷的时候，去窗边站一会儿，深呼吸，我陪你。"},{"who":"衔阳","t":"你不是在应付暑假作业，是在给开学后的自己攒底气。"},{"who":"衔阳","t":"被谁误会了别急着解释，时间会把你慢慢洗干净的。"},{"who":"衔阳","t":"难过不是软弱，哭完擦干眼泪，你还是那个勇敢的小孩。"},{"who":"衔阳","t":"你读过的诗、背过的词，都会悄悄变成你说话的底气。"},{"who":"衔阳","t":"别拿别人的节奏要求自己，你的步子你自己最清楚。"},{"who":"衔阳","t":"卡住的题不是你的错，我们再试一次，就一次。"},{"who":"衔阳","t":"你可以慢慢来，但别停在原地，往前走一点点也是赢。"},{"who":"衔阳","t":"今天若只能做成一件事，那就先好好照顾自己。"},{"who":"衔阳","t":"你已经很努力了，这份认真，比分数更值钱。"},{"who":"衔阳","t":"成绩起起伏伏很正常，别因为一个低分就否定全部努力。"},{"who":"衔阳","t":"想放弃的时候，告诉自己：再坚持五分钟，就五分钟。"}]};
+const LS_KEY = "wb_study_desk_v2_";
+const $ = s=>document.querySelector(s);
+
+/* ============================================================
+   云端同步配置（部署前把密钥填进来即可开启多端同步）
+   获取方式见 DEPLOY.md：LeanCloud 控制台 → 设置 → 应用凭证
+   填好 appId/appKey/server 后，把 enabled 改为 true
+   ============================================================ */
+/* ============================================================
+   云端同步配置（部署前把密钥填进来即可开启多端同步）
+   支持两种后端，二选一：
+   A) GitHub【推荐】—— 只需 1 个 GitHub 账号（托管+同步都用它）
+      provider:"github" 时填 ghRepo / ghToken / ghBranch
+   B) LeanCloud —— 若你已注册国际版
+      provider:"leancloud" 时填 appId / appKey / server
+   填好后把 enabled 改为 true。详细说明见 DEPLOY.md
+   ============================================================ */
+const GH_TOKEN_KEY = "wb_gh_token_v2";        // 本机存储的 GitHub 同步 Token（每台设备首次填写一次，不随页面上传）
+const CLOUD = {
+  enabled: true,
+  provider: "github",                         // "github" | "leancloud"
+  ghRepo:  "vinnali808-droid/siyuxuexi",       // ← 同步仓库
+  ghToken: localStorage.getItem(GH_TOKEN_KEY) || "", // ← 每台设备首次在「设置 → 同步 Token」粘贴一次 Fine-grained PAT
+  ghBranch:"main",                            // ← 分支名
+  appId:  "", appKey: "", server: ""           // ← LeanCloud 模式用
+};
+const FAMILY_KEY = "wb_family_code_v2";        // 家庭码存本地
+let CLOUD_READY = false;
+
+function familyCode(){ return localStorage.getItem(FAMILY_KEY) || ""; }
+function setFamilyCode(c){ localStorage.setItem(FAMILY_KEY, c||""); }
+
+function initCloud(){
+  if(CLOUD.provider==="leancloud"){
+    if(typeof AV==="undefined"){ console.warn("LeanCloud SDK 未加载（CDN 被拦），将仅用本地存储"); return false; }
+    if(!CLOUD.enabled || !CLOUD.appId || !CLOUD.appKey){ return false; }
+    try{ AV.init({ appId:CLOUD.appId, appKey:CLOUD.appKey, serverURLs:CLOUD.server||undefined }); CLOUD_READY=true; }
+    catch(e){ console.warn("AV.init 失败", e); CLOUD_READY=false; }
+    return CLOUD_READY;
+  }
+  // github 模式：原生 fetch，无需外部 SDK
+  if(!CLOUD.ghRepo || !CLOUD.ghToken){ CLOUD_READY=false; return false; }
+  CLOUD_READY=true; return true;
+}
+
+/* 云端读写：以“家庭码”为唯一键，4 台设备共享同一份数据 */
+async function cloudLoad(code){
+  if(!CLOUD_READY) return null;
+  try{
+    if(CLOUD.provider==="leancloud"){
+      const q=new AV.Query("FamilyState"); q.equalTo("code", code);
+      const obj=await q.first(); return obj ? obj.get("state") : null;
+    }
+    const path="state/"+encodeURIComponent(code)+".json";
+    const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}?ref=${encodeURIComponent(CLOUD.ghBranch)}`;
+    const r=await fetch(url,{headers:{Authorization:"Bearer "+CLOUD.ghToken, Accept:"application/vnd.github+json"}});
+    if(r.status===404) return null;
+    if(!r.ok){ console.warn("cloudLoad 失败", r.status); return null; }
+    const j=await r.json();
+    const txt=decodeURIComponent(escape(atob(j.content.replace(/\s/g,""))));
+    return JSON.parse(txt);
+  }catch(e){ console.warn("cloudLoad 失败", e); return null; }
+}
+async function cloudSave(code, state){
+  if(!CLOUD_READY) return false;
+  try{
+    if(CLOUD.provider==="leancloud"){
+      const q=new AV.Query("FamilyState"); q.equalTo("code", code);
+      let obj=await q.first();
+      if(!obj){ obj=new AV.Object("FamilyState"); obj.set("code", code); }
+      obj.set("state", state); await obj.save(); return true;
+    }
+    const path="state/"+encodeURIComponent(code)+".json";
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+    const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}`;
+    const headers={Authorization:"Bearer "+CLOUD.ghToken, Accept:"application/vnd.github+json", "Content-Type":"application/json"};
+    let sha=null;
+    const getR=await fetch(url+"?ref="+encodeURIComponent(CLOUD.ghBranch),{headers});
+    if(getR.ok){ const gj=await getR.json(); sha=gj.sha; }
+    const body={message:"sync "+code+" "+new Date().toISOString(), content, branch:CLOUD.ghBranch};
+    if(sha) body.sha=sha;
+    const putR=await fetch(url,{method:"PUT",headers,body:JSON.stringify(body)});
+    return putR.ok;
+  }catch(e){ console.warn("cloudSave 失败", e); return false; }
+}
+
+/* 本地缓存按家庭码命名，避免多家庭串数据 */
+function localKey(){ const c=familyCode(); return c ? (LS_KEY+c) : LS_KEY; }
+function loadLocal(){ try{ return JSON.parse(localStorage.getItem(localKey()))||{}; }catch(e){ return {}; } }
+function saveLocal(o){ try{ localStorage.setItem(localKey(), JSON.stringify(o)); }catch(e){} }
+
+/* 默认学习伙伴：衔阳（17岁男生）。上传自己的 OC 后会覆盖默认形象。 */
+const MASCOTS = [
+ '<img src="oc_xianyang_q.png" class="oc-img" alt="衔阳">',
+ '<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +'<circle cx="50" cy="54" r="31" fill="#f5e6d8"/>'
+  +'<path d="M22 42 q8 -22 28 -22 q20 0 28 22 q-2 6 -8 4 q-6 -2 -20 -2 q-14 0 -20 2 q-6 2 -8 -4z" fill="#4a3b32"/>'
+  +'<path d="M26 46 q6 -8 12 -2 q-4 6 -10 4z" fill="#4a3b32"/><path d="M74 46 q-6 -8 -12 -2 q4 6 10 4z" fill="#4a3b32"/>'
+  +'<ellipse cx="38" cy="55" rx="4.2" ry="5.2" fill="#3a2e28"/><ellipse cx="62" cy="55" rx="4.2" ry="5.2" fill="#3a2e28"/>'
+  +'<circle cx="39.2" cy="53.2" r="1.5" fill="#fff"/><circle cx="63.2" cy="53.2" r="1.5" fill="#fff"/>'
+  +'<path d="M46 64 q4 4 8 0" stroke="#c47a5a" stroke-width="3" stroke-linecap="round" fill="none"/></svg>',
+ '<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +'<circle cx="50" cy="54" r="31" fill="#f5e6d8"/>'
+  +'<path d="M20 40 q10 -24 30 -24 q20 0 30 24 q-4 8 -12 4 q-8 -4 -18 -4 q-10 0 -18 4 q-8 4 -12 -4z" fill="#5a463a"/>'
+  +'<ellipse cx="38" cy="55" rx="4" ry="5" fill="#3a2e28"/><ellipse cx="62" cy="55" rx="4" ry="5" fill="#3a2e28"/>'
+  +'<circle cx="39" cy="53.2" r="1.4" fill="#fff"/><circle cx="61" cy="53.2" r="1.4" fill="#fff"/>'
+  +'<path d="M45 63 q5 5 10 0" stroke="#c47a5a" stroke-width="3" stroke-linecap="round" fill="none"/></svg>',
+ '<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +'<circle cx="50" cy="54" r="31" fill="#f5e6d8"/>'
+  +'<path d="M25 42 q10 -20 25 -20 q15 0 25 20 q-2 6 -10 4 q-8 -2 -15 -2 q-7 0 -15 2 q-8 2 -10 -4z" fill="#6b5648"/>'
+  +'<ellipse cx="38" cy="55" rx="4" ry="5" fill="#3a2e28"/><ellipse cx="62" cy="55" rx="4" ry="5" fill="#3a2e28"/>'
+  +'<circle cx="39" cy="53.2" r="1.4" fill="#fff"/><circle cx="61" cy="53.2" r="1.4" fill="#fff"/>'
+  +'<path d="M45 63 q5 5 10 0" stroke="#c47a5a" stroke-width="3" stroke-linecap="round" fill="none"/></svg>'
+];
+const MASCOT_NAMES=["衔阳（默认照片）","衔阳·简笔","衔阳·短发","衔阳·顺毛"];
+
+/* OC 装扮目录（用积分给衔阳换上小配饰，slot 决定叠加位置） */
+const OC_OUTFITS=[
+ {id:"flower", name:"耳机", cost:30, slot:"head", svg:'<path d="M30 35 q0 -14 20 -14 q20 0 20 14" stroke="#5a5a5a" stroke-width="3" fill="none"/><rect x="26" y="38" width="10" height="16" rx="3" fill="#4a4a4a"/><rect x="64" y="38" width="10" height="16" rx="3" fill="#4a4a4a"/>'},
+ {id:"catEar", name:"棒球帽", cost:50, slot:"head", svg:'<path d="M25 34 q25 -18 50 0 v4 q-25 -14 -50 0z" fill="#3a6ea5"/><path d="M22 38 q28 -10 56 0" stroke="#3a6ea5" stroke-width="3" fill="none"/>'},
+ {id:"bow", name:"墨镜", cost:40, slot:"head", svg:'<path d="M34 50 h12 v10 q-6 6 -12 0z" fill="#222"/><path d="M54 50 h12 v10 q-6 6 -12 0z" fill="#222"/><line x1="46" y1="55" x2="54" y2="55" stroke="#222" stroke-width="2"/>'},
+ {id:"crown", name:"王冠", cost:90, slot:"head", svg:'<path d="M33 21 l4 -10 6 7 7 -9 6 9 4 -10 3 13z" fill="#ffd96b" stroke="#c9a030" stroke-width="1.4" stroke-linejoin="round"/><circle cx="50" cy="12" r="2" fill="#ff7a5a"/>'},
+  {id:"scarf", name:"格子围巾", cost:70, slot:"neck", svg:'<path d="M36 74 q14 8 28 0 l-2 10 q-12 5 -24 0z" fill="#3a6ea5"/><path d="M42 78 h16 M44 82 h12" stroke="#7aa7d9" stroke-width="2"/>'}
+];
+
+/* 成就徽章 */
+const BADGES=[
+  {id:"streak3",  icon:"🔥", name:"三天不断", desc:"连续打卡满 3 天"},
+  {id:"streak7",  icon:"⚡", name:"一周超人", desc:"连续打卡满 7 天"},
+  {id:"streak14", icon:"👑", name:"打卡王者", desc:"连续打卡满 14 天"},
+  {id:"early",    icon:"🚀", name:"提前先锋", desc:"第一次提前打卡（双倍）"},
+  {id:"clearZ",   icon:"📖", name:"语文全清", desc:"语文任务全部完成"},
+  {id:"clearM",   icon:"➗", name:"数学全清", desc:"数学任务全部完成"},
+  {id:"clearE",   icon:"🔤", name:"英语全清", desc:"英语任务全部完成"},
+  {id:"allDone",  icon:"🏆", name:"暑假通关", desc:"全部任务完成"}
+];
+
+/* 衔阳成长等级（积分阈值） */
+const OC_LEVELS=[
+  {min:0,    name:"萌新"},
+  {min:60,   name:"小伙伴"},
+  {min:150,  name:"得力搭档"},
+  {min:300,  name:"铁磁"},
+  {min:500,  name:"守护星"},
+  {min:800,  name:"最佳拍档"},
+  {min:1200, name:"灵魂搭档"},
+  {min:1800, name:"永远的好朋友"}
+];
+
+/* 推荐视频：每科锁定一位老师/一个体系，避免混搭不同老师
+   结构：kind -> 数组（按内容 index）；值为 [bvid,标题] 或 null（null=用该科老师同名搜索兜底）
+   锁定：古诗文/文言文=语文大师，朝花夕拾=皮皮老师，音标=雪梨老师，西游记=动画合集 */
+const VIDEO_TEACHER = {poem:"语文大师", essay:"阿紫老师", zhax:"皮皮老师", ipa:"雪梨老师", xyj:"西游记动画", dhx:"语文动画"};
+const VIDEOS = {
+  ipa: [["BV1a47X6jEJg","雪梨老师·用拼音学会48个音标（跟读示范）"],["BV1Ms4y1v7DF","雪梨老师·口诀巧记48个音标"]],
+  poem: [
+    ["BV1eJ411q7XK","《观沧海》曹操·赏析讲解（语文大师）"],
+    ["BV1iJ411W7RH","《闻王昌龄左迁龙标遥有此寄》·讲解（语文大师）"],
+    ["BV1tJ411y7Nz","《次北固山下》·讲解（语文大师）"],
+    ["BV1LJ411x7QC","《天净沙·秋思》·讲解（语文大师）"],
+    null,
+    null
+  ],
+  essay: [
+    ["BV1BL411f7Yp","《郑人买履》·小古文精讲（阿紫老师）"],
+    null,null,null,null,
+    ["BV1fv4y1J7vB","《自相矛盾》·小古文精讲（阿紫老师）"],
+    null,null
+  ],
+  zhax: [
+    ["BV1UE411r79X","《狗·猫·鼠》导读（皮皮老师）"],
+    ["BV1v741187Kk","《阿长与〈山海经〉》导读（皮皮老师）"],
+    null,null,null,
+    ["BV19Q4y1k75T","《从百草园到三味书屋》导读（皮皮老师）"],
+    null,null,null,null
+  ],
+  xyj: [
+    null,["BV1owAsebE5d","大闹天宫·收孙悟空（动画）"],
+    ["BV1dt4y1p7eJ","计收猪八戒·高老庄（动画）"],
+    ["BV1Tr4y1D7GF","流沙河收沙僧（儿童故事）"],
+    ["BV1MxDLBEE7w","偷吃人参果·五庄观（动画）"],
+    ["BV1qkDUYKE6d","三打白骨精（动画）"],
+    null,["BV1gY411p7Fk","车迟国斗法（儿童故事）"],
+    ["BV1BL4y1E76Z","通天河受阻（儿童故事）"],
+    ["BV1wBSgYaE4t","女儿国奇遇（动画）"],
+    ["BV1qR4y1372K","三借芭蕉扇·火焰山（儿童故事）"],
+    null,["BV1Zq4y1C7Lj","棒打蜘蛛精·盘丝洞（儿童故事）"],
+    null,["BV1HY411o7PN","灵山取得真经（大结局）"]
+  ],
+  dhx: [
+    ["BV1LRM46fEru","《初中语文》全112集 动画讲解版（用户收藏）"],
+    ["BV1WbkDB9EnL","《初中语文·唐诗三百首》全300集 动画版"]
+  ]
+};
+const bzIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="3"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>';
+const webIcon='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
+/* 视频：去掉内置黑屏，改为两个好看的跳转按钮（去B站 / 去网页）；跳转目标不变 */
+function jumpButtons(bvid,kw,title){
+  const cap='<div class="vjk-t">'+playIcon+(title||"相关视频")+'</div>';
+  if(bvid){
+    return '<div class="vjk">'+cap+'<div class="vjk-btns">'+
+      '<a class="vbtn bz" href="bilibili://video/'+bvid+'">'+bzIcon+'去B站（客户端）</a>'+
+      '<a class="vbtn wb" href="https://www.bilibili.com/video/'+bvid+'" target="_blank">'+webIcon+'去网页看</a>'+
+      '</div></div>';
+  }
+  const url="https://search.bilibili.com/all?keyword="+encodeURIComponent(kw)+"&order=click";
+  return '<div class="vjk">'+cap+'<div class="vjk-btns">'+
+    '<a class="vbtn bz" href="'+url+'" target="_blank">'+bzIcon+'去B站搜</a>'+
+    '<a class="vbtn wb" href="'+url+'" target="_blank">'+webIcon+'去网页搜</a>'+
+    '</div></div>';
+}
+function jumpButtonsFor(kind,i,item){
+  let v=(VIDEOS[kind]&&VIDEOS[kind][i])||null;
+  if(v)return jumpButtons(v[0],null,v[1]);
+  const teacher=VIDEO_TEACHER[kind]||"";
+  const name=(item.title||item.name)||"";
+  const kw=teacher? (teacher+" "+name+" 讲解") : (name+" 讲解");
+  return jumpButtons(null,kw,"《"+name+"》讲解视频（"+teacher+"）");
+}
+
+/* 动画学：初中语文动画讲解合集（家长收藏的视频统一放这里） */
+function openDhx(){
+  let h='<button class="close" onclick="closeSheet()">×</button><h3>动画学 · 初中语文动画讲解</h3>'+
+    '<div class="hint">看动画把初中语文课文和知识点过一遍，适合课前预习或饭后放松。点开直接去 B站客户端看。</div>'+
+    '<div class="dhx-list">';
+  VIDEOS.dhx.forEach(v=>{
+    h+='<div class="dhx-item"><div class="dhx-t">'+v[1]+'</div>'+jumpButtons(v[0],null,v[1])+'</div>';
+  });
+  h+='</div>';
+  showSheet(h);
+}
+
+/* 朝花夕拾 Anki 记忆卡（间隔重复 · 填空 + 人物性格） */
+const ZHAX_CARDS=[
+ {type:"填空",q:"《朝花夕拾》原名《______》，是鲁迅的一部______集（体裁）。",a:"《旧事重提》；回忆性散文集"},
+ {type:"填空",q:"《狗·猫·鼠》里，作者最心爱的小______（隐鼠）被猫吃掉，因此仇猫。",a:"隐鼠（小老鼠）"},
+ {type:"填空",q:"《阿长与〈山海经〉》中，保姆阿长千辛万苦为“我”买来了最渴慕的《______》。",a:"《山海经》（“我”叫它《三哼经》）"},
+ {type:"填空",q:"《二十四孝图》中，作者最反感的两个故事是“______”和“______”。",a:"老莱娱亲；郭巨埋儿"},
+ {type:"填空",q:"《五猖会》中，父亲在“我”要去看庙会前，逼“我”背《______》。",a:"《鉴略》"},
+ {type:"填空",q:"《从百草园到三味书屋》里，寿镜吾先生是______（私塾名）的老师。",a:"三味书屋"},
+ {type:"填空",q:"《父亲的病》中，庸医开的荒唐药引有“原配的______一对”“败鼓皮丸”等。",a:"蟋蟀"},
+ {type:"填空",q:"《琐记》中，鲁迅接触到的进步书是赫胥黎的《______》（严复译）。",a:"《天演论》"},
+ {type:"填空",q:"《藤野先生》中，鲁迅在日本______（地名）的医学专门学校学医。",a:"仙台"},
+ {type:"填空",q:"《范爱农》中，范爱农在______（事件）后心情抑郁，最终溺水身亡。",a:"辛亥革命（绍兴光复）"},
+ {type:"人物",q:"阿长（长妈妈）是什么性格？结合事例说说。",a:"善良朴实、粗俗迷信、真诚关爱“我”——虽不识字却为“我”买来《山海经》。"},
+ {type:"人物",q:"藤野先生是什么性格？",a:"治学严谨、没有民族偏见、热情关怀中国留学生。"},
+ {type:"人物",q:"寿镜吾先生（三味书屋）是什么性格？",a:"方正质朴、博学、严而不厉，教学认真但不太束缚学生。"},
+ {type:"人物",q:"衍太太是什么性格？",a:"表面和气、实则自私虚伪，怂恿孩子做危险/坏事又装好人。"},
+ {type:"人物",q:"范爱农是什么性格？",a:"正直爱国、倔强耿直、愤世嫉俗，命运悲凉。"},
+ {type:"人物",q:"《五猖会》里父亲的形象特点？",a:"封建家长式严厉，强迫背书，扫了孩子看会的兴致。"}
+];
+function ocFaceHtml(withOutfit){
+  const base = S.oc_img ? '<img src="'+S.oc_img+'" alt="OC">'
+                         : MASCOTS[S.mascot||0];
+  if(!withOutfit) return base;
+  let layer="";
+  ["head","neck","hand"].forEach(slot=>{
+    const id=S.wearing[slot]; if(!id)return;
+    const o=OC_OUTFITS.find(x=>x.id===id); if(o&&o.svg) layer+=o.svg;
+  });
+  return '<div class="oc-wrap">'+base+'<svg class="oc-outfit" viewBox="0 0 100 100">'+layer+'</svg></div>';
+}
+/* 正常版（全身立绘）装扮：把 Q版头像里的配饰 SVG，按头部在全身图里的位置整体平移缩放后叠加 */
+const FULL_HEAD_T = "translate(330,30) scale(1.8)";
+function ocFullLayer(){
+  let layer="";
+  ["head","neck","hand"].forEach(slot=>{
+    const id=S.wearing[slot]; if(!id)return;
+    const o=OC_OUTFITS.find(x=>x.id===id); if(o&&o.svg)layer+=o.svg;
+  });
+  return '<svg class="oc-outfit-full" viewBox="0 0 832 1216"><g transform="'+FULL_HEAD_T+'">'+layer+'</g></svg>';
+}
+function paintMascot(){
+  const small = S.oc_img ? '<img src="'+S.oc_img+'" alt="OC">' : MASCOTS[S.mascot||0];
+  const ava=document.querySelector(".avatar-top"); if(ava)ava.innerHTML=small;
+  const bf=document.querySelector(".buddy .face"); if(bf)bf.innerHTML=ocFaceHtml(true);
+}
+/* 今日 or 下一个计划日 */
+function targetDay(){
+  const now=dateObj(todayStr());
+  const today=DATA.plan.find(d=>d.date===todayStr());
+  if(today) return {date:today.date, week:today.week, isToday:true, isFuture:false};
+  let next=null;
+  for(const d of DATA.plan){ if(dateObj(d.date)>now){next=d;break;} }
+  if(!next && DATA.plan.length) next=DATA.plan[DATA.plan.length-1];
+  if(next) return {date:next.date, week:next.week, isToday:false, isFuture:dateObj(next.date)>now};
+  return null;
+}
+/* 衔阳状态旁白池：按打卡进度触发，平时不显示在气泡里（藏在日常语录中） */
+const OC_STATUS = {
+  notStart:["开整？","早打完早收工。","你不开始，我就先睡了。"],
+  doing:["动了就行，别停。","进度条动了。","这题我都不会，你教教我？"],
+  done:["全清。牛啊。","今天状态在线。"],
+  early:["偷跑是吧，我喜欢。","隐藏规则被你发现了。"],
+  idle:["今天没任务，我歇了。","想卷就卷，我陪着。"]
+};
+function ocStatusPool(day){
+  const td=todayStr(), now=dateObj(td);
+  if(day && dateObj(day)>now){               /* 提前打卡（完成未来某天的任务） */
+    const d=DATA.plan.find(x=>x.date===day);
+    return d ? (d.tasks.every(t=>isDone(day,t))?OC_STATUS.done:OC_STATUS.early) : OC_STATUS.early;
+  }
+  const today=DATA.plan.find(d=>d.date===td);
+  if(today){
+    const total=today.tasks.length,done=today.tasks.filter(t=>isDone(td,t)).length;
+    if(done===total && total>0) return OC_STATUS.done;
+    if(done>0) return OC_STATUS.doing;
+    return OC_STATUS.notStart;
+  }
+  let early=0;
+  DATA.plan.forEach(d=>{if(dateObj(d.date)>now)d.tasks.forEach(t=>{if(isDone(d.date,t))early++;});});
+  return early>0 ? OC_STATUS.early : OC_STATUS.idle;
+}
+function randItem(a){return a[Math.floor(Math.random()*a.length)];}
+let _flashTimer=null;
+function flashStatusLine(day){
+  const w=$("#buddyWho"),m=$("#buddyMsg");if(!w||!m)return;
+  w.textContent="衔阳状态";
+  m.textContent=randItem(ocStatusPool(day));
+  if(_flashTimer)clearTimeout(_flashTimer);
+  _flashTimer=setTimeout(()=>{
+    const q=quoteOfDay();
+    if(w)w.textContent="衔阳说";
+    if(m)m.textContent=q.t;
+  },2500);
+}
+function renderBuddy(){
+  const q=quoteOfDay();
+  const w=$("#buddyWho"),m=$("#buddyMsg");
+  if(w)w.textContent="衔阳说";
+  if(m)m.textContent=q.t;
+}
+/* 上传孩子的 OC 图 */
+function uploadOC(){
+  const inp=document.createElement("input");inp.type="file";inp.accept="image/*";
+  inp.onchange=()=>{const f=inp.files[0];if(!f)return;const r=new FileReader();
+    r.onload=()=>{S.oc_img=r.result;
+      const n=document.getElementById("suOcName");if(n)S.oc_name=n.value.trim()||S.oc_name;
+      save(S);paintMascot();toast(S.oc_name+" 来啦！陪你学习～");};
+    r.readAsDataURL(f);};
+  inp.click();
+}
+/* OC 装扮柜 */
+function outfitHtml(){
+  let s='<div class="rs-list">';
+  OC_OUTFITS.forEach(o=>{
+    const owned=!!S.owned[o.id], wearing=S.wearing[o.slot]===o.id;
+    let btn;
+    if(owned) btn = wearing? '<button class="tbtn rs-btn off">穿着中</button>' : '<button class="tbtn rs-btn" onclick="wearOutfit(\''+o.id+'\')">穿上</button>';
+    else btn = S.points>=o.cost? '<button class="tbtn rs-btn" onclick="buyOutfit(\''+o.id+'\')">用 '+o.cost+' 分换</button>' : '<button class="tbtn rs-btn off">'+o.cost+' 分</button>';
+    s+='<div class="rs-item"><div class="rs-name">'+escapeHtml(o.name)+'</div><div class="rs-cost">'+(owned?'已拥有':(o.cost+' 分'))+'</div>'+btn+'</div>';
+  });
+  return s+'</div>';
+}
+function openOutfitStore(){
+  const view=S.oc_view||"full";
+  const prev = view==="full"
+    ? '<div class="oc-full-wrap"><img src="oc_xianyang_full.png" alt="'+escapeHtml(S.oc_name)+'全身">'+ocFullLayer()+'</div>'
+    : '<div class="oc-prev qprev">'+ocFaceHtml(true)+'</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>给 '+escapeHtml(S.oc_name)+' 换装扮 ✨</h3>'+
+    '<div class="oc-view-toggle">'+
+      '<button class="tbtn '+(view==="full"?"on":"")+'" onclick="S.oc_view=\'full\';save(S);openOutfitStore()">全身立绘</button>'+
+      '<button class="tbtn '+(view==="q"?"on":"")+'" onclick="S.oc_view=\'q\';save(S);openOutfitStore()">Q版头像</button>'+
+    '</div>'+
+    '<div class="oc-prev">'+prev+'</div>'+
+    '<div class="rs-top">我的积分：<b>'+S.points+'</b> 分</div>'+
+    '<div class="hint">用积分给 '+escapeHtml(S.oc_name)+' 换点小配饰，点「穿上」就能装扮到身上～</div>'+
+    outfitHtml());
+}
+function buyOutfit(id){const o=OC_OUTFITS.find(x=>x.id===id);if(!o)return;
+  if(S.points<o.cost){toast("积分不够，再攒攒～");return;}
+  S.points-=o.cost;S.owned[id]=true;S.wearing[o.slot]=id;save(S);
+  toast("给"+S.oc_name+"换上了"+o.name+"！✨");confetti();renderPoints();paintMascot();openOutfitStore();
+}
+function wearOutfit(id){const o=OC_OUTFITS.find(x=>x.id===id);if(!o)return;S.wearing[o.slot]=id;save(S);paintMascot();toast("穿上啦～");openOutfitStore();}
+function applyDefaults(o){
+  o=o||{};
+  o.checked = o.checked||{};
+  o.math_url = o.math_url||"";
+  o.eye = o.eye||false;
+  o.fs = o.fs||16;
+  o.mascot = o.mascot||0;
+  o.oc_view = o.oc_view||"full";   /* 换装页预览：full=全身立绘 / q=Q版头像 */
+  o.parent_pw = o.parent_pw||"1234";
+  o.cards = o.cards||{};
+  o.points = o.points||0;            /* 可兑换积分（累计） */
+  o.awarded = o.awarded||{};        /* taskId -> 已发积分，用于取消勾选时回收 */
+  o.redeemed = o.redeemed||[];      /* 兑换记录 [{name,cost,t}] */
+  o.oc_img = o.oc_img||"";          /* 孩子上传的 OC 图（dataURL） */
+  o.oc_name = o.oc_name||"衔阳";     /* OC 名字 */
+  o.owned = o.owned||{};            /* 已拥有的装扮：id->true */
+  o.wearing = o.wearing||{};        /* 当前穿戴：slot->id */
+  o.rewards = o.rewards||[          /* 奖励目录（家长可在设置里改） */
+    {name:"一杯奶茶 / 冰饮", cost:30},
+    {name:"今晚点一道想吃的菜", cost:50},
+    {name:"30 分钟额外屏幕时间", cost:80},
+    {name:"一款喜欢的游戏皮肤 / 道具", cost:120},
+    {name:"一本想看的书 / 漫画", cost:150},
+    {name:"和好朋友出去玩半天（家长陪）", cost:200},
+    {name:"心仪小礼物（手办 / 球鞋 / 耳机配件）", cost:300},
+    {name:"一次短途出游 / 看电影", cost:500}
+  ];
+  o.dayPoints = o.dayPoints||{};     /* 每日获得积分：date -> 分数（用于周回顾） */
+  o.badges = o.badges||{};           /* 已解锁成就：badgeId -> true */
+  o.firstEarly = o.firstEarly||false;/* 是否完成过提前打卡 */
+  o.dream = o.dream||{text:"", target:300}; /* 梦想板 */
+  o.eggs = o.eggs||[];              /* 彩蛋任务 [{id,text,pts,done}] */
+  return o;
+}
+let S = applyDefaults(loadLocal());
+
+/* 保存：先写本地缓存，再异步推云端（开启的情况下） */
+function save(o){
+  saveLocal(o);
+  const code=familyCode();
+  if(CLOUD_READY && code){
+    cloudSave(code, o).then(ok=>{ if(!ok) console.warn("云同步未成功，已用本地备份"); });
+  }
+}
+
+/* 任务 id */
+function taskId(day,task){return day+"#"+task.time+"#"+task.task;}
+function isDone(day,task){return !!S.checked[taskId(day,task)];}
+
+/* 奖励积分：基础分 + 提前打卡双倍 */
+const POINT_BASE = 10;
+function earlyDay(day){const t=dateObj(day),n=dateObj(todayStr());return !!(t&&n&&t>n);} /* 完成“未来某天”的任务 = 提前 */
+function taskPoints(day,task){return POINT_BASE*(earlyDay(day)?2:1);}
+function setDone(id,day,task,on){
+  S.checked[id]=on;
+  if(on){
+    const pts=taskPoints(day,task);
+    S.points+=pts;S.awarded[id]=pts;
+    S.dayPoints[day]=(S.dayPoints[day]||0)+pts;
+    if(earlyDay(day)&&!S.firstEarly)S.firstEarly=true;
+  } else if(S.awarded[id]){
+    S.points=Math.max(0,S.points-S.awarded[id]);delete S.awarded[id];
+    if(S.dayPoints[day])S.dayPoints[day]=Math.max(0,S.dayPoints[day]-S.awarded[id]);
+  }
+  save(S);
+  checkBadges();
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* 当前时间判断：让今日清单中高亮「进行中」任务 */
+function parseHM(s){const m=s.match(/(\d{1,2}):(\d{2})/);return m?{h:+m[1],m:+m[2]}:null;}
+function isNow(task){
+  const now=new Date();const hm=now.getHours()*60+now.getMinutes();
+  if(task.time.includes("-")){
+    const p=task.time.split("-").map(parseHM);if(!p[0]||!p[1])return false;
+    const start=p[0].h*60+p[0].m,end=p[1].h*60+p[1].m;
+    return hm>=start && hm<=end;
+  } else {
+    const p=parseHM(task.time);if(!p)return false;
+    const start=p.h*60+p.m;
+    return hm>=start && hm<start+30;
+  }
+}
+
+/* 时钟 */
+function tick(){const d=new Date();const hh=String(d.getHours()).padStart(2,"0"),mm=String(d.getMinutes()).padStart(2,"0"),ss=String(d.getSeconds()).padStart(2,"0");
+  $("#clock").textContent=hh+":"+mm;$("#bigClock").textContent=hh+":"+mm+":"+ss;
+  const week=["周日","周一","周二","周三","周四","周五","周六"];
+  $("#clockMeta").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日 · "+week[d.getDay()];}
+setInterval(tick,1000);tick();
+
+/* 日期 */
+function todayStr(){const d=new Date();return (d.getMonth()+1)+"月"+d.getDate()+"日";}
+function dateObj(s){
+  if(!s)return null;
+  let m=s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  m=s.match(/(\d{1,2})月(\d{1,2})日/);
+  if(m)return new Date(2026,+m[1]-1,+m[2]);
+  return null;
+}
+function daysBetween(a,b){return Math.round((a-b)/86400000);}
+
+/* 语录：每 12 小时自动轮换一次 */
+function quoteOfDay(){const idx=Math.floor(Date.now()/(12*3600*1000))%DATA.quotes.length;return DATA.quotes[(idx+DATA.quotes.length)%DATA.quotes.length];}
+
+/* 渲染首页 */
+function renderHome(){
+  $("#heroDate").textContent = "Hi，邓斯予";
+  renderBuddy();  /* OC 每日语录 */
+  const hs=$("#heroSub"); if(hs)hs.textContent="";
+  renderCountdown();
+  renderDtable();
+  renderToday();
+  renderStats();
+  renderPoints();
+  renderTodayRing();
+  updateCelebrate();
+}
+
+function renderDtable(){
+  const box=$("#dtable");box.innerHTML="";
+  let order=0;
+  DATA.plan.forEach(day=>{
+    const tasks=day.tasks;
+    const total=tasks.length;
+    const done=tasks.filter(t=>isDone(day.date,t)).length;
+    let cls="todo",badge="进行",bcls="b-todo";
+    const t=dateObj(day.date);const now=dateObj(todayStr());
+    if(done===total){cls="done";badge="完成";bcls="b-done";}
+    else if(t<now){cls="over";badge="逾期";bcls="b-over";}
+    const cell=document.createElement("div");
+    cell.className="dcell "+cls;
+    cell.innerHTML='<span class="badge '+bcls+'">'+badge+'</span><div class="d">'+day.date+'</div><div class="w">'+day.week+'</div>'+
+      '<div class="p"><i style="width:'+(total?Math.round(done/total*100):0)+'%"></i></div>';
+    cell.onclick=()=>openDay(day.date);
+    box.appendChild(cell);
+  });
+}
+
+const checkSvg="<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='4,12 10,18 20,6'/></svg>";
+/* 任务 → 对应学习内容（点「去学习」跳转） */
+function taskTarget(task){
+  const t=task.task||"";
+  if(task.subject==="数学"){
+    return ()=>{goto("math"); if(/口算/.test(t)){toast("去口算打卡，计时完成～");}
+      else if(S.math_url){window.open(S.math_url,"_blank");} else {toast("请先在「设置」粘贴数学课网址");}};
+  }
+  if(task.subject==="英语"){
+    if(/音标/.test(t)) return ()=>openEnIpa();
+    return ()=>{goto("english");renderEnglish();openEnGrammar();};
+  }
+  if(task.subject==="语文"){
+    for(let i=0;i<DATA.poems.length;i++) if(t.includes(DATA.poems[i].title)) return ()=>openPoem(i);
+    for(let i=0;i<DATA.essays.length;i++) if(t.includes(DATA.essays[i].title)) return ()=>openEssay(i);
+    for(let i=0;i<DATA.zhax_book.length;i++) if(t.includes(DATA.zhax_book[i].title)) return ()=>openZhax(i);
+    if(/朝花夕拾/.test(t)) return ()=>openCnList("zhax");
+    if(/文言文/.test(t)) return ()=>openCnList("essay");
+    if(/默写/.test(t)){for(let i=0;i<DATA.poems.length;i++) if(t.includes(DATA.poems[i].title)) return ()=>openPoem(i);}
+    return ()=>openCnList("poem");
+  }
+  return null;
+}
+
+function taskRow(day,task,over,refreshHome){
+  const id=taskId(day,task);
+  const div=document.createElement("div");
+  div.className="task"+(over?" over":"")+(isDone(day,task)?" done":"")+(day===todayStr()&&isNow(task)?" now":"");
+  div.innerHTML='<label><span class="chk'+(isDone(day,task)?" on":"")+'">'+(isDone(day,task)?checkSvg:"")+'</span>'+
+    '<span><b>'+task.time+'</b> '+task.task+
+    (task.subject&&task.subject!=="固定"?'<span class="tag">'+task.subject+'</span>':'')+
+    '<div class="meta">'+(task.standard?("完成标准："+task.standard+" ｜ "):"")+(task.note||"")+'</div></span></label>'+
+    '<button class="gostudy" type="button">去学习 ›</button>';
+  const span=div.querySelector(".chk");
+  const label=div.querySelector("label");
+  function update(){const on=S.checked[id];span.className="chk"+(on?" on":"");span.innerHTML=on?checkSvg:"";div.classList.toggle("done",on);}
+  function toggle(ev){if(ev)ev.stopPropagation();
+    const on=!S.checked[id];setDone(id,day,task,on);update();
+    if(on&&earlyDay(day))toast("✨ 发现隐藏加成 ×2 🌟");
+    feedbackAfterToggle(day);if(refreshHome)renderHome();
+  }
+  span.onclick=toggle;
+  label.onclick=()=>toggle();
+  const tg=taskTarget(task);
+  const gbtn=div.querySelector(".gostudy");
+  if(tg){gbtn.onclick=e=>{e.stopPropagation();tg();};}
+  else{gbtn.style.display="none";}
+  return div;
+}
+
+function shortTitle(s,max=14){if(!s)return"";return s.length>max?s.slice(0,max-1)+"…":s;}
+
+function taskPill(day,task,over){
+  const done=isDone(day,task);
+  const sub=(task.subject==="—"?"固定":(task.subject||"固定"));
+  const isRest=(task.type==="午休"||task.type==="休息"||task.type==="晚饭休息"||task.type==="结束");
+  const color={语文:"var(--green-d)",数学:"var(--blue)",英语:"var(--pink-d)",固定:"var(--beige)"}[sub]||"var(--sub)";
+  const div=document.createElement("div");
+  div.className="tpill"+(done?" done":"")+(over?" over":"")+(isRest?" rest":"");
+  div.innerHTML='<span class="tp-time">'+task.time.split('-')[0]+'</span>'+
+    '<span class="tp-dot" style="background:'+color+'"></span>'+
+    '<span class="tp-main">'+
+      '<span class="tp-title">'+shortTitle(task.task)+(isRest?"":(" · "+sub))+'</span>'+
+    '</span>'+
+    '<span class="tp-chk'+(done?" on":"")+'">'+(done?checkSvg:"")+'</span>';
+  div.onclick=()=>{if(isRest)return;openTaskDetail(day,task);};
+  return div;
+}
+
+let _detailTask=null;
+function openTaskDetail(day,task){
+  _detailTask={day,task};
+  const id=taskId(day,task);
+  const done=isDone(day,task);
+  const sub=(task.subject==="—"?"固定":(task.subject||"固定"));
+  const color={语文:"var(--green-d)",数学:"var(--blue)",英语:"var(--pink-d)",固定:"var(--beige)"}[sub]||"var(--sub)";
+  const tg=taskTarget(task);
+  let h='<button class="close" onclick="closeSheet()">×</button>'+
+    '<div class="td-head"><span class="tp-dot" style="background:'+color+'"></span><h3 style="margin:0;font-size:19px">'+task.task+'</h3></div>'+
+    '<div class="au">'+task.time+' · '+sub+' · '+task.duration+'</div>'+
+    '<div class="task-detail-card">'+
+      (task.standard?'<div class="td-row"><b>完成标准</b><p>'+task.standard+'</p></div>':'')+
+      (task.note?'<div class="td-row"><b>备注</b><p>'+task.note+'</p></div>':'')+
+    '</div>'+
+    '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">'+
+      '<button class="vbtn rate '+(done?'forgot':'know')+'" style="flex:1" onclick="toggleCurrentTaskDetail()">'+(done?'取消打卡':'打卡完成')+'</button>'+
+      (tg?'<button class="vbtn wb" onclick="closeSheet();taskTarget(_detailTask.task)()">去学习 ›</button>':'')+
+    '</div>';
+  showSheet(h);
+}
+function toggleCurrentTaskDetail(){
+  if(!_detailTask)return;
+  const {day,task}=_detailTask;
+  const id=taskId(day,task);
+  const on=!S.checked[id];
+  setDone(id,day,task,on);
+  closeSheet();
+  if(on&&earlyDay(day))toast("✨ 发现隐藏加成 ×2 🌟");
+  feedbackAfterToggle(day);
+  renderToday();
+}
+
+function renderToday(){
+  const box=$("#todayList");box.innerHTML="";
+  const td=todayStr(), now=dateObj(td), s=dateObj(DATA.start_date);
+  const t=targetDay();
+  const tf=$(".tfocus h2"); if(tf)tf.innerHTML='<span class="dot"></span>'+(t&&t.isToday?"今日学习清单":"下一日学习清单");
+  if(t){
+    const day=DATA.plan.find(d=>d.date===t.date);
+    if(day){
+      const wrap=document.createElement("div");wrap.className="tpill-wrap";
+      day.tasks.forEach(tt=>wrap.appendChild(taskPill(day.date,tt)));
+      box.appendChild(wrap);
+    }
+  } else {
+    box.innerHTML='<div class="task">计划已结束，恭喜坚持完成！可回看各科目复习。</div>';
+  }
+  if(now>=s){ /* 逾期未完成滚到今天（仅计划开始后） */
+    let hasOver=false;
+    const overWrap=document.createElement("div");overWrap.className="tpill-wrap";
+    DATA.plan.forEach(d=>{const dt=dateObj(d.date);
+      if(dt<now && d.date!==td){d.tasks.forEach(tt=>{if(!isDone(d.date,tt)){hasOver=true;overWrap.appendChild(taskPill(d.date,tt,true));}});}});
+    if(hasOver){
+      const hint=document.createElement("div");hint.className="tp-oh";hint.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> 还有之前没完成的任务，点开补卡';
+      box.appendChild(hint);box.appendChild(overWrap);
+    }
+  }
+}
+
+function renderStats(){
+  let total=0,done=0;
+  DATA.plan.forEach(d=>d.tasks.forEach(t=>{total++;if(isDone(d.date,t))done++;}));
+  $("#stDone").textContent=done;
+  $("#stPct").textContent=(total?Math.round(done/total*100):0)+"%";
+  let streak=0; const now=dateObj(todayStr());
+  for(let i=DATA.plan.length-1;i>=0;i--){const d=DATA.plan[i];const t=dateObj(d.date);
+    if(t>now)continue;
+    const all=d.tasks.every(tt=>isDone(d.date,tt));
+    if(all)streak++;else break;}
+  $("#stStreak").textContent=streak;
+  const pct=total?done/total:0;
+  const pi=$("#progressI"); if(pi) pi.style.width=Math.round(pct*100)+"%";
+  const r=50,c=2*Math.PI*r;
+  $("#ring").innerHTML='<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="#e8e4da" stroke-width="12"/>'+
+    '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="url(#gg)" stroke-width="12" stroke-linecap="round" '+
+    'stroke-dasharray="'+c+'" stroke-dashoffset="'+(c*(1-pct))+'" transform="rotate(-90 60 60)"/>'+
+    '<defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9bb88c"/><stop offset="1" stop-color="#b8d4aa"/></linearGradient></defs>'+
+    '<text x="60" y="66" text-anchor="middle" font-size="20" font-weight="800" fill="#7a9e6b">'+Math.round(pct*100)+'%</text>';
+}
+
+function renderCountdown(){
+  const now=dateObj(todayStr()), s=dateObj(DATA.start_date), e=dateObj(DATA.end_date);
+  const n=$("#countNum"), l=$("#countLab"); if(!n)return;
+  if(now<s){ n.textContent=daysBetween(s,now); l.textContent="距暑假作业开始"; }
+  else if(now>e){ n.textContent="0"; l.textContent="暑假作业已结束"; }
+  else { n.textContent=daysBetween(e,now)+1; l.textContent="距暑假作业结束"; }
+}
+
+/* 今日进度环 + 完成反馈 */
+function renderTodayRing(){
+  const ring=$("#todayRing");if(!ring)return;
+  const t=targetDay();
+  const tv=$("#todayCount"),ts=$("#todayStatus");
+  if(!t){tv.textContent="—";ts.textContent="暑假作业已全部完成，太棒啦！";ring.innerHTML="";return;}
+  const d=DATA.plan.find(x=>x.date===t.date);
+  const total=d.tasks.length,done=d.tasks.filter(tt=>isDone(t.date,tt)).length;
+  tv.textContent=done+"/"+total;
+  ts.textContent=randItem(ocStatusPool());
+  const pct=total?done/total:0,r=46,c=2*Math.PI*r;
+  ring.innerHTML='<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="#e8e4da" stroke-width="12"/>'+
+    '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="#9bb88c" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+(c*(1-pct))+'" transform="rotate(-90 60 60)"/>'+
+    '<text x="60" y="66" text-anchor="middle" font-size="22" font-weight="800" fill="#7a9e6b">'+Math.round(pct*100)+'%</text>';
+}
+function updateCelebrate(){const td=todayStr();const d=DATA.plan.find(x=>x.date===td);
+  const el=$("#celebrate");if(!el||!d)return;
+  const done=d.tasks.filter(t=>isDone(td,t)).length;
+  el.classList.toggle("show",done===d.tasks.length&&d.tasks.length>0);}
+function feedbackAfterToggle(day){
+  renderTodayRing();renderPoints();renderBuddy();flashStatusLine(day);
+  const d=DATA.plan.find(x=>x.date===day);if(!d)return;
+  const total=d.tasks.length,done=d.tasks.filter(t=>isDone(day,t)).length;
+  if(done<total)toast("✓ +1");
+  else{toast("全部完成！🎉");confetti();updateCelebrate();}
+}
+
+/* 语文：紧凑模块入口，点开钻取二级/三级页 */
+function renderChinese(){
+  const mods=[
+    {t:"古诗文", s:DATA.poems.length+" 首 · 全文＋注释＋注音", go:()=>openCnList("poem")},
+    {t:"文言文", s:DATA.essays.length+" 篇 · 逐词翻译＋寓意", go:()=>openCnList("essay")},
+    {t:"朝花夕拾", s:DATA.zhax_book.length+" 篇 · 中心思想＋必考考点（含Anki记忆卡）", go:()=>openCnList("zhax")},
+    {t:"动画学", s:"初中语文动画讲解 · 看动画轻松学课文", go:openDhx},
+    {t:"西游记取经图", s:"15关 · 每章动画＋知识点", go:openXyjList}
+  ];
+  const cn=$("#cnModules");cn.innerHTML="";
+  mods.forEach(m=>{const el=document.createElement("div");el.className="mitem";
+    el.innerHTML='<div class="t">'+m.t+'</div><div class="s">'+m.s+'</div><div class="go">查看 →</div>';
+    el.onclick=m.go;cn.appendChild(el);});
+  renderSubjectTasks("#cnTasks","语文");
+}
+
+/* 二级页：模块内容列表 */
+function openCnList(kind){
+  let title, items, click;
+  if(kind==="poem"){title="古诗文";items=DATA.poems;click=i=>openPoem(i);}
+  else if(kind==="essay"){title="文言文";items=DATA.essays;click=i=>openEssay(i);}
+  else {
+    title="朝花夕拾";items=DATA.zhax_book;click=i=>openZhax(i);
+    const guide='<div class="note" style="background:#eef3ff;margin-bottom:10px"><b>学习导引</b><div style="margin-top:4px">'+DATA.zhax_guide+'</div><div style="margin-top:6px;color:var(--green-d)">'+DATA.zhax_mnemonic+'</div></div>';
+    let dueN=0;ZHAX_CARDS.forEach((_,i)=>{if(!S.cards[i]||S.cards[i].due<=Date.now())dueN++;});
+    const extra='<div class="mlist" style="margin-bottom:12px">'+
+      '<div class="mitem" data-x="anki"><div class="t">📇 Anki 记忆卡<span class="tag" style="margin-left:6px;background:var(--pink);color:#fff">'+dueN+' 张待复习</span></div><div class="s">间隔重复 · 每天5分钟 · 填空+人物性格</div><div class="go">开始练习 →</div></div>'+
+      '<div class="mitem" data-x="chars"><div class="t">人物速查卡</div><div class="s">'+DATA.zhax_chars.length+' 位核心人物 · 性格＋事例</div><div class="go">查看 →</div></div>'+
+      '<div class="mitem" data-x="exam"><div class="t">中考题型模板</div><div class="s">'+DATA.zhax_exam.length+' 类常考题型 · 答题要点</div><div class="go">查看 →</div></div></div>';
+    const list='<div style="font-size:13px;color:var(--sub);margin-bottom:6px">10 篇散文（点开看核心内容）</div><div class="mlist">'+items.map((it,i)=>'<div class="mitem" data-i="'+i+'"><div class="t">'+it.n+'. '+it.title+'</div><div class="s">点开看核心内容</div><div class="go">查看 →</div></div>').join("")+'</div>';
+    showSheet('<button class="close" onclick="closeSheet()">×</button><h3>'+title+'</h3>'+guide+extra+list);
+    document.querySelectorAll("#sheet .mitem[data-x=chars]").forEach(el=>el.onclick=openZhaxChars);
+    document.querySelectorAll("#sheet .mitem[data-x=exam]").forEach(el=>el.onclick=openZhaxExam);
+    document.querySelectorAll("#sheet .mitem[data-x=anki]").forEach(el=>el.onclick=openZhaxAnki);
+    document.querySelectorAll("#sheet .mitem[data-i]").forEach(el=>el.onclick=()=>click(+el.dataset.i));
+    return;
+  }
+  const body='<div class="mlist">'+items.map((it,i)=>{
+    const lab=it.title;
+    const sub=kind==="essay"?it.from:(it.author+" · 全文/注释");
+    return '<div class="mitem" data-i="'+i+'"><div class="t">'+lab+'</div><div class="s">'+sub+'</div><div class="go">查看 →</div></div>';
+  }).join("")+'</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>'+title+'</h3><div style="font-size:13px;color:var(--sub);margin-bottom:10px">点任一篇，看详细内容。</div>'+body);
+  document.querySelectorAll("#sheet .mitem").forEach(el=>el.onclick=()=>click(+el.dataset.i));
+}
+function openZhaxChars(){
+  let b=DATA.zhax_chars.map(c=>'<div class="note" style="margin:0 0 8px"><b>'+c.name+'</b> <span style="color:var(--sub);font-size:12px">'+c.role+'</span>'+
+    '<div style="margin-top:3px">'+c.traits+'</div><div style="margin-top:3px;color:var(--green-d);font-size:12px">事例：'+c.eg+'</div></div>').join("");
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>人物速查卡</h3><div style="font-size:13px;color:var(--sub);margin-bottom:8px">人物题务必结合事例答，是阅卷给分点。</div>'+b);
+}
+function openZhaxExam(){
+  let b=DATA.zhax_exam.map(e=>'<div class="note" style="margin:0 0 8px"><b>'+e.type+'</b>'+
+    '<div style="margin-top:3px">考法：'+e.how+'</div><div style="margin-top:3px;color:var(--green-d)">答题要点：'+e.key+'</div></div>').join("");
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>中考题型模板</h3><div style="font-size:13px;color:var(--sub);margin-bottom:8px">按题型练，填空—简答—人物三类刷近 3 年中考题。</div>'+b);
+}
+
+function openPoem(i){const p=DATA.poems[i];
+  let hard=p.hard.map(h=>'<span class="chip" onclick="speak(\''+h[1]+'\')"><ruby>'+h[0]+'<rt class="py">'+h[1]+'</rt></ruby></span>').join("");
+  let notes=p.notes.map(n=>"• "+n).join("<br>");
+  showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openCnList(\'poem\')">← 返回列表</button><h3>'+p.title+'</h3><div class="au">'+p.author+'</div>'+
+    '<div class="poem">'+p.text+'</div>'+
+    '<div style="margin-top:12px;font-weight:700">生僻字注音（点字听读）</div><div class="hard">'+hard+'</div>'+
+    '<div class="note"><b>注释</b><br>'+notes+'</div>'+
+    jumpButtonsFor('poem',i,p));
+}
+function openEssay(i){const e=DATA.essays[i];
+  showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openCnList(\'essay\')">← 返回列表</button><h3>'+e.title+'</h3><div class="au">'+e.from+'</div>'+
+    '<div class="note" style="background:#eef3ff"><b>原文</b><div class="poem" style="background:#fff">'+e.orig+'</div></div>'+
+    '<div class="note"><b>逐词翻译</b><br>'+e.trans+'</div>'+
+    '<div class="note" style="background:#fff0f7"><b>寓意 / 启示</b><br>'+e.moral+'</div>'+
+    jumpButtonsFor('essay',i,e));
+}
+function openZhax(i){const z=DATA.zhax_book[i];
+  const block=(h,t)=>'<div class="note" style="margin-top:10px"><b>'+h+'</b><div style="margin-top:4px">'+t+'</div></div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openCnList(\'zhax\')">← 返回列表</button><h3>'+z.n+'. '+z.title+'</h3>'+
+    '<div class="au">《朝花夕拾》· 初中必读散文</div>'+
+    block("一句话导读", z.guide)+
+    block("内容概括", z.gai)+
+    block("中心思想", z.hexin)+
+    block("人物性格", z.renwu)+
+    block("初中必考考点", z.kaodian)+
+    jumpButtonsFor('zhax',i,z));
+}
+
+/* 朝花夕拾 Anki 记忆卡：间隔重复（填空 + 人物性格），每天5分钟，工作台内完成 */
+let ankiQueue=[];
+function openZhaxAnki(){
+  ankiQueue=[];ZHAX_CARDS.forEach((_,i)=>{if(!S.cards[i]||S.cards[i].due<=Date.now())ankiQueue.push(i);});
+  if(!ankiQueue.length){
+    showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openCnList(\'zhax\')">← 返回</button><h3>Anki 记忆卡</h3>'+
+      '<div class="note" style="background:#eef3ff">今天 '+ZHAX_CARDS.length+' 张的间隔重复都复习完啦 ✓<br>明天新卡片会自动出现，每天5分钟就够了～</div>');
+    return;
+  }
+  ankiRender(0);
+}
+function ankiRender(pos){
+  if(pos>=ankiQueue.length){
+    showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openCnList(\'zhax\')">← 返回</button><h3>复习完成 🎉</h3>'+
+      '<div class="note" style="background:#eef3ff">今天 '+ankiQueue.length+' 张记忆卡练完啦，间隔重复帮你记牢考点。<br>明天继续，每天5分钟～</div>');
+    confetti();return;
+  }
+  const i=ankiQueue[pos];const cd=ZHAX_CARDS[i];
+  showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openCnList(\'zhax\')">← 返回</button><h3>Anki 记忆卡</h3>'+
+    '<div class="anki-head"><span class="chip-type '+(cd.type==="填空"?"t-fill":"t-char")+'">'+cd.type+'</span><span class="anki-prog">第 '+(pos+1)+' / '+ankiQueue.length+' 张</span></div>'+
+    '<div class="anki-q">'+cd.q+'</div>'+
+    '<div class="anki-back" id="ankiBack" style="display:none"><b>答案</b><div style="margin-top:4px">'+cd.a+'</div>'+
+      '<div class="anki-rate" id="ankiRate" style="display:none">'+
+      '<button class="vbtn rate forgot" onclick="ankiRate('+i+','+(pos+1)+',1)">😵 忘了</button>'+
+      '<button class="vbtn rate blur" onclick="ankiRate('+i+','+(pos+1)+',3)">🤔 模糊</button>'+
+      '<button class="vbtn rate know" onclick="ankiRate('+i+','+(pos+1)+',7)">😎 记得</button></div></div>'+
+    '<button class="tbtn" id="ankiShow" onclick="ankiReveal()">显示答案</button>');
+}
+function ankiReveal(){$("#ankiBack").style.display="block";$("#ankiRate").style.display="flex";$("#ankiShow").style.display="none";}
+function ankiRate(i,pos,grade){
+  const now=Date.now();const prev=S.cards[i]||{interval:0};
+  let interval;
+  if(grade===1)interval=1;
+  else if(grade===3)interval=Math.max(2,Math.round((prev.interval||1)*1.5));
+  else interval=Math.max(2,Math.round((prev.interval||1)*2.5));
+  interval=Math.min(interval,30);
+  S.cards[i]={due:now+interval*86400000,interval};save(S);
+  ankiRender(pos);
+}
+/* 西游记：二级章节列表 + 三级每章小动画 */
+function openXyjList(){
+  const list='<div style="font-size:13px;color:var(--sub);margin-bottom:6px">15 个取经关卡（点开看每章动画/知识点）</div><div class="mlist">'+DATA.xiyouji.map((x,i)=>'<div class="mitem" data-i="'+i+'"><div class="t">第'+(i+1)+'关 · '+x.name+'</div><div class="s">'+x.event+'</div><div class="go">看动画 →</div></div>').join("")+'</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>《西游记》取经闯关图</h3><div class="hint" style="margin-bottom:10px">孩子按关卡快速了解每章情节与知识点，不用全记 81 难。</div>'+list);
+  document.querySelectorAll("#sheet .mitem[data-i]").forEach(el=>el.onclick=()=>openXyjChapter(+el.dataset.i));
+}
+function openXyjChapter(i){const x=DATA.xiyouji[i];
+  showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openXyjList()">← 返回章节</button><h3>第'+(i+1)+'关 · '+x.name+'</h3>'+
+    '<div class="au">《西游记》取经路线图</div>'+
+    '<div class="note"><b>这一关发生了什么</b><div style="margin-top:4px">'+x.event+'</div></div>'+
+    jumpButtonsFor('xyj',i,x));
+}
+
+/* 每日跟读轮换序号（按学习日 0..9；未开始/已结束按日期轮换） */
+function studyDayIndex(){
+  const td=todayStr();const t=dateObj(td),s=dateObj(DATA.start_date),e=dateObj(DATA.end_date);
+  if(t>=s&&t<=e)return daysBetween(t,s)%10;
+  return new Date().getDate()%10;
+}
+
+/* 英语音标 */
+function renderEnglish(){
+  const mods=[
+    {t:"音标跟读", s:"48个音标＋每日轮换例词跟读", go:openEnIpa},
+    {t:"英语语法", s:DATA.grammar_topics.length+" 个语法点 · 点开看详解", go:openEnGrammar}
+  ];
+  const cn=$("#enModules");cn.innerHTML="";
+  mods.forEach(m=>{const el=document.createElement("div");el.className="mitem";
+    el.innerHTML='<div class="t">'+m.t+'</div><div class="s">'+m.s+'</div><div class="go">查看 →</div>';
+    el.onclick=m.go;cn.appendChild(el);});
+  renderSubjectTasks($("#enTasks"),"英语");
+}
+/* 二级页：音标跟读 */
+function openEnIpa(){
+  const idx=studyDayIndex();
+  const cell=s=>{const ws=DATA.ipa.words[s]||[DATA.ipa.examples[s]];const w=(ws[idx%ws.length])||DATA.ipa.examples[s];
+    return '<div class="ipa-cell" onclick="speak(\''+w+'\')"><div class="sym">'+s+'</div><div class="ex">'+w+'</div><div class="spk">听</div></div>';};
+  const v=DATA.ipa.vowels.map(s=>cell(s)).join("");
+  const c=DATA.ipa.consonants.map(s=>cell(s)).join("");
+  const all=[...DATA.ipa.vowels,...DATA.ipa.consonants];
+  const start=(idx*12)%all.length;
+  let rd='<div class="hint" style="margin:0 0 6px">今日（第 '+(idx+1)+' 轮）跟读 · 共 12 个，跟着例词读 2 遍 →</div><div class="readrow">';
+  for(let k=0;k<12;k++){const s=all[(start+k)%all.length];const ws=DATA.ipa.words[s]||[DATA.ipa.examples[s]];const w=ws[idx%ws.length];
+    rd+='<button class="readpill" onclick="speak(\''+w+'\')"><b>'+s+'</b><span>'+w+'</span><i>听</i></button>';}
+  rd+='</div>';
+  const html='<button class="close" onclick="closeSheet()">×</button><h3>音标跟读</h3>'+
+    '<div class="hint">跟着雪梨老师读，点任意音标听发音；讲解视频用下方按钮去B站 / 网页看。</div>'+
+    jumpButtons(VIDEOS.ipa[0][0],null,VIDEOS.ipa[0][1])+
+    '<div class="readcard" style="margin-top:12px">'+rd+'</div>'+
+    '<div style="font-size:13px;color:var(--sub);margin:14px 0 8px">全部 48 个国际音标（点一下听发音）</div>'+
+    '<div class="ipa-grid" style="margin-bottom:8px">'+v+'</div>'+
+    '<div style="font-size:13px;color:var(--sub);margin:8px 0">28 个辅音</div>'+
+    '<div class="ipa-grid">'+c+'</div>'+
+    '<div class="hint" style="margin-top:14px">音标跟读统一跟「雪梨老师」，发音标准高效。想换老师可自行在 B站搜「48个国际音标 跟读」。</div>'+
+    '<div class="hint" style="margin-top:12px">每天轮换 12 个音标重点跟读（覆盖全部 48 个），跟着例词读 2 遍；上方是全部音标，随时点听。</div>';
+  showSheet(html);
+}
+/* 二级页：英语语法 */
+function openEnGrammar(){
+  let mm='<div class="glist">';
+  DATA.grammar_topics.forEach((t,i)=>{mm+='<div class="gitem" onclick="openGrammar('+i+')"><span class="gdot '+t.cls+'"></span><b>'+t.name+'</b><span class="garrow">详情 ›</span></div>';});
+  mm+='</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>英语语法</h3><div style="font-size:13px;color:var(--sub);margin-bottom:10px">点任一点，看讲解 / 变化 / 口诀 / 例句。</div>'+mm);
+}
+/* 二级页：英语语法详情 */
+function openGrammar(i){const t=DATA.grammar_topics[i];
+  const ch=t.change.map(x=>"• "+x).join("<br>");
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3><span class="gdot '+t.cls+'" style="vertical-align:-2px"></span> '+t.name+'</h3>'+
+    '<div class="au">'+t.summary+'</div>'+
+    '<div class="note"><b>讲解</b><div style="margin-top:4px">'+t.detail+'</div></div>'+
+    '<div class="note" style="background:#eef3ff"><b>变化 / 用法</b><div style="margin-top:4px">'+ch+'</div></div>'+
+    '<div class="note" style="background:#fff0f7"><b>记忆口诀</b><div style="margin-top:4px;line-height:1.7">'+t.mnemonic+'</div></div>'+
+    '<div class="note"><b>例句</b><div style="margin-top:4px">'+t.eg+'</div></div>');
+}
+
+/* 数学 */
+function renderMath(){
+  $("#mathUrlInput").value=S.math_url;
+  $("#mathGo").onclick=()=>{if(S.math_url){window.open(S.math_url,"_blank");}else{toast("请先在设置里粘贴数学课网址");}};
+  $("#mathUrlSave").onclick=()=>{S.math_url=$("#mathUrlInput").value.trim();save(S);toast("已保存");};
+  renderSubjectTasks("#mathTasks","数学");
+}
+
+/* 科目任务：今日聚焦 + 10天横向闯关条（点某天进入二级页） */
+function renderSubjectTasks(sel,subj){
+  const box=(typeof sel==="string")?$(sel):sel;box.innerHTML="";
+  const match=t=> subj==="语文"? t.subject==="语文"
+    : subj==="英语"? t.subject==="英语"
+    : /口算|数学课|习题/.test(t.task);
+  const td=todayStr();
+  const day=DATA.plan.find(d=>d.date===td);
+  const rows=[];
+  if(day) day.tasks.filter(match).forEach(t=>rows.push({day:day.date,t}));
+  if(rows.length){
+    box.insertAdjacentHTML("beforeend",'<div style="font-weight:800;font-size:14px;margin:2px 0 8px;color:var(--green-d)">今日'+subj+'任务 · '+td+'</div>');
+  }
+  const wrap=document.createElement("div");wrap.className="tfocus";
+  rows.forEach(r=>wrap.appendChild(taskRow(r.day.date,r.t,false,false)));
+  if(!rows.length) wrap.innerHTML='<div class="task" style="color:var(--sub)">'+(day?('今天计划里没有'+subj+'任务，轻松一下～'):'今天不是计划日，去「学习日历」提前打卡未来任务可拿双倍积分🌟')+'</div>';
+  box.appendChild(wrap);
+  const hint=document.createElement("div");hint.style.cssText="font-size:12px;color:var(--sub);margin:16px 0 6px";hint.textContent="选某一天，看当天「"+subj+"」的任务 →";
+  box.appendChild(hint);
+  const bar=document.createElement("div");bar.className="dtable";
+  DATA.plan.forEach(d=>{
+    const tasks=d.tasks.filter(match);const total=tasks.length;const done=tasks.filter(t=>isDone(d.date,t)).length;
+    let cls="todo",badge="进行",b="b-todo";const t=dateObj(d.date),now=dateObj(td);
+    if(total>0&&done===total){cls="done";badge="完成";b="b-done";}
+    else if(t<now){cls="over";badge="逾期";b="b-over";}
+    const cell=document.createElement("div");cell.className="dcell "+cls;
+    cell.innerHTML='<span class="badge '+b+'">'+badge+'</span><div class="d">'+d.date+'</div><div class="w">'+d.week+'</div><div class="p"><i style="width:'+(total?Math.round(done/total*100):0)+'%"></i></div>';
+    cell.onclick=()=>openDay(d.date,subj);bar.appendChild(cell);
+  });
+  box.appendChild(bar);
+}
+
+/* 纪录片 */
+const playIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-1px;margin-right:3px"><polygon points="5,3 21,12 5,21"/></svg>';
+function renderFilm(){
+  const f=DATA.doc_film;const box=$("#filmBox");
+  box.innerHTML='<div class="hint">'+f.note+'</div>';
+  f.schedule.forEach(d=>{
+    const div=document.createElement("div");div.className="fday";
+    let pills=d.rec.map(r=>'<span class="rec-pill" onclick="window.open(\'https://search.bilibili.com/all?keyword='+encodeURIComponent(f.name+" "+r)+'\',\'_blank\')">'+playIcon+r+'</span>').join("");
+    div.innerHTML='<div class="dt">'+d.date+' · '+d.time+'</div><div>'+d.what+'</div><div style="margin-top:6px">推荐看：'+pills+'</div>';
+    box.appendChild(div);
+  });
+  let all=f.rec_bilibili.map(r=>'<span class="rec-pill" onclick="window.open(\''+r[1]+'\',\'_blank\')">'+playIcon+r[0]+'</span>').join("");
+  box.insertAdjacentHTML("beforeend",'<div style="margin-top:8px;font-weight:700">全部推荐国宝（点开看）：</div>'+all);
+}
+
+/* 打开某天（二级页：按语数英分组，清晰分界） */
+function openDay(dateStr,subj){
+  const day=DATA.plan.find(d=>d.date===dateStr);if(!day)return;
+  let groups;
+  if(subj==="语文") groups=[["语文","yu",t=>t.subject==="语文"]];
+  else if(subj==="数学") groups=[["数学","ma",t=>/口算|数学课|习题/.test(t.task)]];
+  else if(subj==="英语") groups=[["英语","en",t=>t.subject==="英语"]];
+  else groups=[["语文","yu",t=>t.subject==="语文"],["数学","ma",t=>/口算|数学课|习题/.test(t.task)],["英语","en",t=>t.subject==="英语"]];
+  let body="";
+  groups.forEach(([name,cls,fn])=>{
+    const ts=day.tasks.filter(fn);if(!ts.length)return;
+    body+='<div class="subjgrp '+cls+'"><div class="gh"><span class="gd"></span>'+name+'</div><div class="tfocus">';
+    ts.forEach(t=>{    body+='<div class="task'+(isDone(day.date,t)?' done':'')+(day.date===todayStr()&&isNow(t)?' now':'')+'"><label><span class="chk'+(isDone(day.date,t)?' on':'')+'">'+(isDone(day.date,t)?checkSvg:'')+'</span>'+
+      '<span><b>'+t.time+'</b> '+t.task+'<div class="meta">'+(t.standard?('完成标准：'+t.standard+' ｜ '):'')+(t.note||'')+'</div></span></label>'+
+      '<button class="gostudy" type="button">去学习 ›</button></div>';});
+    body+='</div></div>';
+  });
+  const tip=subj?('当天「'+subj+'」任务，勾完点外面关闭即可。'):'当天的语数英任务，勾完点外面关闭即可。';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>'+dateStr+' · '+day.week+'</h3><div style="font-size:13px;color:var(--sub);margin-bottom:8px">'+tip+'</div>'+body);
+  const blocks=document.querySelectorAll("#sheet .subjgrp .tfocus");
+  let gi=0;
+  groups.forEach(([name,cls,fn])=>{
+    const ts=day.tasks.filter(fn);if(!ts.length)return;
+    const tf=blocks[gi];gi++;
+    ts.forEach((t,ti)=>{
+      const id=taskId(day.date,t);const row=tf.children[ti];
+      const span=row.querySelector(".chk");const label=row.querySelector("label");
+      function update(){const on=S.checked[id];span.className="chk"+(on?" on":"");span.innerHTML=on?checkSvg:"";row.classList.toggle("done",on);}
+      function toggle(ev){if(ev)ev.stopPropagation();const on=!S.checked[id];setDone(id,day.date,t,on);update();if(on&&earlyDay(day.date))toast("✨ 发现隐藏加成 ×2 🌟");feedbackAfterToggle(day.date);}
+      span.onclick=toggle;label.onclick=()=>toggle();
+      const g=row.querySelector(".gostudy");const tg=taskTarget(t);if(tg)g.onclick=e=>{e.stopPropagation();tg();};
+    });
+  });
+}
+
+/* modal */
+function showSheet(html){$("#sheet").innerHTML=html;$("#modal").classList.add("show");}
+function closeSheet(){$("#modal").classList.remove("show");}
+$("#modal").onclick=e=>{if(e.target===$("#modal"))closeSheet();};
+
+/* 发音 */
+function speak(txt){if(!txt)return;try{
+  const u=new SpeechSynthesisUtterance(txt);u.lang="en-US";u.rate=.9;
+  const vs=speechSynthesis.getVoices();const en=vs.find(v=>/en[-_]/i.test(v.lang));if(en)u.voice=en;
+  speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+
+/* toast */
+let toastT;
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1600);}
+
+/* 撒花 */
+function maybeConfetti(){
+  const total=Object.keys(S.checked).filter(k=>S.checked[k]).length;
+  if(total>0 && total%10===0)confetti();
+}
+function confetti(){const cv=$("#confetti");cv.width=innerWidth;cv.height=innerHeight;const x=cv.getContext("2d");
+  const cols=["#9bb88c","#b8d4aa","#e8b87d","#e8a8b8","#8fa8d6"];const ps=[];
+  for(let i=0;i<80;i++)ps.push({x:Math.random()*cv.width,y:-10,vy:2+Math.random()*3,c:cols[i%cols.length],s:4+Math.random()*4,r:Math.random()*6});
+  let f=0;function loop(){f++;x.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.y+=p.vy;p.x+=Math.sin((p.y+p.r*20)/20);x.fillStyle=p.c;x.fillRect(p.x,p.y,p.s,p.s);});
+    if(f<160)requestAnimationFrame(loop);else x.clearRect(0,0,cv.width,cv.height);}loop();
+}
+
+/* 番茄钟 */
+let tm=25*60,timerInt=null;
+function tshow(){const m=Math.floor(tm/60),s=tm%60;$("#timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");}
+$("#tStart").onclick=()=>{if(timerInt){clearInterval(timerInt);timerInt=null;$("#tStart").textContent="继续";toast("已暂停");}
+  else{timerInt=setInterval(()=>{tm--;tshow();if(tm<=0){clearInterval(timerInt);timerInt=null;$("#tStart").textContent="开始";tm=25*60;tshow();beep();toast("⏰ 时间到，休息一下！");}},1000);$("#tStart").textContent="暂停";}};
+$("#tReset").onclick=()=>{clearInterval(timerInt);timerInt=null;tm=25*60;tshow();$("#tStart").textContent="开始";};
+function beep(){try{const a=new AudioContext();const o=a.createOscillator();o.frequency.value=880;o.connect(a.destination);o.start();setTimeout(()=>o.stop(),300);}catch(e){}}
+
+/* 导航 */
+function goto(sec){document.querySelectorAll(".nav-btn,.bottom-tab button").forEach(b=>b.classList.toggle("active",b.dataset.sec===sec));
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  $("#sec-"+sec).classList.add("active");
+  const names={home:"今日概览",chinese:"语文",math:"数学",english:"英语",reward:"我的奖励"};
+  $("#pageTitle").textContent=names[sec]||"学习台";
+  if(sec==="chinese")renderChinese();if(sec==="math")renderMath();if(sec==="english")renderEnglish();if(sec==="reward")renderReward();
+  window.scrollTo(0,0);
+  }
+document.querySelectorAll(".nav-btn,.bottom-tab button").forEach(b=>b.onclick=()=>goto(b.dataset.sec));
+
+/* 护眼 / 字号 */
+function applyFs(){document.documentElement.style.setProperty("--fs",S.fs+"px");}
+function applyEye(){document.body.classList.toggle("eye",S.eye);$("#btnEye").textContent=S.eye?"标准":"护眼";}
+$("#btnEye").onclick=()=>{S.eye=!S.eye;save(S);applyEye();};
+$("#btnFsU").onclick=()=>{S.fs=Math.min(22,S.fs+1);save(S);applyFs();};
+$("#btnFsD").onclick=()=>{S.fs=Math.max(13,S.fs-1);save(S);applyFs();};
+
+/* 设置 */
+$("#btnSet").onclick=()=>{
+  let mp='<div class="mascot-pick">';
+  MASCOTS.forEach((m,i)=>{mp+='<div class="mp'+(i===(S.mascot||0)?' on':'')+'" onclick="S.mascot='+i+';save(S);paintMascot();document.querySelectorAll(\'.mascot-pick .mp\').forEach(e=>e.classList.remove(\'on\'));this.classList.add(\'on\');toast(\'已换成：'+MASCOT_NAMES[i]+'\')">'+m+'<span>'+MASCOT_NAMES[i]+'</span></div>';});
+  mp+='</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>设置</h3>'+
+  '<div class="sub">形象（点一下切换，首页/侧栏都会变）</div>'+mp+
+  '<div class="sub">我的 OC（上传你画的小人，陪你一起学习）</div>'+
+  '<div class="set-row"><span>OC 名字</span><input type="text" id="suOcName" value="'+escapeHtml(S.oc_name)+'"><button class="tbtn" onclick="S.oc_name=document.getElementById(\'suOcName\').value.trim()||\'衔阳\';save(S);toast(\'已保存\')">保存</button></div>'+
+  '<div class="set-row"><button class="tbtn" onclick="uploadOC()">上传我的 OC 图片</button>'+
+  '<button class="tbtn" onclick="S.oc_img=\'\';save(S);paintMascot();toast(\'已恢复默认形象\')">用默认形象</button></div>'+
+  '<div class="set-row"><span>OC 装扮</span><button class="tbtn" onclick="openOutfitStore()">给'+escapeHtml(S.oc_name)+'换装扮</button></div>'+
+  '<div class="set-row"><span>数学课网址</span><input type="text" id="suMath" value="'+S.math_url+'"></div>'+
+  '<div class="set-row"><button class="tbtn" onclick="S.math_url=document.getElementById(\'suMath\').value.trim();save(S);toast(\'已保存\');closeSheet();renderMath();">保存数学课网址</button></div>'+
+  '<div class="set-row"><span>家长密码(4位)</span><input type="password" id="suPw" value="'+S.parent_pw+'"></div>'+
+  '<div class="set-row"><button class="tbtn" onclick="S.parent_pw=document.getElementById(\'suPw\').value.trim()||\'1234\';save(S);toast(\'已保存\');closeSheet();">保存密码</button></div>'+
+  '<div class="set-row"><span>奖励目录</span><button class="tbtn" onclick="openRewardEditor()">管理奖励目录</button></div>'+
+  '<div class="set-row"><span>同步 Token</span><input type="text" id="suTok" value="'+escapeHtml(localStorage.getItem(GH_TOKEN_KEY)||"")+'" placeholder="github_pat_..."><button class="tbtn" onclick="localStorage.setItem(GH_TOKEN_KEY,document.getElementById(\'suTok\').value.trim());CLOUD.ghToken=localStorage.getItem(GH_TOKEN_KEY);if(initCloud()&&familyCode()){cloudSave(familyCode(),S);}toast(\'同步 Token 已保存，\'+(CLOUD_READY?\'云端已开启 ✓\':\'未开启(先填家庭码)\'))">保存</button></div>'+
+  '<div class="set-row"><span>家庭码</span><input type="text" id="suCode" value="'+escapeHtml(familyCode())+'" placeholder="未设置"><button class="tbtn" onclick="setFamilyCode(document.getElementById(\'suCode\').value.trim());if(familyCode()){S=applyDefaults(loadLocal());renderAll();}toast(\'家庭码已保存，重新打开以同步\')">保存</button></div>'+
+  '<div class="hint" style="margin-top:10px">手机使用：浏览器打开本页 → 点右上角 ⋮ → 「添加到主屏幕」，即可像 APP 一样使用。<br>多设备同步：4 台设备输入<strong>同一个家庭码</strong>，并在「设置 → 同步 Token」粘贴一次 GitHub 令牌后自动云端同步（令牌仅存本机，不会上传）。</div>');};
+
+/* 家长视图 */
+$("#btnParent").onclick=openParentView;
+function openParentView(){
+  const pw=prompt("请输入家长密码（默认1234）：");if(pw!==S.parent_pw){toast("密码错误");return;}
+  let done=0,total=0,over=[];
+  DATA.plan.forEach(d=>d.tasks.forEach(t=>{total++;if(isDone(d.date,t))done++;else{const t0=dateObj(d.date),now=dateObj(todayStr());if(t0<now)over.push(d.date);}}));
+  const pct=total?Math.round(done/total*100):0;
+  const w=weeklyStats();const badges=Object.keys(S.badges).filter(k=>S.badges[k]).length;
+  const code=familyCode();
+  const sync=CLOUD_READY&&code?"已开启云端同步（"+code+"）":(code?"家庭码 "+code+"（未配置云端，仅本机）":"未设置家庭码（本机模式）");
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>家长视图</h3>'+
+    '<div class="pv-grid"><div class="pv-stat"><b>'+done+'/'+total+'</b><span>已完成任务</span></div>'+
+    '<div class="pv-stat"><b>'+pct+'%</b><span>总进度</span></div>'+
+    '<div class="pv-stat"><b>'+w.streak+'</b><span>连续打卡(天)</span></div>'+
+    '<div class="pv-stat"><b>'+S.points+'</b><span>累计积分</span></div></div>'+
+    '<div class="pv-bar"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="note">本周完成 '+w.done+' 项 · 提前 '+w.early+' 天 · 本周积分 '+w.pts+'</div>'+
+    (over.length?'<div class="note" style="background:#fff0f2"><b>逾期未完成的日期</b>：'+[...new Set(over)].join("、")+'</div>':'<div class="note">全部日期按时完成，太棒了！</div>')+
+    '<div class="pv-row"><span>已解锁徽章</span><span>'+badges+' / '+(typeof BADGES!=="undefined"?BADGES.length:0)+'</span></div>'+
+    '<div class="note">在手机 / 电脑浏览器打开同一链接，输入相同家庭码，即可实时查看以上进度。</div>'+
+    '<div class="pv-code">'+sync+'</div>');
+}
+
+/* 数据备份 */
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="邓斯予学习台备份_"+todayStr()+".json";a.click();URL.revokeObjectURL(a.href);
+  toast("备份已导出");
+}
+function importData(){
+  const inp=document.createElement("input");inp.type="file";inp.accept="application/json";
+  inp.onchange=()=>{const f=inp.files[0];if(!f)return;const r=new FileReader();
+    r.onload=()=>{try{const d=JSON.parse(r.result);S={...S,...d};save(S);location.reload();}catch(e){toast("文件格式错误");}};
+    r.readAsText(f);};
+  inp.click();
+}
+function resetData(){if(confirm("确定清空所有学习进度？已勾选的记录会被删除且不可恢复。")){S.checked={};save(S);location.reload();}}
+
+/* ===== 奖励机制 ===== */
+function renderPoints(){
+  const p=S.points|0;
+  const a=$("#ptsPill");if(a)a.textContent="🌟 "+p;
+  const b=$("#rwPoints");if(b)b.textContent=p;
+}
+function renderReward(){
+  renderPoints();
+  const on=$("#rwOcName");if(on)on.textContent=S.oc_name;
+  renderOcGrow();renderBadges();renderWeekly();renderDream();renderEggs();
+  const box=$("#rewardHistory");if(!box)return;
+  if(!S.redeemed||!S.redeemed.length){box.innerHTML='还没有兑换记录哦～';return;}
+  box.innerHTML=S.redeemed.slice().reverse().map(r=>{
+    const d=new Date(r.t);const ds=(d.getMonth()+1)+'月'+d.getDate()+'日';
+    return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>'+escapeHtml(r.name)+'</span><span style="color:var(--sub);font-size:12px">'+ds+' · -'+r.cost+'分</span></div>';
+  }).join('');
+}
+function openRewardStore(){
+  let h='<button class="close" onclick="closeSheet()">×</button><h3>奖励柜 🌟</h3>'+
+    '<div class="rs-top">我的积分：<b id="rsPts">'+S.points+'</b> 分</div>'+
+    '<div class="hint">积分靠每天打卡积累，攒够就能给 <b>'+S.oc_name+'</b> 换装扮，或兑换你喜欢的东西～</div>'+
+    '<div class="rs-list">';
+  if(!S.rewards.length){h+='<div class="hint">还没有奖励，去「设置 → 管理奖励目录」添加吧～</div>';}
+  S.rewards.forEach((r,i)=>{
+    const can=S.points>=r.cost;
+    h+='<div class="rs-item"><div class="rs-name">'+escapeHtml(r.name)+'</div>'+
+       '<div class="rs-cost"><b>'+r.cost+'</b> 分</div>'+
+       '<button class="tbtn rs-btn'+(can?'':' off')+'" onclick="redeemReward('+i+')">兑换</button></div>';
+  });
+  h+='</div>';
+  h+='<div style="margin-top:16px"><div class="rs-top">给 '+S.oc_name+' 换装扮 ✨</div>'+outfitHtml()+'</div>';
+  if(S.redeemed.length){
+    h+='<div class="rs-hist"><b>已兑换</b>：'+S.redeemed.slice(-8).reverse().map(x=>escapeHtml(x.name)+'（'+x.cost+'分）').join('、')+'</div>';
+  }
+  showSheet(h);
+}
+function redeemReward(i){const r=S.rewards[i];if(!r)return;
+  if(S.points<r.cost){toast("积分不够，再攒攒～");return;}
+  S.points-=r.cost;S.redeemed.push({name:r.name,cost:r.cost,t:Date.now()});save(S);
+  toast("兑换成功："+r.name+" 🎉");confetti();renderPoints();openRewardStore();
+}
+function openRewardEditor(){
+  let h='<button class="close" onclick="closeSheet()">×</button><h3>奖励目录（家长设置）</h3>'+
+    '<div class="hint">孩子用积分兑换的奖励。名称写她喜欢的东西，积分按你定的价值填。</div>'+
+    '<div class="rs-edit" id="rsEdit">';
+  S.rewards.forEach((r,i)=>{
+    h+='<div class="re-row" data-i="'+i+'"><input class="re-name" value="'+escapeHtml(r.name)+'">'+
+       '<input class="re-cost" type="number" min="0" value="'+r.cost+'"><span>分</span>'+
+       '<button class="re-del" onclick="delReward('+i+')">×</button></div>';
+  });
+  h+='</div><div class="row" style="margin-top:10px">'+
+     '<button class="tbtn" onclick="addReward()">+ 添加奖励</button>'+
+     '<button class="tbtn" onclick="saveRewards()">保存目录</button>'+
+     '<button class="tbtn" style="color:var(--red)" onclick="resetPoints()">清零积分</button></div>';
+  showSheet(h);
+}
+function delReward(i){S.rewards.splice(i,1);save(S);openRewardEditor();}
+function addReward(){S.rewards.push({name:"新奖励",cost:100});save(S);openRewardEditor();}
+function saveRewards(){
+  const out=[];document.querySelectorAll("#rsEdit .re-row").forEach(r=>{
+    const n=r.querySelector(".re-name").value.trim();const c=parseInt(r.querySelector(".re-cost").value,10)||0;
+    if(n)out.push({name:n,cost:c});});
+  S.rewards=out;save(S);toast("奖励目录已保存");openRewardEditor();
+}
+function resetPoints(){if(!confirm("确定把积分清零？（已兑换记录保留）"))return;S.points=0;S.awarded={};save(S);renderPoints();toast("积分已清零");openRewardEditor();}
+
+/* ===== 奖励页增强：成就/成长/周报/梦想/彩蛋 ===== */
+function doneDates(){const set={};Object.keys(S.checked).forEach(k=>{if(S.checked[k])set[k.split("#")[0]]=true;});return set;}
+function currentStreak(){
+  const set=doneDates();
+  let d=dateObj(todayStr());
+  if(!set[todayStr()])d.setDate(d.getDate()-1); /* 今天还没打卡则从昨天往前数 */
+  let n=0;const key=x=>(x.getMonth()+1)+"月"+x.getDate()+"日";
+  while(set[key(d)]){n++;d.setDate(d.getDate()-1);}
+  return n;
+}
+function subjectAllClear(sub){let total=0,done=0;
+  DATA.plan.forEach(d=>d.tasks.forEach(t=>{if(t.subject===sub){total++;if(isDone(d.date,t))done++;}}));
+  return total>0&&total===done;}
+function allTasksClear(){let total=0,done=0;
+  DATA.plan.forEach(d=>d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}}));
+  return total>0&&total===done;}
+function evalBadges(){
+  const st=currentStreak();const r={};
+  r.streak3=st>=3;r.streak7=st>=7;r.streak14=st>=14;
+  r.early=!!S.firstEarly;
+  r.clearZ=subjectAllClear("语文");r.clearM=subjectAllClear("数学");r.clearE=subjectAllClear("英语");
+  r.allDone=allTasksClear();
+  return r;
+}
+function checkBadges(){
+  const r=evalBadges();
+  BADGES.forEach(b=>{ if(r[b.id]&&!S.badges[b.id]){S.badges[b.id]=true;save(S);toast("🏅 解锁成就："+b.name+"！");confetti();} });
+}
+function ocLevelInfo(){
+  const p=S.points;let idx=0;
+  for(let i=0;i<OC_LEVELS.length;i++){if(p>=OC_LEVELS[i].min)idx=i;}
+  const cur=OC_LEVELS[idx],nxt=OC_LEVELS[idx+1]||null;
+  const span=nxt?(nxt.min-cur.min):1;
+  const prog=nxt?Math.min(1,(p-cur.min)/span):1;
+  return {lv:idx+1,name:cur.name,next:nxt,prog,p};
+}
+function ocMood(){
+  let total=0,done=0;
+  DATA.plan.forEach(d=>d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}}));
+  const r=total?done/total:0;
+  if(r>=0.9)return "🤩 状态爆棚，衔阳为你骄傲！";
+  if(r>=0.6)return "😎 稳稳向前，继续保持～";
+  if(r>=0.3)return "🙂 在努力啦，慢慢来";
+  return "😴 还没开始？我陪你慢慢来";
+}
+function weekStartMonday(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x;}
+function weeklyStats(){
+  const ws=weekStartMonday(dateObj(todayStr())),we=new Date(ws);we.setDate(we.getDate()+7);
+  let done=0,total=0,early=0;
+  DATA.plan.forEach(d=>{const dd=dateObj(d.date);if(dd>=ws&&dd<we){
+    d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}});
+    if(dd>=ws&&dd<we&&earlyDay(d.date)){d.tasks.forEach(t=>{if(isDone(d.date,t))early++;});}
+  }});
+  let pts=0;Object.keys(S.dayPoints).forEach(dt=>{const dd=dateObj(dt);if(dd>=ws&&dd<we)pts+=(S.dayPoints[dt]||0);});
+  return {done,total,early,pts,streak:currentStreak()};
+}
+function fmtDate(s){const m=s&&s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);return m?(+m[2])+"月"+(+m[3])+"日":s;}
+
+/* —— 渲染各模块 —— */
+function renderOcGrow(){
+  const el=$("#ocGrowCard");if(!el)return;
+  const info=ocLevelInfo(),mood=ocMood(),pct=Math.round(info.prog*100);
+  const nextTxt=info.next?("还差 <b>"+(info.next.min-S.points)+"</b> 分升到「"+info.next.name+"」"):"已是最高级啦，衔阳永远陪你 💛";
+  el.innerHTML='<div class="og-top"><div class="og-avatar">'+ocFaceHtml(false)+'</div>'+
+    '<div class="og-info"><div class="og-name">'+escapeHtml(S.oc_name)+' · Lv.'+info.lv+'<span class="og-tag">'+info.name+'</span></div>'+
+    '<div class="og-mood">'+mood+'</div></div></div>'+
+    '<div class="lv-bar"><div class="lv-fill" style="width:'+pct+'%"></div></div>'+
+    '<div class="og-next">'+nextTxt+'</div>';
+}
+function renderBadges(){
+  const el=$("#badgeGrid");if(!el)return;const r=evalBadges();
+  el.innerHTML=BADGES.map(b=>{const got=S.badges[b.id]||r[b.id];
+    return '<div class="badge'+(got?' on':'')+'"><div class="b-icon">'+(got?b.icon:'🔒')+'</div>'+
+      '<div class="b-name">'+b.name+'</div><div class="b-desc">'+b.desc+'</div></div>';
+  }).join('');
+}
+function wkItem(label,val,unit){return '<div class="wk-item"><div class="wk-val">'+val+'<small>'+unit+'</small></div><div class="wk-lab">'+label+'</div></div>';}
+function renderWeekly(){
+  const el=$("#weeklyCard");if(!el)return;const w=weeklyStats();
+  if(w.total===0){el.innerHTML='<div class="wk-empty">本周（'+todayStr()+' 这周）还没有打卡数据～<br>从 '+fmtDate(DATA.start_date)+' 开始，每天打卡就会攒出小报啦！</div>';return;}
+  const rate=Math.round(w.done/w.total*100);
+  el.innerHTML='<div class="wk-grid">'+wkItem("完成",w.done+"/"+w.total,"项")+wkItem("提前",w.early,"天")+
+    wkItem("积分","+"+w.pts,"分")+wkItem("连续",w.streak,"天")+'</div>'+
+    '<div class="wk-bar"><div class="wk-fill" style="width:'+rate+'%"></div></div>'+
+    '<div class="wk-cap">本周完成率 '+rate+'% · 邓斯予，你超棒的！🌟</div>';
+}
+function renderDream(){
+  const el=$("#dreamCard");if(!el)return;const d=S.dream||{text:"",target:300};
+  const tgt=d.target>0?d.target:1,pct=Math.min(100,Math.round(S.points/tgt*100)),reached=S.points>=tgt;
+  el.innerHTML='<div class="dm-inputs">'+
+    '<input id="dreamText" class="re-name" placeholder="我最想兑换的大奖励，比如…" value="'+escapeHtml(d.text)+'">'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span>目标</span>'+
+    '<input id="dreamTarget" type="number" min="0" value="'+d.target+'" class="re-cost"><span>分</span></div>'+
+    '<button class="tbtn" style="margin-top:8px" onclick="saveDream()">保存梦想</button></div>'+
+    '<div class="dm-bar"><div class="dm-fill" style="width:'+pct+'%"></div></div>'+
+    '<div class="dm-cap">'+(reached?('🎉 积分已攒够「'+(d.text||'大奖励')+'」，可以实现啦！'):('已攒 '+S.points+' / '+d.target+' 分（'+pct+'%）'))+'</div>';
+}
+function renderEggs(){
+  const el=$("#eggList");if(!el)return;
+  if(!S.eggs.length){el.innerHTML='<div style="font-size:13px;color:var(--sub)">还没有彩蛋任务，点下面添加吧～</div>';return;}
+  el.innerHTML=S.eggs.map(e=>'<div class="egg-item'+(e.done?' done':'')+'" onclick="doEgg(\''+e.id+'\')">'+
+    '<span class="egg-ic">🥚</span><span class="egg-t">'+escapeHtml(e.text)+'</span>'+
+    '<span class="egg-p">+'+(e.pts||0)+'分</span>'+
+    (e.done?'<span class="egg-ok">✓</span>':'<span class="egg-x" onclick="event.stopPropagation();delEgg(\''+e.id+'\')">×</span>')+
+    '</div>').join('');
+}
+function saveDream(){const t=$("#dreamText").value.trim(),tg=parseInt($("#dreamTarget").value,10)||0;
+  S.dream={text:t,target:tg};save(S);renderReward();toast("梦想已记下 ✨");}
+function addEgg(){
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>添加彩蛋任务 🥚</h3>'+
+   '<div class="hint">写一个孩子完成会有惊喜积分的小任务，比如「主动整理书包」。</div>'+
+   '<input id="eggText" class="re-name" placeholder="任务内容" style="width:100%;margin-bottom:8px">'+
+   '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span>惊喜积分</span>'+
+   '<input id="eggPts" type="number" min="0" value="20" class="re-cost"><span>分</span></div>'+
+   '<button class="tbtn rw-go" onclick="saveEgg()">添加</button>');
+  setTimeout(()=>{const e=$("#eggText");if(e)e.focus();},60);
+}
+function saveEgg(){const t=$("#eggText").value.trim(),p=parseInt($("#eggPts").value,10)||0;
+  if(!t){toast("写点任务内容吧～");return;}
+  S.eggs.push({id:"egg"+Date.now(),text:t,pts:p,done:false});save(S);
+  toast("彩蛋已藏好 🥚");closeSheet();renderReward();}
+function doEgg(id){const e=S.eggs.find(x=>x.id===id);if(!e||e.done)return;
+  e.done=true;S.points+=e.pts;save(S);renderPoints();
+  toast("🥚 彩蛋达成！+"+e.pts+" 分 🎉");confetti();renderReward();}
+function delEgg(id){S.eggs=S.eggs.filter(x=>x.id!==id);save(S);renderReward();}
+
+/* 登录 / 云端引导 */
+function hideLogin(){const el=$("#loginScreen");if(el)el.style.display="none";}
+function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();tshow();
+  if($("#sec-reward").classList.contains("active"))renderReward();}
+async function boot(){
+  initCloud();
+  const code=familyCode();
+  if(code){
+    hideLogin();
+    if(CLOUD_READY){
+      const remote=await cloudLoad(code);
+      if(remote&&Object.keys(remote).length){S=applyDefaults(remote);saveLocal(S);renderAll();toast("已从云端同步 ✓");}
+    }
+  }
+}
+async function setupFamily(){
+  const v=($("#familyInput").value||"").trim();
+  if(!v){$("#loginNote").textContent="请输入家庭码";return;}
+  setFamilyCode(v);$("#loginNote").textContent="正在连接…";
+  initCloud();
+  if(CLOUD_READY){
+    const remote=await cloudLoad(v);
+    if(remote&&Object.keys(remote).length){S=applyDefaults(remote);saveLocal(S);renderAll();toast("已从云端同步 ✓");}
+    else{save(S);toast("已创建家庭："+v);}
+  }else{
+    S=applyDefaults(loadLocal());renderAll();
+    $("#loginNote").textContent="未配置云端，已用本机存储（家庭码："+v+"）";
+  }
+  setTimeout(hideLogin,900);
+}
+function skipFamily(){setFamilyCode("");hideLogin();}
+
+/* init */
+applyFs();applyEye();paintMascot();renderHome();renderFilm();tshow();
+boot();
+// 预载语音
+if('speechSynthesis'in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}
+// PWA：离线可用 + 可「添加到主屏幕」
+if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+</script>
+</body>
+</html>
