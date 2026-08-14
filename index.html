@@ -1610,7 +1610,7 @@ function openGrammar(i){const t=DATA.grammar_topics[i];
 function renderMath(){
   $("#mathUrlInput").value=S.math_url;
   $("#mathGo").onclick=()=>{if(S.math_url){window.open(S.math_url,"_blank");}else{toast("请先在设置里粘贴数学课网址");}};
-  $("#mathUrlSave").onclick=()=>{S.math_url=$("#mathUrlInput").value.trim();save(S);toast("已保存");};
+  $("#mathUrlSave").onclick=()=>{S.math_url=$("#mathUrlInput").value.trim();save(S);toast(CAN_PUSH?"已保存并同步 ✓":"已存本机，请在「设置→同步Token」填令牌才会同步到其他设备");};
   renderSubjectTasks("#mathTasks","数学");
 }
 
@@ -1780,7 +1780,7 @@ $("#btnSet").onclick=()=>{
   '<button class="tbtn" onclick="S.oc_img=\'\';save(S);paintMascot();toast(\'已恢复默认形象\')">用默认形象</button></div>'+
   '<div class="set-row"><span>OC 装扮</span><button class="tbtn" onclick="openOutfitStore()">给'+escapeHtml(S.oc_name)+'换装扮</button></div>'+
   '<div class="set-row"><span>数学课网址</span><input type="text" id="suMath" value="'+S.math_url+'"></div>'+
-  '<div class="set-row"><button class="tbtn" onclick="S.math_url=document.getElementById(\'suMath\').value.trim();save(S);toast(\'已保存\');closeSheet();renderMath();">保存数学课网址</button></div>'+
+  '<div class="set-row"><button class="tbtn" onclick="S.math_url=document.getElementById(\'suMath\').value.trim();save(S);toast(CAN_PUSH?\'已保存并同步 ✓\':\'已存本机，填同步Token后才会同步到其他设备\');closeSheet();renderMath();">保存数学课网址</button></div>'+
   '<div class="set-row"><span>家长密码(4位)</span><input type="password" id="suPw" value="'+S.parent_pw+'"></div>'+
   '<div class="set-row"><button class="tbtn" onclick="S.parent_pw=document.getElementById(\'suPw\').value.trim()||\'1234\';save(S);toast(\'已保存\');closeSheet();">保存密码</button></div>'+
   '<div class="set-row"><span>奖励目录</span><button class="tbtn" onclick="openRewardEditor()">管理奖励目录</button></div>'+
@@ -2026,14 +2026,28 @@ function hideLogin(){const el=$("#loginScreen");if(el)el.style.display="none";}
 function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();tshow();
   if($("#sec-reward").classList.contains("active"))renderReward();}
 /* 自动拉取：定时 + 切回页面时，从云端取最新（以 _ts 判断，仅当云端更新才覆盖本机） */
+/* 云端合并：配置类字段（数学链接/OC/装扮等）以云端为准；打卡/积分做并集，谁都不丢 */
+function mergeCloudIntoLocal(local, remote){
+  const out = applyDefaults(remote);   // 云端为基底
+  let localHadExtra=false;
+  const lc = (local&&local.checked)||{}, oc = out.checked = out.checked||{};
+  for(const k in lc){ if(lc[k] && !oc[k]){ oc[k]=true; localHadExtra=true; } }
+  if((local&&local.points||0) > (out.points||0)){ out.points=local.points; localHadExtra=true; }
+  const la = (local&&local.awarded)||{}, oa = out.awarded = out.awarded||{};
+  for(const k in la){ if(la[k] && !oa[k]){ oa[k]=la[k]; localHadExtra=true; } }
+  if((local&&local.dayPoints||0) > (out.dayPoints||0)){ out.dayPoints=local.dayPoints; localHadExtra=true; }
+  return {state:out, localHadExtra};
+}
 async function pullCloud(){
   const code=familyCode();
   if(!CAN_PULL || !code) return;
   const remote=await cloudLoad(code);
-  if(remote && (remote._ts||0) > (S._ts||0)){
-    S=applyDefaults(remote); saveLocal(S); renderAll();
-    toast("已同步云端 ✓");
-  }
+  if(!remote) return;
+  const before=JSON.stringify(S);
+  const merged=mergeCloudIntoLocal(S, remote);
+  S=merged.state; saveLocal(S); renderAll();
+  if(merged.localHadExtra && CAN_PUSH){ cloudSave(code, S); }   // 本机有独有打卡则回写云端
+  if(before!==JSON.stringify(S)) toast("已同步云端 ✓");
 }
 async function boot(){
   initCloud();
@@ -2042,7 +2056,12 @@ async function boot(){
     hideLogin();
     if(CAN_PULL){
       const remote=await cloudLoad(code);
-      if(remote&&Object.keys(remote).length){S=applyDefaults(remote);saveLocal(S);renderAll();toast("已从云端同步 ✓");}
+      if(remote&&Object.keys(remote).length){
+        const merged=mergeCloudIntoLocal(applyDefaults(loadLocal()), remote);
+        S=merged.state; saveLocal(S); renderAll();
+        if(merged.localHadExtra && CAN_PUSH) cloudSave(code, S);
+        toast("已从云端同步 ✓");
+      } else if(CAN_PUSH){ save(S); }
     }
   }
   if(!window.__syncTimer){            // 自动同步：每 25 秒 + 切回页面时拉取
@@ -2057,7 +2076,12 @@ async function setupFamily(){
   initCloud();
   if(CAN_PULL){
     const remote=await cloudLoad(v);
-    if(remote&&Object.keys(remote).length){S=applyDefaults(remote);saveLocal(S);renderAll();toast("已从云端同步 ✓");}
+    if(remote&&Object.keys(remote).length){
+      const merged=mergeCloudIntoLocal(applyDefaults(loadLocal()), remote);
+      S=merged.state; saveLocal(S); renderAll();
+      if(merged.localHadExtra && CAN_PUSH) cloudSave(v, S);
+      toast("已从云端同步 ✓");
+    }
     else if(CAN_PUSH){ save(S); toast("已创建家庭："+v); }
     else { S=applyDefaults(loadLocal()); renderAll(); toast("已连云端（只读），打卡设备填 Token 后才会同步"); }
   }else{
