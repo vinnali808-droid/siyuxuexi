@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>邓斯予 · 小升初暑假作业学习台</title>
 <meta name="theme-color" content="#9bb88c">
 <link rel="manifest" href="manifest.webmanifest">
@@ -777,7 +779,7 @@ async function cloudLoad(code){
       if(!r.ok){ console.warn("cloudLoad 失败", r.status); return null; }
       const j=await r.json();
       if(!j || !j.length) return null;
-      return j[0].state;   // 远端完整状态（jsonb）
+      window.__lastSyncAt=Date.now(); window.__syncErr=null; return j[0].state;   // 远端完整状态（jsonb）
     }
     const path="state/"+encodeURIComponent(code)+".json";
     const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}`;   // 与 PUT 一致，均用默认分支，避免 ?ref 分支歧义导致读不到刚写的内容
@@ -789,7 +791,7 @@ async function cloudLoad(code){
     const j=await r.json();
     const txt=decodeURIComponent(escape(atob(j.content.replace(/\s/g,""))));
     return JSON.parse(txt);
-  }catch(e){ console.warn("cloudLoad 失败", e); return null; }
+  }catch(e){ window.__syncErr="读取云端失败: "+((e&&e.message)||e); console.warn("cloudLoad 失败", e); return null; }
 }
 /* 写入串行 + 合并 + 退避重试：每次推送前先拉云端与本机合并（per-entry last-write-wins），避免互相覆盖 */
 let _saveChain = Promise.resolve();
@@ -802,10 +804,10 @@ function cloudSave(code, state){
     for(let i=0;i<6;i++){
       const remote = await cloudLoad(code);            // 推前先拉，合并他人改动（含取消）
       const toPush = remote ? mergeCloudIntoLocal(remote, st).state : st;
-      if(await _putOnce(code, toPush)) return true;
+      if(await _putOnce(code, toPush)){ window.__lastSyncAt=Date.now(); window.__syncErr=null; return true; }
       await new Promise(r=>setTimeout(r, 250*(i+1)));
     }
-    console.warn("cloudSave 重试耗尽"); return false;
+    window.__syncErr="云端写入失败（重试耗尽，可能网络不通或 Supabase 项目被暂停）"; console.warn("cloudSave 重试耗尽"); return false;
   });
   _saveChain = run.catch(()=>{});
   return run;
@@ -825,8 +827,8 @@ async function _putOnce(code, state){
     const body=JSON.stringify({code, state, updated_at:new Date().toISOString()});
     const put=await fetch(url,{method:"POST",headers,body});
     if(put.ok || put.status===201 || put.status===204) return true;
-    console.warn("cloudSave 失败", put.status); return false;
-  }catch(e){ console.warn("cloudSave 失败", e); return false; }
+    window.__syncErr="云端写入失败: HTTP "+put.status; console.warn("cloudSave 失败", put.status); return false;
+  }catch(e){ window.__syncErr="云端写入失败: "+((e&&e.message)||e); console.warn("cloudSave 失败", e); return false; }
 }
 
 /* 本地缓存按家庭码命名，避免多家庭串数据 */
@@ -1788,19 +1790,24 @@ $("#btnFsD").onclick=()=>{S.fs=Math.max(13,S.fs-1);save(S);applyFs();};
 /* 同步状态 & 手动同步 */
 function updateSyncStatus(){
   const el=document.getElementById("syncStatus"); if(!el) return;
-  const code=familyCode(); let s;
+  const code=familyCode(); let s, col="#0a7";
   if(!code) s="未设置家庭码（本机模式）";
-  else if(CLOUD_READY) s="已连接 ✓ 自动实时同步（"+code+"）";
+  else if(CLOUD_READY){
+    if(window.__syncErr){ s="已连接，但同步出错 ⚠️ "+window.__syncErr; col="#c00"; }
+    else if(window.__lastSyncAt){ const ago=Math.round((Date.now()-window.__lastSyncAt)/1000); s="已连接 ✓ 实时同步（"+code+"）· "+ago+"秒前成功"; }
+    else s="已连接 ✓ 自动实时同步（"+code+"）";
+  }
   else s="未连接云端（请填家庭码）";
-  el.textContent=s;
+  el.textContent=s; el.style.color=col;
+  if(!window.__syncStatusTimer){ window.__syncStatusTimer=setInterval(updateSyncStatus,5000); }
 }
 async function doSyncNow(){
   initCloud();
   if(!familyCode()){ toast("请先填家庭码"); return; }
   if(!CAN_PULL && !CAN_PUSH){ toast("未配置云端：请检查网络或家庭码"); return; }
-  toast("正在同步…"); await pullCloud();
-  if(CAN_PUSH){ save(S); toast("已同步 ✓"); } else { toast("已拉取云端（只读）"); }
-  updateSyncStatus();
+  window.__syncErr=null; toast("正在同步…"); await pullCloud();
+  if(CAN_PUSH){ await save(S); }
+  setTimeout(()=>{ updateSyncStatus(); if(window.__syncErr) toast("同步失败: "+window.__syncErr); else toast("已同步 ✓"); }, 1500);
 }
 /* 设置 */
 $("#btnSet").onclick=()=>{
