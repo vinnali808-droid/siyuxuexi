@@ -765,8 +765,9 @@ function initCloud(){
   return CLOUD_READY;
 }
 
-/* 多设备同步改为「每设备独立行」(family_rows: code+dev 复合主键)：
-   pull 时聚合所有设备的行，按条目取版本高者、配置取最新——彻底避免整行覆盖互相冲掉数据 */
+/* 多设备同步改为「旧表分片」方案（绕开 PostgREST 新表缓存 bug）：
+   每台设备写 family_state 中自己专属的一行：code = "家庭码-设备ID"。
+   pull 时把旧版遗留行（code=家庭码）和所有设备分片行聚合，按条目取版本高者、配置取最新——彻底避免整行覆盖。 */
 async function cloudLoadRows(code){
   window.__pullOk=false;
   if(!CAN_PULL){ window.__pullOk=true; return null; }
@@ -777,12 +778,17 @@ async function cloudLoadRows(code){
       return obj ? [{state:obj.get("state")||{}, updated_at:new Date().toISOString()}] : [];
     }
     if(CLOUD.provider==="supabase"){
-      const url=`${CLOUD.sbUrl}/rest/v1/family_rows?code=eq.${encodeURIComponent(code)}&select=state,updated_at&order=updated_at.asc`;
       const headers={apikey:CLOUD.sbKey, Authorization:"Bearer "+CLOUD.sbKey, Accept:"application/json"};
-      const r=await fetch(url,{headers});
-      if(r.status===404){ window.__pullOk=true; return []; }   // 云端确实无此家庭码：成功，仅为空
-      if(!r.ok){ console.warn("cloudLoadRows 失败", r.status); return null; }
-      const j=await r.json();
+      const base=`${CLOUD.sbUrl}/rest/v1/family_state`;
+      const legacyUrl=`${base}?code=eq.${encodeURIComponent(code)}&select=code,state`;
+      const shardUrl =`${base}?code=like.${encodeURIComponent(code)}-%25&select=code,state`;
+      const [r1,r2]=await Promise.all([fetch(legacyUrl,{headers}), fetch(shardUrl,{headers})]);
+      if(r1.status===404 && r2.status===404){ window.__pullOk=true; return []; }   // 云端确实无此家庭码：成功，仅为空
+      if(!r1.ok && r1.status!==404){ console.warn("cloudLoadRows legacy 失败", r1.status); return null; }
+      if(!r2.ok && r2.status!==404){ console.warn("cloudLoadRows shard 失败", r2.status); return null; }
+      const j1=r1.ok? await r1.json() : [];
+      const j2=r2.ok? await r2.json() : [];
+      const j=j1.concat(j2);
       window.__pullOk=true; window.__lastSyncAt=Date.now(); window.__syncErr=null;
       return Array.isArray(j)? j : [];
     }
@@ -804,7 +810,7 @@ async function cloudLoad(code){            // 兼容旧调用：返回聚合后�
   if(rows===null) return null;
   return rows.length? aggregateStates(rows) : null;
 }
-/* 写入串行 + 退避重试：直接 upsert 本设备这一行（code+dev 主键），绝不覆盖其他设备的数据 */
+/* 写入串行 + 退避重试：直接 upsert 本设备专属行（code=家庭码-设备ID），绝不覆盖其他设备的数据 */
 let _saveChain = Promise.resolve();
 let _savePending = null;
 function cloudSave(code, state){
@@ -829,11 +835,11 @@ async function _putOnce(code, state){
       if(!obj){ obj=new AV.Object("FamilyState"); obj.set("code", code); }
       obj.set("state", state); await obj.save(); return true;
     }
-    // supabase：upsert 只写「本设备这一行」(code+dev 主键)，绝不覆盖其他设备的数据
-    const url=`${CLOUD.sbUrl}/rest/v1/family_rows`;
+    // supabase：upsert 只写本设备专属行（code=家庭码-设备ID），不覆盖其他设备，也不覆盖旧版遗留行
+    const url=`${CLOUD.sbUrl}/rest/v1/family_state`;
     const headers={apikey:CLOUD.sbKey, Authorization:"Bearer "+CLOUD.sbKey,
       "Content-Type":"application/json", Prefer:"resolution=merge-duplicates"};
-    const body=JSON.stringify({code, dev:DEV_ID, state, updated_at:new Date().toISOString()});
+    const body=JSON.stringify({code:code+"-"+DEV_ID, state, updated_at:new Date().toISOString()});
     const put=await fetch(url,{method:"POST",headers,body});
     if(put.ok || put.status===201 || put.status===204) return true;
     window.__syncErr="云端写入失败: HTTP "+put.status; console.warn("cloudSave 失败", put.status); return false;
