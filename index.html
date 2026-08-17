@@ -457,6 +457,8 @@ html,body{overflow-x:clip}
 .login-skip{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--sub);font-size:13px;
   text-decoration:underline;cursor:pointer;font-family:inherit}
 .login-note{font-size:12px;color:var(--red);min-height:16px;margin:8px 0 0}
+.login-screen{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(45,35,22,.5);backdrop-filter:blur(3px)}
+.login-screen.show{display:flex}
 
 /* 家长视图 */
 .pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
@@ -2064,7 +2066,8 @@ function doEgg(id){const e=S.eggs.find(x=>x.id===id);if(!e||e.done)return;
 function delEgg(id){S.eggs=S.eggs.filter(x=>x.id!==id);save(S);renderReward();}
 
 /* 登录 / 云端引导 */
-function hideLogin(){const el=$("#loginScreen");if(el)el.style.display="none";}
+function hideLogin(){const el=$("#loginScreen");if(el){el.style.display="none";el.classList.remove("show");}}
+function showLogin(){const el=$("#loginScreen");if(el){el.style.display="flex";el.classList.add("show");const f=$("#familyInput");if(f)setTimeout(()=>{try{f.focus();}catch(e){}},60);}}
 function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();renderMath();tshow();
   if($("#sec-reward").classList.contains("active"))renderReward();}
 /* 自动拉取：定时 + 切回页面时，从云端取最新（以 _ts 判断，仅当云端更新才覆盖本机） */
@@ -2124,6 +2127,7 @@ async function boot(){
     window.__syncTimer=setInterval(pullCloud,5000);
     document.addEventListener("visibilitychange",()=>{ if(!document.hidden) pullCloud(); });
   }
+  if(!familyCode()) showLogin();      // 无家庭码才稳定弹出引导（已记住则直接进学习台，不闪）
 }
 async function setupFamily(){
   const v=($("#familyInput").value||"").trim();
