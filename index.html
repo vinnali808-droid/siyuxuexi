@@ -765,38 +765,46 @@ function initCloud(){
   return CLOUD_READY;
 }
 
-/* 云端读写：以“家庭码”为唯一键，4 台设备共享同一份数据 */
-async function cloudLoad(code){
-  if(!CAN_PULL){ window.__pullOk=true; return null; }   // 未配置拉取（只读）不算失败
+/* 多设备同步改为「每设备独立行」(family_rows: code+dev 复合主键)：
+   pull 时聚合所有设备的行，按条目取版本高者、配置取最新——彻底避免整行覆盖互相冲掉数据 */
+async function cloudLoadRows(code){
   window.__pullOk=false;
+  if(!CAN_PULL){ window.__pullOk=true; return null; }
   try{
     if(CLOUD.provider==="leancloud"){
       const q=new AV.Query("FamilyState"); q.equalTo("code", code);
-      const obj=await q.first(); window.__pullOk=true; return obj ? obj.get("state") : null;
+      const obj=await q.first(); window.__pullOk=true;
+      return obj ? [{state:obj.get("state")||{}, updated_at:new Date().toISOString()}] : [];
     }
     if(CLOUD.provider==="supabase"){
-      const url=`${CLOUD.sbUrl}/rest/v1/family_state?code=eq.${encodeURIComponent(code)}&select=state`;
+      const url=`${CLOUD.sbUrl}/rest/v1/family_rows?code=eq.${encodeURIComponent(code)}&select=state,updated_at&order=updated_at.asc`;
       const headers={apikey:CLOUD.sbKey, Authorization:"Bearer "+CLOUD.sbKey, Accept:"application/json"};
       const r=await fetch(url,{headers});
-      if(r.status===404){ window.__pullOk=true; return null; }   // 云端确实无此家庭码：拉取成功，仅为空
-      if(!r.ok){ console.warn("cloudLoad 失败", r.status); return null; }
+      if(r.status===404){ window.__pullOk=true; return []; }   // 云端确实无此家庭码：成功，仅为空
+      if(!r.ok){ console.warn("cloudLoadRows 失败", r.status); return null; }
       const j=await r.json();
-      if(!j || !j.length){ window.__pullOk=true; return null; }
-      window.__lastSyncAt=Date.now(); window.__syncErr=null; window.__pullOk=true; return j[0].state;   // 远端完整状态（jsonb）
+      window.__pullOk=true; window.__lastSyncAt=Date.now(); window.__syncErr=null;
+      return Array.isArray(j)? j : [];
     }
+    window.__pullOk=true;
     const path="state/"+encodeURIComponent(code)+".json";
     const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}`;   // 与 PUT 一致，均用默认分支，避免 ?ref 分支歧义导致读不到刚写的内容
     const headers={Accept:"application/vnd.github+json"};
     if(CLOUD.ghToken) headers.Authorization="Bearer "+CLOUD.ghToken;   // 有 token 才带，公开读可不带
     const r=await fetch(url,{headers});
-    if(r.status===404) return null;
+    if(r.status===404) return [];
     if(!r.ok){ console.warn("cloudLoad 失败", r.status); return null; }
     const j=await r.json();
     const txt=decodeURIComponent(escape(atob(j.content.replace(/\s/g,""))));
-    return JSON.parse(txt);
-  }catch(e){ window.__syncErr="读取云端失败: "+((e&&e.message)||e); console.warn("cloudLoad 失败", e); return null; }
+    return [{state:JSON.parse(txt), updated_at:new Date().toISOString()}];
+  }catch(e){ window.__syncErr="读取云端失败: "+((e&&e.message)||e); console.warn("cloudLoadRows 失败", e); return null; }
 }
-/* 写入串行 + 合并 + 退避重试：每次推送前先拉云端与本机合并（per-entry last-write-wins），避免互相覆盖 */
+async function cloudLoad(code){            // 兼容旧调用：返回聚合后的完整 state（无行时返回 null）
+  const rows=await cloudLoadRows(code);
+  if(rows===null) return null;
+  return rows.length? aggregateStates(rows) : null;
+}
+/* 写入串行 + 退避重试：直接 upsert 本设备这一行（code+dev 主键），绝不覆盖其他设备的数据 */
 let _saveChain = Promise.resolve();
 let _savePending = null;
 function cloudSave(code, state){
@@ -805,14 +813,7 @@ function cloudSave(code, state){
   const run = _saveChain.catch(()=>{}).then(async ()=>{
     const st = _savePending; _savePending = null;
     for(let i=0;i<6;i++){
-      const remote = await cloudLoad(code);            // 推前先拉，合并他人改动（含取消）
-      if(window.__pullOk===false && remote===null){    // 拉取出错：绝不用本地覆盖云端，否则会冲掉他人打卡（保命）
-        window.__syncErr="云端读取失败，已跳过上传以免覆盖他人数据（稍后自动重试）";
-        console.warn("cloudSave 跳过：拉取出错，不覆盖云端");
-        return false;
-      }
-      const toPush = remote ? mergeCloudIntoLocal(remote, st).state : st;
-      if(await _putOnce(code, toPush)){ window.__lastSyncAt=Date.now(); window.__syncErr=null; return true; }
+      if(await _putOnce(code, st)){ window.__lastSyncAt=Date.now(); window.__syncErr=null; return true; }
       await new Promise(r=>setTimeout(r, 250*(i+1)));
     }
     window.__syncErr="云端写入失败（重试耗尽，可能网络不通或 Supabase 项目被暂停）"; console.warn("cloudSave 重试耗尽"); return false;
@@ -828,11 +829,11 @@ async function _putOnce(code, state){
       if(!obj){ obj=new AV.Object("FamilyState"); obj.set("code", code); }
       obj.set("state", state); await obj.save(); return true;
     }
-    // supabase：PostgREST upsert（按 code 主键，存在则更新整行）
-    const url=`${CLOUD.sbUrl}/rest/v1/family_state`;
+    // supabase：upsert 只写「本设备这一行」(code+dev 主键)，绝不覆盖其他设备的数据
+    const url=`${CLOUD.sbUrl}/rest/v1/family_rows`;
     const headers={apikey:CLOUD.sbKey, Authorization:"Bearer "+CLOUD.sbKey,
       "Content-Type":"application/json", Prefer:"resolution=merge-duplicates"};
-    const body=JSON.stringify({code, state, updated_at:new Date().toISOString()});
+    const body=JSON.stringify({code, dev:DEV_ID, state, updated_at:new Date().toISOString()});
     const put=await fetch(url,{method:"POST",headers,body});
     if(put.ok || put.status===201 || put.status===204) return true;
     window.__syncErr="云端写入失败: HTTP "+put.status; console.warn("cloudSave 失败", put.status); return false;
@@ -2103,16 +2104,48 @@ function mergeCloudIntoLocal(local, remote){
   out.points = Math.max(local&&local.points||0, remote&&remote.points||0);
   return {state:out, localHadExtra};
 }
+/* 聚合多设备的行：打卡逐条目取版本号高者；积分取最大；配置类（OC/数学网址/装扮/头像等）取更新时间最新者 */
+function aggregateStates(rows){
+  const out=applyDefaults({});
+  const cfg={};                                   // field -> {at, val}
+  const SKIP=new Set(["checked","points","awarded","dayPoints","_v","_ts"]);
+  for(const r of (rows||[])){
+    const s=applyDefaults(r.state||{}); const at=r.updated_at? Date.parse(r.updated_at)||0 : 0;
+    for(const k in (s.checked||{})){
+      const cv=normCheck(s.checked[k]); const ex=out.checked[k]?normCheck(out.checked[k]):null;
+      if(!ex || cv.v>ex.v) out.checked[k]=s.checked[k];
+    }
+    out.points=Math.max(out.points, s.points||0);
+    if(s.awarded) Object.assign(out.awarded, s.awarded);
+    if(s.dayPoints) for(const d in s.dayPoints) out.dayPoints[d]=Math.max(out.dayPoints[d]||0, s.dayPoints[d]||0);
+    out._v=Math.max(out._v||0, s._v||0);
+    for(const k in s){ if(SKIP.has(k)) continue; const v=s[k]; if(v!==undefined&&v!==null&&v!==""){ if(!cfg[k]||at>cfg[k].at) cfg[k]={at,val:v}; } }
+  }
+  for(const k in cfg) out[k]=cfg[k].val;
+  return out;
+}
 async function pullCloud(){
   const code=familyCode();
   if(!CAN_PULL || !code) return;
-  const remote=await cloudLoad(code);
-  if(!remote) return;
-  const before=JSON.stringify(S);
-  const merged=mergeCloudIntoLocal(S, remote);
-  S=merged.state; saveLocal(S); renderAll();
-  if(merged.localHadExtra && CAN_PUSH){ cloudSave(code, S); }   // 本机有独有打卡则回写云端
-  if(before!==JSON.stringify(S)) toast("已同步云端 ✓");
+  const rows=await cloudLoadRows(code);
+  if(rows===null) return;                       // 拉取失败
+  const before=JSON.stringify([S.checked,S.points,S.awarded,S.oc_img]);
+  const merged=aggregateStates([...rows, {state:S, updated_at:new Date().toISOString()}]);
+  S=merged; saveLocal(S); renderAll();
+  if(CAN_PUSH) cloudSave(code, S);              // 回写本设备行（独立行，安全，不会冲掉他人）
+  if(before!==JSON.stringify([S.checked,S.points,S.awarded,S.oc_img])) toast("已同步云端 ✓");
+}
+function syncFromCloud(code, alsoPush){          // boot / setupFamily 共用的「拉所有行+聚合(含本地)」逻辑
+  return (async()=>{
+    const rows=await cloudLoadRows(code);
+    if(rows===null) return false;                // 拉取失败
+    const merged=aggregateStates([...rows, {state:applyDefaults(loadLocal()), updated_at:new Date().toISOString()}]);
+    const before=JSON.stringify([S.checked,S.points,S.awarded,S.oc_img]);
+    S=merged; saveLocal(S); renderAll();
+    if(CAN_PUSH && alsoPush) cloudSave(code, S);
+    if(before!==JSON.stringify([S.checked,S.points,S.awarded,S.oc_img])) toast("已从云端同步 ✓");
+    return true;
+  })();
 }
 async function boot(){
   initCloud();
@@ -2120,16 +2153,11 @@ async function boot(){
   if(code){
     hideLogin();
     if(CAN_PULL){
-      const remote=await cloudLoad(code);
-      if(remote&&Object.keys(remote).length){
-        const merged=mergeCloudIntoLocal(applyDefaults(loadLocal()), remote);
-        S=merged.state; saveLocal(S); renderAll();
-        if(merged.localHadExtra && CAN_PUSH) cloudSave(code, S);
-        toast("已从云端同步 ✓");
-      } else if(CAN_PUSH){ save(S); }
+      const ok=await syncFromCloud(code, CAN_PUSH);
+      if(!ok && CAN_PUSH){ save(S); }            // 拉取失败但有写权限：先把本地推上去（独立行安全）
     }
   }
-  if(!window.__syncTimer){            // 自动同步：每 25 秒 + 切回页面时拉取
+  if(!window.__syncTimer){            // 自动同步：每 5 秒 + 切回页面时拉取
     window.__syncTimer=setInterval(pullCloud,5000);
     document.addEventListener("visibilitychange",()=>{ if(!document.hidden) pullCloud(); });
   }
@@ -2141,20 +2169,13 @@ async function setupFamily(){
   setFamilyCode(v);$("#loginNote").textContent="正在连接…";
   initCloud();
   if(CAN_PULL){
-    const remote=await cloudLoad(v);
-    if(remote&&Object.keys(remote).length){
-      const merged=mergeCloudIntoLocal(applyDefaults(loadLocal()), remote);
-      S=merged.state; saveLocal(S); renderAll();
-      if(merged.localHadExtra && CAN_PUSH) cloudSave(v, S);
-      toast("已从云端同步 ✓");
-    }
-    else if(CAN_PUSH){ save(S); toast("已创建家庭："+v); }
-    else { S=applyDefaults(loadLocal()); renderAll(); toast("已连云端（只读），打卡设备填 Token 后才会同步"); }
+    const ok=await syncFromCloud(v, CAN_PUSH);
+    if(!ok && CAN_PUSH){ save(S); toast("已创建家庭："+v); }
+    else if(!CAN_PUSH){ S=applyDefaults(loadLocal()); renderAll(); toast("已连云端（只读），打卡设备填 Token 后才会同步"); }
   }else{
     S=applyDefaults(loadLocal());renderAll();
     $("#loginNote").textContent="未配置云端，已用本机存储（家庭码："+v+"）";
-  }
-  setTimeout(hideLogin,900);
+  }  setTimeout(hideLogin,900);
 }
 function skipFamily(){setFamilyCode("");hideLogin();}
 
