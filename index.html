@@ -767,21 +767,22 @@ function initCloud(){
 
 /* 云端读写：以“家庭码”为唯一键，4 台设备共享同一份数据 */
 async function cloudLoad(code){
-  if(!CAN_PULL) return null;
+  if(!CAN_PULL){ window.__pullOk=true; return null; }   // 未配置拉取（只读）不算失败
+  window.__pullOk=false;
   try{
     if(CLOUD.provider==="leancloud"){
       const q=new AV.Query("FamilyState"); q.equalTo("code", code);
-      const obj=await q.first(); return obj ? obj.get("state") : null;
+      const obj=await q.first(); window.__pullOk=true; return obj ? obj.get("state") : null;
     }
     if(CLOUD.provider==="supabase"){
       const url=`${CLOUD.sbUrl}/rest/v1/family_state?code=eq.${encodeURIComponent(code)}&select=state`;
       const headers={apikey:CLOUD.sbKey, Authorization:"Bearer "+CLOUD.sbKey, Accept:"application/json"};
       const r=await fetch(url,{headers});
-      if(r.status===404) return null;
+      if(r.status===404){ window.__pullOk=true; return null; }   // 云端确实无此家庭码：拉取成功，仅为空
       if(!r.ok){ console.warn("cloudLoad 失败", r.status); return null; }
       const j=await r.json();
-      if(!j || !j.length) return null;
-      window.__lastSyncAt=Date.now(); window.__syncErr=null; return j[0].state;   // 远端完整状态（jsonb）
+      if(!j || !j.length){ window.__pullOk=true; return null; }
+      window.__lastSyncAt=Date.now(); window.__syncErr=null; window.__pullOk=true; return j[0].state;   // 远端完整状态（jsonb）
     }
     const path="state/"+encodeURIComponent(code)+".json";
     const url=`https://api.github.com/repos/${CLOUD.ghRepo}/contents/${path}`;   // 与 PUT 一致，均用默认分支，避免 ?ref 分支歧义导致读不到刚写的内容
@@ -805,6 +806,11 @@ function cloudSave(code, state){
     const st = _savePending; _savePending = null;
     for(let i=0;i<6;i++){
       const remote = await cloudLoad(code);            // 推前先拉，合并他人改动（含取消）
+      if(window.__pullOk===false && remote===null){    // 拉取出错：绝不用本地覆盖云端，否则会冲掉他人打卡（保命）
+        window.__syncErr="云端读取失败，已跳过上传以免覆盖他人数据（稍后自动重试）";
+        console.warn("cloudSave 跳过：拉取出错，不覆盖云端");
+        return false;
+      }
       const toPush = remote ? mergeCloudIntoLocal(remote, st).state : st;
       if(await _putOnce(code, toPush)){ window.__lastSyncAt=Date.now(); window.__syncErr=null; return true; }
       await new Promise(r=>setTimeout(r, 250*(i+1)));
