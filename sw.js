@@ -1,7 +1,6 @@
-/* 学习台 Service Worker：缓存静态资源，断网也能打开；联网自动更新 */
-const CACHE = "desk-v0814";
+/* 学习台 Service Worker：图片离线缓存；HTML 永远走网络拿最新，保证多设备同步版本一致 */
+const CACHE = "desk-v0817";
 const ASSETS = [
-  "./",
   "oc_xianyang_q.png",
   "oc_xianyang_full.png",
   "manifest.webmanifest"
@@ -26,6 +25,20 @@ self.addEventListener("fetch", (e) => {
   if (url.hostname.includes("api.github.com") || url.hostname.includes("cdn.jsdelivr.net") || e.request.method !== "GET") {
     return; // 交给浏览器正常网络请求
   }
+  // HTML 文档（导航请求 / .html / 根路径）：network-first，保证永远拿到线上最新版，
+  // 多设备同步时不会卡在旧 Service Worker 缓存里
+  const isHtml = e.request.mode === "navigate" || url.pathname.endsWith(".html") || url.pathname === "/";
+  if (isHtml) {
+    e.respondWith(
+      fetch(e.request).then((resp) => {
+        const cp = resp.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, cp).catch(() => {}));
+        return resp;
+      }).catch(() => caches.match(e.request).then((r) => r || caches.match("./")))
+    );
+    return;
+  }
+  // 其余静态资源（图片等）：cache-first，断网也能显示
   e.respondWith(
     caches.match(e.request).then((r) =>
       r || fetch(e.request).then((resp) => {
