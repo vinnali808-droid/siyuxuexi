@@ -11,10 +11,10 @@
 <link rel="apple-touch-icon" href="oc_xianyang_q.png">
 <style>
 :root{
-  --cream:#f6f3ec;
-  --cream-2:#e5e1d8;
-  --card:#ffffff;
-  --green:#9bb88c;
+  --cream:#f4f1e8;
+  --cream-2:#e5e0d2;
+  --card:#fffaf2;
+  --green:#8fa880;
   --green-d:#7a9e6b;
   --green-l:#e6eedf;
   --beige:#e8dcc6;
@@ -22,7 +22,7 @@
   --pink-d:#c98a9a;
   --ink:#3d3d3d;
   --sub:#8a8a8a;
-  --line:#e8e4da;
+  --line:#e5e0d2;
   --ok:#8fb881;
   --warn:#e8b87d;
   --red:#d67a7a;
@@ -34,7 +34,6 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",Roboto,"Microsoft YaHei",sans-serif;
   font-size:var(--fs);color:var(--ink);background:var(--cream);min-height:100vh;line-height:1.55}
-body.eye{--cream:#f4f1e8;--card:#fffaf2;--line:#e5e0d2;--green:#8fa880}
 a{color:var(--green-d);text-decoration:none}
 html,body{overflow-x:clip}
 .app{display:flex;min-height:100vh;min-width:0}
@@ -75,21 +74,13 @@ html,body{overflow-x:clip}
 .card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 
-/* 首页 hero 并排 */
-.hero-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin-bottom:14px}
-.home-head{flex:1;min-width:0;display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px 16px;box-shadow:var(--shadow)}
-.home-head .ava{display:none}
-.home-head .titles{flex:1;min-width:0}
-.home-head .titles h1{font-size:22px;font-weight:900;color:#3d5a3a;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.5px}
-.home-head .titles p{display:none}
-.wave{display:none}
-
-/* 首页时钟（紧凑） */
-.hero-clock-card{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#e6eedf,#f3eee6);border-radius:20px;padding:10px 14px;
+/* 首页时钟（占满一行，手机端完整展示） */
+.hero-row{display:flex;margin-bottom:14px}
+.hero-clock-card{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#e6eedf,#f3eee6);border-radius:20px;padding:12px 16px;
   box-shadow:var(--shadow);border:1px solid var(--line)}
-.hero-clock-card .hc-ic{width:34px;height:34px;border-radius:11px;background:#fff;display:grid;place-items:center;flex:0 0 34px;box-shadow:var(--shadow)}
-.big-clock{font-variant-numeric:tabular-nums;font-size:21px;font-weight:800;color:var(--ink);letter-spacing:1px;line-height:1}
-.clock-meta{font-size:11px;color:var(--sub);margin-top:2px}
+.hero-clock-card .hc-ic{width:38px;height:38px;border-radius:12px;background:#fff;display:grid;place-items:center;flex:0 0 38px;box-shadow:var(--shadow)}
+.big-clock{font-variant-numeric:tabular-nums;font-size:26px;font-weight:800;color:var(--ink);letter-spacing:1px;line-height:1;white-space:nowrap}
+.clock-meta{font-size:12px;color:var(--sub);margin-top:3px}
 
 /* 好朋友金句气泡 */
 .buddy{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid #ecdce3;border-radius:20px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:14px}
@@ -224,16 +215,22 @@ html,body{overflow-x:clip}
 
 /* 移动端始终显示左侧导航轨 */
 @media(max-width:820px){
-  .sidebar{width:72px;padding:12px 0 10px}
-  .avatar-top{width:40px;height:40px;border-radius:13px;margin-bottom:14px}
-  .nav-btn{width:58px;padding:8px 1px;font-size:10px}
-  .nav-btn .ic{width:26px;height:26px;border-radius:10px}
-  .content{padding:12px 12px 80px}
-  .big-clock{font-size:18px;letter-spacing:1px}
-  .home-head .titles h1{font-size:18px}
+  .sidebar{width:76px;padding:12px 0 10px}
+  .avatar-top{width:42px;height:42px;border-radius:14px;margin-bottom:12px}
+  .nav-rail{gap:4px}
+  .nav-btn{width:64px;padding:8px 1px;font-size:11px}
+  .nav-btn .ic{width:28px;height:28px;border-radius:10px}
+  .content{padding:12px 10px 96px}
+  .big-clock{font-size:23px;letter-spacing:.5px}
+  .tbtn{padding:10px 16px;font-size:14px;border-radius:14px}
+  .topbar{gap:8px}
+  .topbar h1{font-size:17px}
   .buddy .face{width:42px;height:42px;flex:0 0 42px}
   .stat{min-width:80px;padding:12px 6px}
   .ring{width:56px;height:56px}
+  .set-row{gap:8px}
+  .set-row input[type=text],.set-row input[type=password]{padding:11px;font-size:15px}
+  .card{padding:14px;border-radius:18px}
 }
 
 .celebrate{display:none;background:linear-gradient(135deg,#9bb88c,#b8d4aa);color:#fff;border-radius:18px;padding:14px 16px;margin-bottom:14px;
@@ -514,7 +511,7 @@ html,body{overflow-x:clip}
 </div>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-  <div class="avatar-top"><svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+  <div class="avatar-top" onclick="openOcSettings()" style="cursor:pointer" title="我的 OC"><svg width="28" height="28" viewBox="0 0 100 100" fill="none">
   <circle cx="50" cy="50" r="45" fill="#fff"/>
   <circle cx="35" cy="42" r="5" fill="#3d3d3d"/>
   <circle cx="65" cy="42" r="5" fill="#3d3d3d"/>
@@ -527,11 +524,10 @@ html,body{overflow-x:clip}
     <button class="nav-btn" data-sec="chinese"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>语文</button>
     <button class="nav-btn" data-sec="math"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span>数学</button>
     <button class="nav-btn" data-sec="english"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></span>英语</button>
+    <button class="nav-btn" data-sec="film"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M7 4v16M17 4v16M2 9h5M2 15h5M17 9h5M17 15h5"/></svg></span>纪录片</button>
     <button class="nav-btn" data-sec="reward"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>奖励</button>
-  </div>
-  <div class="side-foot">
-    <button class="mini-btn" id="btnParent">家长</button>
-    <button class="mini-btn" id="btnSet">设置</button>
+    <button class="nav-btn" data-sec="parent"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>家长</button>
+    <button class="nav-btn" data-sec="set"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>设置</button>
   </div>
 </aside>
   <main class="content">
@@ -540,22 +536,13 @@ html,body{overflow-x:clip}
       <span class="sub" id="pageSub"></span>
       <span class="clock-pill" id="clock">--:--</span>
       <span class="pts-pill" id="ptsPill">🌟 0</span>
-      <button class="tbtn" id="btnEye">护眼</button>
-      <button class="tbtn" id="btnFsD">A−</button>
-      <button class="tbtn" id="btnFsU">A+</button>
     </div>
 
     <!-- 首页 -->
     <section class="section active" id="sec-home">
       <div class="hero-row">
-        <div class="home-head">
-          <div class="titles">
-            <h1 id="heroDate">Hi，邓斯予</h1>
-          </div>
-        </div>
-
         <div class="hero-clock-card">
-          <div class="hc-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7a9e6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div class="hc-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7a9e6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
           <div>
             <div class="big-clock" id="bigClock">--:--:--</div>
             <div class="clock-meta" id="clockMeta">--月--日</div>
@@ -615,21 +602,6 @@ html,body{overflow-x:clip}
         <h2><span class="dot"></span>学习日历</h2>
         <div class="dtable" id="dtable"></div>
       </div>
-
-      <div class="card">
-        <h2><span class="dot"></span>《如果国宝会说话》观看安排</h2>
-        <div id="filmBox"></div>
-      </div>
-
-      <div class="card">
-        <h2><span class="dot"></span>数据备份</h2>
-        <div style="font-size:13px;color:var(--sub);margin-bottom:10px">点击导出把学习进度存成 JSON 文件，换设备或误清数据后可导入恢复。</div>
-        <div class="row">
-          <button class="tbtn" onclick="exportData()">导出 JSON 备份</button>
-          <button class="tbtn" onclick="importData()">导入 JSON</button>
-          <button class="tbtn" style="color:var(--red)" onclick="resetData()">清空进度</button>
-        </div>
-      </div>
     </section>
 
     <!-- 语文 -->
@@ -679,6 +651,14 @@ html,body{overflow-x:clip}
       <div class="card">
         <h2><span class="dot"></span>英语学习模块（点开学习）</h2>
         <div class="mlist" id="enModules"></div>
+      </div>
+    </section>
+
+    <!-- 纪录片 -->
+    <section class="section" id="sec-film">
+      <div class="card">
+        <h2><span class="dot"></span>《如果国宝会说话》观看安排</h2>
+        <div id="filmBox"></div>
       </div>
     </section>
 
@@ -745,11 +725,6 @@ const $ = s=>document.querySelector(s);
 
 /* ============================================================
    云端同步配置（部署前把密钥填进来即可开启多端同步）
-   获取方式见 DEPLOY.md：LeanCloud 控制台 → 设置 → 应用凭证
-   填好 appId/appKey/server 后，把 enabled 改为 true
-   ============================================================ */
-/* ============================================================
-   云端同步配置（部署前把密钥填进来即可开启多端同步）
    支持两种后端，二选一：
    A) GitHub【推荐】—— 只需 1 个 GitHub 账号（托管+同步都用它）
       provider:"github" 时填 ghRepo / ghToken / ghBranch
@@ -776,7 +751,17 @@ let CAN_PULL = false;   // 能否从云端读取（公开仓库无需 token 即�
 let CAN_PUSH = false;   // 能否写入云端（需要 token）
 
 function familyCode(){ return localStorage.getItem(FAMILY_KEY) || ""; }
-function setFamilyCode(c){ localStorage.setItem(FAMILY_KEY, c||""); }
+function setFamilyCode(c){
+  const old=familyCode();
+  localStorage.setItem(FAMILY_KEY, c||"");
+  /* F2：改家庭码后，清理本设备在旧家庭码下留下的分片行（避免旧房间残留数据） */
+  if(old && old!==(c||"") && CLOUD.provider==="supabase"){
+    try{
+      const url=CLOUD.sbUrl+"/rest/v1/family_state?code=eq."+encodeURIComponent(old+"-"+DEV_ID);
+      fetch(url,{method:"DELETE",headers:{apikey:CLOUD.sbKey,Authorization:"Bearer "+CLOUD.sbKey}}).catch(()=>{});
+    }catch(e){}
+  }
+}
 
 function initCloud(){
   if(CLOUD.provider==="leancloud"){
@@ -1137,6 +1122,20 @@ function uploadOC(){
     r.readAsDataURL(f);};
   inp.click();
 }
+/* OC 设置二级页（点击侧栏头像进入） */
+function openOcSettings(){
+  let mp='<div class="mascot-pick">';
+  MASCOTS.forEach((m,i)=>{mp+='<div class="mp'+(i===(S.mascot||0)?' on':'')+'" onclick="S.mascot='+i+';save(S);paintMascot();document.querySelectorAll(\'.mascot-pick .mp\').forEach(e=>e.classList.remove(\'on\'));this.classList.add(\'on\');toast(\'已换成：'+MASCOT_NAMES[i]+'\')">'+m+'<span>'+MASCOT_NAMES[i]+'</span></div>';});
+  mp+='</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>我的 OC · '+escapeHtml(S.oc_name)+'</h3>'+
+  '<div class="sub">默认形象（点一下切换，侧栏/首页都会变）</div>'+mp+
+  '<div class="sub">我的 OC（上传你画的小人，陪你一起学习）</div>'+
+  '<div class="set-row"><span>OC 名字</span><input type="text" id="suOcName" value="'+escapeHtml(S.oc_name)+'"><button class="tbtn" onclick="S.oc_name=document.getElementById(\'suOcName\').value.trim()||\'衔阳\';save(S);toast(\'已保存\')">保存</button></div>'+
+  '<div class="set-row"><button class="tbtn" onclick="uploadOC()">上传我的 OC 图片</button>'+
+  '<button class="tbtn" onclick="S.oc_img=\'\';save(S);paintMascot();toast(\'已恢复默认形象\')">用默认形象</button></div>'+
+  '<div class="set-row"><span>OC 装扮</span><button class="tbtn" onclick="openOutfitStore()">给'+escapeHtml(S.oc_name)+'换装扮</button></div>'+
+  '<div class="hint">用积分给 TA 换装扮，攒够就能拥有更多小配饰～</div>');
+}
 /* OC 装扮柜 */
 function outfitHtml(){
   let s='<div class="rs-list">';
@@ -1300,9 +1299,7 @@ function quoteOfDay(){const idx=Math.floor(Date.now()/(12*3600*1000))%DATA.quote
 
 /* 渲染首页 */
 function renderHome(){
-  $("#heroDate").textContent = "Hi，邓斯予";
   renderBuddy();  /* OC 每日语录 */
-  const hs=$("#heroSub"); if(hs)hs.textContent="";
   renderCountdown();
   renderDtable();
   renderToday();
@@ -1851,22 +1848,22 @@ $("#tReset").onclick=()=>{clearInterval(timerInt);timerInt=null;tm=25*60;tshow()
 function beep(){try{const a=new AudioContext();const o=a.createOscillator();o.frequency.value=880;o.connect(a.destination);o.start();setTimeout(()=>o.stop(),300);}catch(e){}}
 
 /* 导航 */
-function goto(sec){document.querySelectorAll(".nav-btn,.bottom-tab button").forEach(b=>b.classList.toggle("active",b.dataset.sec===sec));
+function goto(sec){
+  if(sec==="parent"){openParentView();return;}
+  if(sec==="set"){openSettings();return;}
+  document.querySelectorAll(".nav-btn,.bottom-tab button").forEach(b=>b.classList.toggle("active",b.dataset.sec===sec));
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  $("#sec-"+sec).classList.add("active");
-  const names={home:"今日概览",chinese:"语文",math:"数学",english:"英语",reward:"我的奖励"};
+  const el=$("#sec-"+sec); if(!el)return;
+  el.classList.add("active");
+  const names={home:"今日概览",chinese:"语文",math:"数学",english:"英语",film:"纪录片",reward:"我的奖励"};
   $("#pageTitle").textContent=names[sec]||"学习台";
-  if(sec==="chinese")renderChinese();if(sec==="math")renderMath();if(sec==="english")renderEnglish();if(sec==="reward")renderReward();
+  if(sec==="chinese")renderChinese();if(sec==="math")renderMath();if(sec==="english")renderEnglish();if(sec==="reward")renderReward();if(sec==="film")renderFilm();
   window.scrollTo(0,0);
   }
 document.querySelectorAll(".nav-btn,.bottom-tab button").forEach(b=>b.onclick=()=>goto(b.dataset.sec));
 
-/* 护眼 / 字号 */
+/* 护眼 / 字号（已固定为护眼配色，按钮移除，仅保留字号变量） */
 function applyFs(){document.documentElement.style.setProperty("--fs",S.fs+"px");}
-function applyEye(){document.body.classList.toggle("eye",S.eye);$("#btnEye").textContent=S.eye?"标准":"护眼";}
-$("#btnEye").onclick=()=>{S.eye=!S.eye;save(S);applyEye();};
-$("#btnFsU").onclick=()=>{S.fs=Math.min(22,S.fs+1);save(S);applyFs();};
-$("#btnFsD").onclick=()=>{S.fs=Math.max(13,S.fs-1);save(S);applyFs();};
 
 /* 同步状态 & 手动同步 */
 function updateSyncStatus(){
@@ -1874,7 +1871,7 @@ function updateSyncStatus(){
   const code=familyCode(); let s, col="#0a7";
   if(!code) s="未设置家庭码（本机模式）";
   else if(CLOUD_READY){
-    if(window.__syncErr){ s="已连接，但同步出错 ⚠️ "+window.__syncErr; col="#c00"; }
+    if(window.__syncErr){ s="同步出错了：请检查网络后点「立即同步」重试"; col="#c00"; }
     else if(window.__lastSyncAt){ const ago=Math.round((Date.now()-window.__lastSyncAt)/1000); s="已连接 ✓ 实时同步（"+code+"）· "+ago+"秒前成功"; }
     else s="已连接 ✓ 自动实时同步（"+code+"）";
   }
@@ -1888,35 +1885,24 @@ async function doSyncNow(){
   if(!CAN_PULL && !CAN_PUSH){ toast("未配置云端：请检查网络或家庭码"); return; }
   window.__syncErr=null; toast("正在同步…"); await pullCloud();
   if(CAN_PUSH){ await save(S); }
-  setTimeout(()=>{ updateSyncStatus(); if(window.__syncErr) toast("同步失败: "+window.__syncErr); else toast("已同步 ✓"); }, 1500);
+  setTimeout(()=>{ updateSyncStatus(); if(window.__syncErr) toast("同步没成功：检查网络后点「立即同步」重试"); else toast("已同步 ✓"); }, 1500);
 }
-/* 设置 */
-$("#btnSet").onclick=()=>{
-  let mp='<div class="mascot-pick">';
-  MASCOTS.forEach((m,i)=>{mp+='<div class="mp'+(i===(S.mascot||0)?' on':'')+'" onclick="S.mascot='+i+';save(S);paintMascot();document.querySelectorAll(\'.mascot-pick .mp\').forEach(e=>e.classList.remove(\'on\'));this.classList.add(\'on\');toast(\'已换成：'+MASCOT_NAMES[i]+'\')">'+m+'<span>'+MASCOT_NAMES[i]+'</span></div>';});
-  mp+='</div>';
+/* 设置（家长/孩子通用：同步 + 数据备份 + 版本） */
+function openSettings(){
   showSheet('<button class="close" onclick="closeSheet()">×</button><h3>设置</h3>'+
-  '<div class="sub">形象（点一下切换，首页/侧栏都会变）</div>'+mp+
-  '<div class="sub">我的 OC（上传你画的小人，陪你一起学习）</div>'+
-  '<div class="set-row"><span>OC 名字</span><input type="text" id="suOcName" value="'+escapeHtml(S.oc_name)+'"><button class="tbtn" onclick="S.oc_name=document.getElementById(\'suOcName\').value.trim()||\'衔阳\';save(S);toast(\'已保存\')">保存</button></div>'+
-  '<div class="set-row"><button class="tbtn" onclick="uploadOC()">上传我的 OC 图片</button>'+
-  '<button class="tbtn" onclick="S.oc_img=\'\';save(S);paintMascot();toast(\'已恢复默认形象\')">用默认形象</button></div>'+
-  '<div class="set-row"><span>OC 装扮</span><button class="tbtn" onclick="openOutfitStore()">给'+escapeHtml(S.oc_name)+'换装扮</button></div>'+
-  '<div class="set-row"><span>数学课网址</span><input type="text" id="suMath" value="'+S.math_url+'"></div>'+
-  '<div class="set-row"><button class="tbtn" onclick="S.math_url=document.getElementById(\'suMath\').value.trim();save(S);toast(\'已保存并同步 ✓\');closeSheet();renderMath();">保存数学课网址</button></div>'+
-  '<div class="set-row"><span>家长密码(4位)</span><input type="password" id="suPw" value="'+S.parent_pw+'"></div>'+
-  '<div class="set-row"><button class="tbtn" onclick="S.parent_pw=document.getElementById(\'suPw\').value.trim()||\'1234\';save(S);toast(\'已保存\');closeSheet();">保存密码</button></div>'+
-  '<div class="set-row"><span>奖励目录</span><button class="tbtn" onclick="openRewardEditor()">管理奖励目录</button></div>'+
-  '<div class="set-row"><span>课表/任务</span><button class="tbtn" onclick="openPlanEditor()">管理课表与任务</button></div>'+
   '<div class="set-row"><span>同步密钥（可选·已内置）</span><input type="text" id="suTok" value="'+escapeHtml(localStorage.getItem(SB_KEY_LOCAL)||"")+'" placeholder="已内置，可留空"><button class="tbtn" onclick="localStorage.setItem(SB_KEY_LOCAL,document.getElementById(\'suTok\').value.trim());CLOUD.sbKey=localStorage.getItem(SB_KEY_LOCAL)||CLOUD.sbKey;initCloud();if(CAN_PUSH&&familyCode()){pullCloud();}updateSyncStatus();toast(\'同步密钥已保存，\'+(CLOUD_READY?\'云端已连 ✓\':\'未连接\'))">保存</button></div>'+
   '<div class="set-row"><span>家庭码</span><input type="text" id="suCode" value="'+escapeHtml(familyCode())+'" placeholder="未设置"><button class="tbtn" onclick="setFamilyCode(document.getElementById(\'suCode\').value.trim());initCloud();if(familyCode()){if(CAN_PULL){pullCloud();}else{S=applyDefaults(loadLocal());renderAll();}}updateSyncStatus();toast(\'家庭码已保存，\'+(CAN_PULL?\'已同步云端 ✓\':\'未配置 Token，仅本机\'))">保存</button></div>'+
   '<div class="set-row"><span>同步状态</span><span id="syncStatus" style="flex:1;font-size:13px;color:#0a7">—</span></div>'+
-  '<div class="set-row"><span>版本</span><span style="flex:1;font-size:13px;color:var(--sub)">v3.1 · 2026-08-18（撤销积分修复版）</span></div>'+
   '<div class="set-row"><button class="tbtn" onclick="doSyncNow()">立即同步</button><button class="tbtn" onclick="updateSyncStatus()">刷新状态</button></div>'+
-  '<div class="hint" style="margin-top:10px">手机使用：浏览器打开本页 → 点右上角 ⋮ → 「添加到主屏幕」，即可像 APP 一样使用。<br>多设备同步：4 台设备输入<strong>同一个家庭码</strong>，云端自动实时同步（约 5 秒刷一次），无需任何令牌。家庭码就是各设备数据的「房间号」，换设备只要填同一个家庭码即可看到相同进度。</div>');setTimeout(updateSyncStatus,30);};
+  '<div class="sub" style="margin-top:6px">数据备份（换设备或误清数据后可恢复）</div>'+
+  '<div class="set-row"><button class="tbtn" onclick="exportData()">导出 JSON 备份</button>'+
+  '<button class="tbtn" onclick="importData()">导入 JSON</button>'+
+  '<button class="tbtn" style="color:var(--red)" onclick="resetData()">清空进度</button></div>'+
+  '<div class="set-row"><span>版本</span><span style="flex:1;font-size:13px;color:var(--sub)">v3.2 · 2026-08-18（全面改版）</span></div>'+
+  '<div class="hint" style="margin-top:10px">手机使用：浏览器打开本页 → 点右上角 ⋮ → 「添加到主屏幕」，即可像 APP 一样使用。<br>多设备同步：多台设备输入<strong>同一个家庭码</strong>，云端自动实时同步（约 5 秒刷一次）。家庭码就是各设备数据的「房间号」。</div>');setTimeout(updateSyncStatus,30);
+}
 
-/* 家长视图 */
-$("#btnParent").onclick=openParentView;
+/* 家长视图（入口在左侧导航「家长」） */
 function openParentView(){
   const pw=prompt("请输入家长密码（默认1234）：");if(pw!==S.parent_pw){toast("密码错误");return;}
   let done=0,total=0,over=[];
@@ -1931,16 +1917,32 @@ function openParentView(){
       '<span style="flex:0 0 auto"><button class="tbtn" style="padding:2px 10px;font-size:12px;margin-right:6px" onclick="approveRedemption(\''+r.id+'\')">同意</button>'+
       '<button class="tbtn" style="padding:2px 10px;font-size:12px;color:var(--red)" onclick="denyRedemption(\''+r.id+'\')">拒绝</button></span></div>').join('')+
     '</div>'):'';
+  /* D1：今日完成情况 + 各科进度 */
+  const td=todayStr();
+  const tday=S.plan.find(d=>d.date===td);
+  let tDone=0,tTotal=0;
+  if(tday){const ts=realTasks(tday.tasks);tTotal=ts.length;tDone=ts.filter(t=>isDone(td,t)).length;}
+  const todayTxt=tday
+    ? (tTotal ? ('今日完成 <b>'+tDone+'/'+tTotal+'</b> 项'+(tDone===tTotal?' · <b style="color:#0a7">已全部完成 ✓</b>':' · 还有 <b style="color:#d67a7a">'+(tTotal-tDone)+'</b> 项没完成'))
+             : '今日无任务')
+    : '今日不是计划日';
+  function subjStat(subj){let a=0,b=0;S.plan.forEach(d=>realTasks(d.tasks).forEach(t=>{if(t.subject===subj){b++;if(isDone(d.date,t))a++;}}));return a+'/'+b;}
   showSheet('<button class="close" onclick="closeSheet()">×</button><h3>家长视图</h3>'+
+    '<div class="note" style="background:#eaf4e4">📌 '+todayTxt+'</div>'+
     '<div class="pv-grid"><div class="pv-stat"><b>'+done+'/'+total+'</b><span>已完成任务</span></div>'+
     '<div class="pv-stat"><b>'+pct+'%</b><span>总进度</span></div>'+
     '<div class="pv-stat"><b>'+w.streak+'</b><span>连续打卡(天)</span></div>'+
     '<div class="pv-stat"><b>'+netPoints()+'</b><span>累计积分</span></div></div>'+
     '<div class="pv-bar"><i style="width:'+pct+'%"></i></div>'+
-    '<div class="note">本周完成 '+w.done+' 项 · 提前 '+w.early+' 天 · 本周积分 '+w.pts+'</div>'+
+    '<div class="note">各科进度：语文 '+subjStat("语文")+' ｜ 数学 '+subjStat("数学")+' ｜ 英语 '+subjStat("英语")+'<br>本周完成 '+w.done+' 项 · 提前 '+w.early+' 天 · 本周积分 '+w.pts+'</div>'+
     (over.length?'<div class="note" style="background:#fff0f2"><b>逾期未完成的日期</b>：'+[...new Set(over)].join("、")+'</div>':'<div class="note">全部日期按时完成，太棒了！</div>')+
     pendBlock+
     '<div class="pv-row"><span>已解锁徽章</span><span>'+badges+' / '+(typeof BADGES!=="undefined"?BADGES.length:0)+'</span></div>'+
+    '<div class="sub" style="margin-top:8px">家长设置</div>'+
+    '<div class="set-row"><span>数学课网址</span><input type="text" id="suMath" value="'+escapeHtml(S.math_url)+'" placeholder="https://..."><button class="tbtn" onclick="S.math_url=document.getElementById(\'suMath\').value.trim();save(S);toast(\'已保存并同步 ✓\');renderMath();">保存</button></div>'+
+    '<div class="set-row"><span>家长密码(4位)</span><input type="password" id="suPw" value="'+S.parent_pw+'"><button class="tbtn" onclick="S.parent_pw=document.getElementById(\'suPw\').value.trim()||\'1234\';save(S);toast(\'已保存\');">保存</button></div>'+
+    '<div class="set-row"><span>奖励目录</span><button class="tbtn" onclick="openRewardEditor()">管理奖励目录</button></div>'+
+    '<div class="set-row"><span>课表/任务</span><button class="tbtn" onclick="openPlanEditor()">管理课表与任务</button></div>'+
     '<div class="note">在手机 / 电脑浏览器打开同一链接，输入相同家庭码，即可实时查看以上进度。</div>'+
     '<div class="pv-code">'+sync+'</div>');
 }
@@ -2345,7 +2347,8 @@ function renderEggs(){
   el.innerHTML=S.eggs.map(e=>'<div class="egg-item'+(e.done?' done':'')+'" onclick="doEgg(\''+e.id+'\')">'+
     '<span class="egg-ic">🥚</span><span class="egg-t">'+escapeHtml(e.text)+'</span>'+
     '<span class="egg-p">+'+(e.pts||0)+'分</span>'+
-    (e.done?'<span class="egg-ok">✓</span>':'<span class="egg-x" onclick="event.stopPropagation();delEgg(\''+e.id+'\')">×</span>')+
+    (e.done?'<span class="egg-ok">✓</span>':'<span class="egg-x" onclick="event.stopPropagation();delEgg(\''+e.id+'\')">×</span>'+
+      '<span class="egg-x" style="margin-right:2px" onclick="event.stopPropagation();editEgg(\''+e.id+'\')">✎</span>')+
     '</div>').join('');
 }
 function saveDream(){const t=$("#dreamText").value.trim(),tg=parseInt($("#dreamTarget").value,10)||0;
@@ -2367,11 +2370,23 @@ function doEgg(id){const e=S.eggs.find(x=>x.id===id);if(!e||e.done)return;
   e.done=true;S.points+=e.pts;save(S);renderPoints();
   toast("🥚 彩蛋达成！+"+e.pts+" 分 🎉");confetti();renderReward();}
 function delEgg(id){S.eggs=S.eggs.filter(x=>x.id!==id);save(S);renderReward();}
+function editEgg(id){const e=S.eggs.find(x=>x.id===id);if(!e)return;
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>编辑彩蛋任务 🥚</h3>'+
+   '<input id="eggTextE" class="re-name" value="'+escapeHtml(e.text)+'" placeholder="任务内容" style="width:100%;margin-bottom:8px">'+
+   '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span>惊喜积分</span>'+
+   '<input id="eggPtsE" type="number" min="0" value="'+(e.pts||0)+'" class="re-cost"><span>分</span></div>'+
+   '<button class="tbtn rw-go" onclick="saveEggEdit(\''+id+'\')">保存修改</button>');
+  setTimeout(()=>{const t=$("#eggTextE");if(t)t.focus();},60);
+}
+function saveEggEdit(id){const e=S.eggs.find(x=>x.id===id);if(!e)return;
+  const t=$("#eggTextE").value.trim(),p=parseInt($("#eggPtsE").value,10)||0;
+  if(!t){toast("写点任务内容吧～");return;}
+  e.text=t;e.pts=p;save(S);toast("彩蛋已更新 🥚");closeSheet();renderReward();}
 
 /* 登录 / 云端引导 */
 function hideLogin(){const el=$("#loginScreen");if(el){el.style.display="none";el.classList.remove("show");}}
 function showLogin(){const el=$("#loginScreen");if(el){el.style.display="flex";el.classList.add("show");const f=$("#familyInput");if(f)setTimeout(()=>{try{f.focus();}catch(e){}},60);}}
-function renderAll(){applyFs();applyEye();paintMascot();renderHome();renderFilm();renderMath();tshow();
+function renderAll(){applyFs();paintMascot();renderHome();renderFilm();renderMath();tshow();
   if($("#sec-reward").classList.contains("active"))renderReward();}
 /* 自动拉取：定时 + 切回页面时，从云端取最新（以 _ts 判断，仅当云端更新才覆盖本机） */
 /* 归一化单条打卡：旧布尔 true/false -> {on,t:0}；已是对象则原样 */
@@ -2485,8 +2500,10 @@ async function setupFamily(){
 }
 function skipFamily(){setFamilyCode("");hideLogin();}
 
-/* init */
-applyFs();applyEye();paintMascot();renderHome();renderFilm();tshow();
+/* init：首屏只渲染首页必需模块，纪录片等非首屏内容延迟到空闲再渲染（E2 首屏加速） */
+applyFs();paintMascot();renderHome();tshow();
+if('requestIdleCallback'in window) requestIdleCallback(()=>{renderFilm();renderMath();},{timeout:2000});
+else setTimeout(()=>{renderFilm();renderMath();},400);
 boot();
 // 预载语音
 if('speechSynthesis'in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}
