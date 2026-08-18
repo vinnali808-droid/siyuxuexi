@@ -287,6 +287,10 @@ html,body{overflow-x:clip}
 .tp-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .tp-title{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tp-sub{font-size:11px;color:var(--sub)}
+.tp-due{display:inline-block;margin-top:2px;font-size:11px;color:var(--sub);font-weight:700}
+.tp-due.over{color:var(--red)}
+.due-tag{font-size:12px;color:var(--sub);font-weight:700}
+.due-tag.over{color:var(--red)}
 .tp-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:#fff;flex:0 0 22px;background:transparent}
 .tp-chk.on{background:var(--green);border-color:var(--green)}
 .tpill.rest .tp-chk{visibility:hidden}
@@ -375,6 +379,14 @@ html,body{overflow-x:clip}
 .re-cost{width:74px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px}
 .re-row>span{color:var(--sub);font-size:13px}
 .re-del{width:30px;height:30px;border:none;border-radius:8px;background:#f3dede;color:var(--red);font-size:16px;cursor:pointer}
+/* 课表/任务编辑（B1） */
+.pe-sel{padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;background:var(--card);flex:1;min-width:140px}
+.pe-tasks{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.pe-row{border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--cream);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pe-row input,.pe-row select{padding:7px 8px;border:1px solid var(--line);border-radius:9px;font-size:13px;font-family:inherit;background:#fff;min-width:0}
+.pe-row .pe-time{width:96px}.pe-row .pe-sub{width:74px}.pe-row .pe-due{width:150px}
+.pe-row .pe-name{flex:1;min-width:160px}.pe-row .pe-std{flex:1;min-width:150px}.pe-row .pe-note{flex:1;min-width:150px}
+.pe-new{margin-top:8px;display:flex;flex-direction:column;gap:8px}
 /* OC 角色与装扮 */
 .avatar-top,.buddy .face{position:relative;overflow:hidden;border-radius:50%}
 .avatar-top img,.buddy .face img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
@@ -1040,11 +1052,11 @@ function paintMascot(){
 /* 今日 or 下一个计划日 */
 function targetDay(){
   const now=dateObj(todayStr());
-  const today=DATA.plan.find(d=>d.date===todayStr());
+  const today=S.plan.find(d=>d.date===todayStr());
   if(today) return {date:today.date, week:today.week, isToday:true, isFuture:false};
   let next=null;
-  for(const d of DATA.plan){ if(dateObj(d.date)>now){next=d;break;} }
-  if(!next && DATA.plan.length) next=DATA.plan[DATA.plan.length-1];
+  for(const d of S.plan){ if(dateObj(d.date)>now){next=d;break;} }
+  if(!next && S.plan.length) next=S.plan[S.plan.length-1];
   if(next) return {date:next.date, week:next.week, isToday:false, isFuture:dateObj(next.date)>now};
   return null;
 }
@@ -1059,18 +1071,18 @@ const OC_STATUS = {
 function ocStatusPool(day){
   const td=todayStr(), now=dateObj(td);
   if(day && dateObj(day)>now){               /* 提前打卡（完成未来某天的任务） */
-    const d=DATA.plan.find(x=>x.date===day);
-    return d ? (d.tasks.every(t=>isDone(day,t))?OC_STATUS.done:OC_STATUS.early) : OC_STATUS.early;
+    const d=S.plan.find(x=>x.date===day);
+    return d ? (realTasks(d.tasks).every(t=>isDone(day,t))?OC_STATUS.done:OC_STATUS.early) : OC_STATUS.early;
   }
-  const today=DATA.plan.find(d=>d.date===td);
+  const today=S.plan.find(d=>d.date===td);
   if(today){
-    const total=today.tasks.length,done=today.tasks.filter(t=>isDone(td,t)).length;
+    const ts=realTasks(today.tasks),total=ts.length,done=ts.filter(t=>isDone(td,t)).length;
     if(done===total && total>0) return OC_STATUS.done;
     if(done>0) return OC_STATUS.doing;
     return OC_STATUS.notStart;
   }
   let early=0;
-  DATA.plan.forEach(d=>{if(dateObj(d.date)>now)d.tasks.forEach(t=>{if(isDone(d.date,t))early++;});});
+  S.plan.forEach(d=>{if(dateObj(d.date)>now)realTasks(d.tasks).forEach(t=>{if(isDone(d.date,t))early++;});});
   return early>0 ? OC_STATUS.early : OC_STATUS.idle;
 }
 function randItem(a){return a[Math.floor(Math.random()*a.length)];}
@@ -1167,6 +1179,7 @@ function applyDefaults(o){   o=o||{}; o._v=(typeof o._v==="number")?o._v:0;
   o.firstEarly = o.firstEarly||false;/* 是否完成过提前打卡 */
   o.dream = o.dream||{text:"", target:300}; /* 梦想板 */
   o.eggs = o.eggs||[];              /* 彩蛋任务 [{id,text,pts,done}] */
+  o.plan = o.plan || JSON.parse(JSON.stringify(DATA.plan)); /* 可编辑课表：自定义任务/排期（默认种子为内置课表）；作为配置字段走聚合 last-write-wins，与 rewards 一致 */
   return o;
 }
 let S = applyDefaults(loadLocal());
@@ -1184,6 +1197,19 @@ function save(o){
 /* 任务 id */
 function taskId(day,task){return day+"#"+task.time+"#"+task.task;}
 function isDone(day,task){const c=S.checked[taskId(day,task)];return !!(c&&c.on);}
+/* 休息/流程类任务（午休、休息、晚饭休息、结束）：不参与打卡、不计入完成度与逾期 */
+function isRestTask(task){return task&&(task.type==="午休"||task.type==="休息"||task.type==="晚饭休息"||task.type==="结束");}
+function realTasks(ts){return (ts||[]).filter(t=>!isRestTask(t));}
+/* B2：任务是否逾期。优先看「截止日 due」，否则看排期日是否已过且未完成（休息类永不逾期） */
+function taskOver(day,task){
+  if(isRestTask(task)) return false;
+  const now=dateObj(todayStr()); if(!now) return false;
+  if(task.due){ const dt=dateObj(task.due); if(dt && dt<now) return !isDone(day,task); }
+  const dt=dateObj(day); return !!(dt && dt<now && !isDone(day,task));
+}
+/* 截止日展示：YYYY-MM-DD / M月D日 → M月D日 */
+function fmtDue(s){ if(!s) return ""; const m=s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/); if(m) return (+m[2])+"月"+(+m[3])+"日";
+  const m2=s.match(/(\d{1,2})月(\d{1,2})日/); if(m2) return s; return s; }
 
 /* 奖励积分：基础分 + 提前打卡双倍 */
 const POINT_BASE = 10;
@@ -1259,14 +1285,15 @@ function renderHome(){
 function renderDtable(){
   const box=$("#dtable");box.innerHTML="";
   let order=0;
-  DATA.plan.forEach(day=>{
-    const tasks=day.tasks;
+  S.plan.forEach(day=>{
+    const tasks=realTasks(day.tasks);
     const total=tasks.length;
     const done=tasks.filter(t=>isDone(day.date,t)).length;
     let cls="todo",badge="进行",bcls="b-todo";
     const t=dateObj(day.date);const now=dateObj(todayStr());
-    if(done===total){cls="done";badge="完成";bcls="b-done";}
-    else if(t<now){cls="over";badge="逾期";bcls="b-over";}
+    const dueOver=tasks.some(tt=>taskOver(day.date,tt));
+    if(done===total && !dueOver){cls="done";badge="完成";bcls="b-done";}
+    else if(t<now || dueOver){cls="over";badge="逾期";bcls="b-over";}
     const cell=document.createElement("div");
     cell.className="dcell "+cls;
     cell.innerHTML='<span class="badge '+bcls+'">'+badge+'</span><div class="d">'+day.date+'</div><div class="w">'+day.week+'</div>'+
@@ -1302,12 +1329,14 @@ function taskTarget(task){
 
 function taskRow(day,task,over,refreshHome){
   const id=taskId(day,task);
+  const over2=over||taskOver(day,task);
   const div=document.createElement("div");
-  div.className="task"+(over?" over":"")+(isDone(day,task)?" done":"")+(day===todayStr()&&isNow(task)?" now":"");
+  div.className="task"+(over2?" over":"")+(isDone(day,task)?" done":"")+(day===todayStr()&&isNow(task)?" now":"");
+  const dueMeta=(task.due)?('<span class="due-tag'+(over2?' over':'')+'">'+(over2?'⚠ 已逾期 · 截止 ':'截止 ')+fmtDue(task.due)+'</span> · '):'';
   div.innerHTML='<label><span class="chk'+(isDone(day,task)?" on":"")+'">'+(isDone(day,task)?checkSvg:"")+'</span>'+
     '<span><b>'+task.time+'</b> '+task.task+
     (task.subject&&task.subject!=="固定"?'<span class="tag">'+task.subject+'</span>':'')+
-    '<div class="meta">'+(task.standard?("完成标准："+task.standard+" ｜ "):"")+(task.note||"")+'</div></span></label>'+
+    '<div class="meta">'+dueMeta+(task.standard?("完成标准："+task.standard+" ｜ "):"")+(task.note||"")+'</div></span></label>'+
     '<button class="gostudy" type="button">去学习 ›</button>';
   const span=div.querySelector(".chk");
   const label=div.querySelector("label");
@@ -1330,15 +1359,18 @@ function shortTitle(s,max=14){if(!s)return"";return s.length>max?s.slice(0,max-1
 
 function taskPill(day,task,over){
   const done=isDone(day,task);
+  const over2=over||taskOver(day,task);
   const sub=(task.subject==="—"?"固定":(task.subject||"固定"));
   const isRest=(task.type==="午休"||task.type==="休息"||task.type==="晚饭休息"||task.type==="结束");
   const color={语文:"var(--green-d)",数学:"var(--blue)",英语:"var(--pink-d)",固定:"var(--beige)"}[sub]||"var(--sub)";
+  const dueTag=(task.due&&!done)?('<span class="tp-due'+(over2?' over':'')+'">'+(over2?'⚠ 逾期 ':'截止 ')+fmtDue(task.due)+'</span>'):'';
   const div=document.createElement("div");
-  div.className="tpill"+(done?" done":"")+(over?" over":"")+(isRest?" rest":"");
+  div.className="tpill"+(done?" done":"")+(over2?" over":"")+(isRest?" rest":"");
   div.innerHTML='<span class="tp-time">'+task.time.split('-')[0]+'</span>'+
     '<span class="tp-dot" style="background:'+color+'"></span>'+
     '<span class="tp-main">'+
       '<span class="tp-title">'+shortTitle(task.task)+(isRest?"":(" · "+sub))+'</span>'+
+      (dueTag?'<span class="tp-sub">'+dueTag+'</span>':'')+
     '</span>'+
     '<span class="tp-chk'+(done?" on":"")+'">'+(done?checkSvg:"")+'</span>';
   div.onclick=()=>{if(isRest)return;openTaskDetail(day,task);};
@@ -1353,12 +1385,15 @@ function openTaskDetail(day,task){
   const sub=(task.subject==="—"?"固定":(task.subject||"固定"));
   const color={语文:"var(--green-d)",数学:"var(--blue)",英语:"var(--pink-d)",固定:"var(--beige)"}[sub]||"var(--sub)";
   const tg=taskTarget(task);
+  const over=taskOver(day,task);
+  const dueHtml=(task.due)?('<div class="td-row"><b>截止日</b><p'+(over?' style="color:var(--red);font-weight:700"':'')+'>'+fmtDue(task.due)+(over?' · ⚠ 已逾期，尽快补卡':'')+'</p></div>'):'';
   let h='<button class="close" onclick="closeSheet()">×</button>'+
     '<div class="td-head"><span class="tp-dot" style="background:'+color+'"></span><h3 style="margin:0;font-size:19px">'+task.task+'</h3></div>'+
-    '<div class="au">'+task.time+' · '+sub+' · '+task.duration+'</div>'+
+    '<div class="au">'+task.time+' · '+sub+' · '+task.duration+(over?' · <span style="color:var(--red);font-weight:700">已逾期</span>':'')+'</div>'+
     '<div class="task-detail-card">'+
       (task.standard?'<div class="td-row"><b>完成标准</b><p>'+task.standard+'</p></div>':'')+
       (task.note?'<div class="td-row"><b>备注</b><p>'+task.note+'</p></div>':'')+
+      dueHtml+
     '</div>'+
     '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">'+
       '<button class="vbtn rate '+(done?'forgot':'know')+'" style="flex:1" onclick="toggleCurrentTaskDetail()">'+(done?'取消打卡':'打卡完成')+'</button>'+
@@ -1384,7 +1419,7 @@ function renderToday(){
   const t=targetDay();
   const tf=$(".tfocus h2"); if(tf)tf.innerHTML='<span class="dot"></span>'+(t&&t.isToday?"今日学习清单":"下一日学习清单");
   if(t){
-    const day=DATA.plan.find(d=>d.date===t.date);
+    const day=S.plan.find(d=>d.date===t.date);
     if(day){
       const wrap=document.createElement("div");wrap.className="tpill-wrap";
       day.tasks.forEach(tt=>wrap.appendChild(taskPill(day.date,tt)));
@@ -1396,8 +1431,8 @@ function renderToday(){
   if(now>=s){ /* 逾期未完成滚到今天（仅计划开始后） */
     let hasOver=false;
     const overWrap=document.createElement("div");overWrap.className="tpill-wrap";
-    DATA.plan.forEach(d=>{const dt=dateObj(d.date);
-      if(dt<now && d.date!==td){d.tasks.forEach(tt=>{if(!isDone(d.date,tt)){hasOver=true;overWrap.appendChild(taskPill(d.date,tt,true));}});}});
+    S.plan.forEach(d=>{const dt=dateObj(d.date);
+      if(dt<now && d.date!==td){d.tasks.forEach(tt=>{if(taskOver(d.date,tt)){hasOver=true;overWrap.appendChild(taskPill(d.date,tt,true));}});}});
     if(hasOver){
       const hint=document.createElement("div");hint.className="tp-oh";hint.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> 还有之前没完成的任务，点开补卡';
       box.appendChild(hint);box.appendChild(overWrap);
@@ -1407,13 +1442,13 @@ function renderToday(){
 
 function renderStats(){
   let total=0,done=0;
-  DATA.plan.forEach(d=>d.tasks.forEach(t=>{total++;if(isDone(d.date,t))done++;}));
+  S.plan.forEach(d=>realTasks(d.tasks).forEach(t=>{total++;if(isDone(d.date,t))done++;}));
   $("#stDone").textContent=done;
   $("#stPct").textContent=(total?Math.round(done/total*100):0)+"%";
   let streak=0; const now=dateObj(todayStr());
-  for(let i=DATA.plan.length-1;i>=0;i--){const d=DATA.plan[i];const t=dateObj(d.date);
+  for(let i=S.plan.length-1;i>=0;i--){const d=S.plan[i];const t=dateObj(d.date);
     if(t>now)continue;
-    const all=d.tasks.every(tt=>isDone(d.date,tt));
+    const all=realTasks(d.tasks).every(tt=>isDone(d.date,tt));
     if(all)streak++;else break;}
   $("#stStreak").textContent=streak;
   const pct=total?done/total:0;
@@ -1440,8 +1475,8 @@ function renderTodayRing(){
   const t=targetDay();
   const tv=$("#todayCount"),ts=$("#todayStatus");
   if(!t){tv.textContent="—";ts.textContent="暑假作业已全部完成，太棒啦！";ring.innerHTML="";return;}
-  const d=DATA.plan.find(x=>x.date===t.date);
-  const total=d.tasks.length,done=d.tasks.filter(tt=>isDone(t.date,tt)).length;
+  const d=S.plan.find(x=>x.date===t.date);
+  const tks=realTasks(d.tasks),total=tks.length,done=tks.filter(tt=>isDone(t.date,tt)).length;
   tv.textContent=done+"/"+total;
   ts.textContent=randItem(ocStatusPool());
   const pct=total?done/total:0,r=46,c=2*Math.PI*r;
@@ -1449,14 +1484,15 @@ function renderTodayRing(){
     '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="#9bb88c" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+(c*(1-pct))+'" transform="rotate(-90 60 60)"/>'+
     '<text x="60" y="66" text-anchor="middle" font-size="22" font-weight="800" fill="#7a9e6b">'+Math.round(pct*100)+'%</text>';
 }
-function updateCelebrate(){const td=todayStr();const d=DATA.plan.find(x=>x.date===td);
+function updateCelebrate(){const td=todayStr();const d=S.plan.find(x=>x.date===td);
   const el=$("#celebrate");if(!el||!d)return;
-  const done=d.tasks.filter(t=>isDone(td,t)).length;
-  el.classList.toggle("show",done===d.tasks.length&&d.tasks.length>0);}
+  const ts=realTasks(d.tasks);
+  const done=ts.filter(t=>isDone(td,t)).length;
+  el.classList.toggle("show",done===ts.length&&ts.length>0);}
 function feedbackAfterToggle(day){
   renderTodayRing();renderPoints();renderBuddy();flashStatusLine(day);
-  const d=DATA.plan.find(x=>x.date===day);if(!d)return;
-  const total=d.tasks.length,done=d.tasks.filter(t=>isDone(day,t)).length;
+  const d=S.plan.find(x=>x.date===day);if(!d)return;
+  const ts=realTasks(d.tasks),total=ts.length,done=ts.filter(t=>isDone(day,t)).length;
   if(done<total)toast("✓ +1");
   else{toast("全部完成！🎉");confetti();updateCelebrate();}
 }
@@ -1674,7 +1710,7 @@ function renderSubjectTasks(sel,subj){
     : subj==="英语"? t.subject==="英语"
     : /口算|数学课|习题/.test(t.task);
   const td=todayStr();
-  const day=DATA.plan.find(d=>d.date===td);
+  const day=S.plan.find(d=>d.date===td);
   const rows=[];
   if(day) day.tasks.filter(match).forEach(t=>rows.push({day:day.date,t}));
   if(rows.length){
@@ -1687,7 +1723,7 @@ function renderSubjectTasks(sel,subj){
   const hint=document.createElement("div");hint.style.cssText="font-size:12px;color:var(--sub);margin:16px 0 6px";hint.textContent="选某一天，看当天「"+subj+"」的任务 →";
   box.appendChild(hint);
   const bar=document.createElement("div");bar.className="dtable";
-  DATA.plan.forEach(d=>{
+  S.plan.forEach(d=>{
     const tasks=d.tasks.filter(match);const total=tasks.length;const done=tasks.filter(t=>isDone(d.date,t)).length;
     let cls="todo",badge="进行",b="b-todo";const t=dateObj(d.date),now=dateObj(td);
     if(total>0&&done===total){cls="done";badge="完成";b="b-done";}
@@ -1716,7 +1752,7 @@ function renderFilm(){
 
 /* 打开某天（二级页：按语数英分组，清晰分界） */
 function openDay(dateStr,subj){
-  const day=DATA.plan.find(d=>d.date===dateStr);if(!day)return;
+  const day=S.plan.find(d=>d.date===dateStr);if(!day)return;
   let groups;
   if(subj==="语文") groups=[["语文","yu",t=>t.subject==="语文"]];
   else if(subj==="数学") groups=[["数学","ma",t=>/口算|数学课|习题/.test(t.task)]];
@@ -1841,6 +1877,7 @@ $("#btnSet").onclick=()=>{
   '<div class="set-row"><span>家长密码(4位)</span><input type="password" id="suPw" value="'+S.parent_pw+'"></div>'+
   '<div class="set-row"><button class="tbtn" onclick="S.parent_pw=document.getElementById(\'suPw\').value.trim()||\'1234\';save(S);toast(\'已保存\');closeSheet();">保存密码</button></div>'+
   '<div class="set-row"><span>奖励目录</span><button class="tbtn" onclick="openRewardEditor()">管理奖励目录</button></div>'+
+  '<div class="set-row"><span>课表/任务</span><button class="tbtn" onclick="openPlanEditor()">管理课表与任务</button></div>'+
   '<div class="set-row"><span>同步密钥（可选·已内置）</span><input type="text" id="suTok" value="'+escapeHtml(localStorage.getItem(SB_KEY_LOCAL)||"")+'" placeholder="已内置，可留空"><button class="tbtn" onclick="localStorage.setItem(SB_KEY_LOCAL,document.getElementById(\'suTok\').value.trim());CLOUD.sbKey=localStorage.getItem(SB_KEY_LOCAL)||CLOUD.sbKey;initCloud();if(CAN_PUSH&&familyCode()){pullCloud();}updateSyncStatus();toast(\'同步密钥已保存，\'+(CLOUD_READY?\'云端已连 ✓\':\'未连接\'))">保存</button></div>'+
   '<div class="set-row"><span>家庭码</span><input type="text" id="suCode" value="'+escapeHtml(familyCode())+'" placeholder="未设置"><button class="tbtn" onclick="setFamilyCode(document.getElementById(\'suCode\').value.trim());initCloud();if(familyCode()){if(CAN_PULL){pullCloud();}else{S=applyDefaults(loadLocal());renderAll();}}updateSyncStatus();toast(\'家庭码已保存，\'+(CAN_PULL?\'已同步云端 ✓\':\'未配置 Token，仅本机\'))">保存</button></div>'+
   '<div class="set-row"><span>同步状态</span><span id="syncStatus" style="flex:1;font-size:13px;color:#0a7">—</span></div>'+
@@ -1852,7 +1889,7 @@ $("#btnParent").onclick=openParentView;
 function openParentView(){
   const pw=prompt("请输入家长密码（默认1234）：");if(pw!==S.parent_pw){toast("密码错误");return;}
   let done=0,total=0,over=[];
-  DATA.plan.forEach(d=>d.tasks.forEach(t=>{total++;if(isDone(d.date,t))done++;else{const t0=dateObj(d.date),now=dateObj(todayStr());if(t0<now)over.push(d.date);}}));
+  S.plan.forEach(d=>realTasks(d.tasks).forEach(t=>{total++;if(isDone(d.date,t))done++;else{const t0=dateObj(d.date),now=dateObj(todayStr());if(t0<now||taskOver(d.date,t))over.push(d.date);}}));
   const pct=total?Math.round(done/total*100):0;
   const w=weeklyStats();const badges=Object.keys(S.badges).filter(k=>S.badges[k]).length;
   const code=familyCode();
@@ -1952,6 +1989,66 @@ function saveRewards(){
 }
 function resetPoints(){if(!confirm("确定把积分清零？（已兑换记录保留）"))return;S.points=0;S.awarded={};save(S);renderPoints();toast("积分已清零");openRewardEditor();}
 
+/* ===== B1：课表 / 任务自定义编辑 ===== */
+function openPlanEditor(){
+  const days=S.plan.map(d=>d.date);
+  let opts=days.map(d=>'<option value="'+d+'">'+d+'（'+(S.plan.find(x=>x.date===d).week||'')+'）</option>').join('');
+  opts+='<option value="__new__">＋ 新建一天</option>';
+  let h='<button class="close" onclick="closeSheet()">×</button><h3>管理课表 / 任务</h3>'+
+    '<div class="hint">可增删每天的打卡任务、改科目、设「截止日」。保存后会同步到所有设备。</div>'+
+    '<div class="set-row"><span>选择日期</span><select id="peDay" class="pe-sel" onchange="peRender()">'+opts+'</select></div>'+
+    '<div id="peBody"></div>'+
+    '<div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap">'+
+      '<button class="tbtn" onclick="peAddTask()">＋ 添加任务</button>'+
+      '<button class="tbtn" onclick="peSave()">保存课表</button>'+
+      '<button class="tbtn" style="color:var(--red)" onclick="peReset()">恢复默认课表</button></div>';
+  showSheet(h);
+  peRender();
+}
+function peRender(){
+  const sel=document.getElementById("peDay");const body=document.getElementById("peBody");if(!sel||!body)return;
+  const day=sel.value;
+  if(day==="__new__"){
+    body.innerHTML='<div class="pe-new">'+
+      '<div class="set-row"><span>日期</span><input id="peNewDate" placeholder="如 8月29日"></div>'+
+      '<div class="set-row"><span>星期</span><input id="peNewWeek" placeholder="如 周六"></div>'+
+      '<button class="tbtn" onclick="peCreateDay()">创建这一天</button></div>';
+    return;
+  }
+  const d=S.plan.find(x=>x.date===day);if(!d){body.innerHTML="";return;}
+  let rows=d.tasks.map((t,i)=>peTaskRow(day,i,t)).join("");
+  body.innerHTML='<div class="pe-tasks">'+(rows||'<div class="hint">这一天还没有任务，点「＋ 添加任务」。</div>')+'</div>';
+}
+function peTaskRow(day,i,t){
+  const subOpts=["语文","数学","英语","固定","—"].map(s=>'<option value="'+s+'"'+(t.subject===s?" selected":"")+'>'+s+'</option>').join("");
+  return '<div class="pe-row" data-i="'+i+'">'+
+    '<input class="pe-time" value="'+escapeHtml(t.time||"")+'" placeholder="时间" oninput="peSet(\''+day+'\','+i+',\'time\',this.value)">'+
+    '<select class="pe-sub" onchange="peSet(\''+day+'\','+i+',\'subject\',this.value)">'+subOpts+'</select>'+
+    '<input class="pe-due" type="date" value="'+escapeHtml(t.due||"")+'" title="截止日" oninput="peSet(\''+day+'\','+i+',\'due\',this.value)">'+
+    '<input class="pe-name" value="'+escapeHtml(t.task||"")+'" placeholder="任务名" oninput="peSet(\''+day+'\','+i+',\'task\',this.value)">'+
+    '<input class="pe-std" value="'+escapeHtml(t.standard||"")+'" placeholder="完成标准" oninput="peSet(\''+day+'\','+i+',\'standard\',this.value)">'+
+    '<input class="pe-note" value="'+escapeHtml(t.note||"")+'" placeholder="备注" oninput="peSet(\''+day+'\','+i+',\'note\',this.value)">'+
+    '<button class="re-del" title="删除该任务" onclick="peDelTask(\''+day+'\','+i+')">×</button></div>';
+}
+function peSet(day,i,field,val){const d=S.plan.find(x=>x.date===day);if(!d)return;if(!d.tasks[i])return;d.tasks[i][field]=val;save(S);}
+function peAddTask(){
+  const sel=document.getElementById("peDay");if(!sel||sel.value==="__new__"){toast("请先选择或新建一个日期");return;}
+  const d=S.plan.find(x=>x.date===sel.value);if(!d)return;
+  d.tasks.push({time:"",type:"",subject:"固定",task:"",standard:"",duration:"",note:"",due:""});save(S);peRender();
+}
+function peDelTask(day,i){const d=S.plan.find(x=>x.date===day);if(!d)return;d.tasks.splice(i,1);save(S);peRender();}
+function peCreateDay(){
+  const date=document.getElementById("peNewDate").value.trim();
+  const week=document.getElementById("peNewWeek").value.trim();
+  if(!date){toast("请填写日期");return;}
+  if(S.plan.some(x=>x.date===date)){toast("该日期已存在");return;}
+  S.plan.push({date:date,week:week||"",tasks:[]});save(S);
+  openPlanEditor();toast("已新建："+date);
+}
+function peSave(){save(S);renderAll();toast("课表已保存并同步 ✓");closeSheet();}
+function peReset(){if(!confirm("确定恢复成内置默认课表？你自定义的修改会丢失。"))return;
+  S.plan=JSON.parse(JSON.stringify(DATA.plan));save(S);renderAll();openPlanEditor();toast("已恢复默认课表");}
+
 /* ===== 奖励页增强：成就/成长/周报/梦想/彩蛋 ===== */
 function doneDates(){const set={};Object.keys(S.checked).forEach(k=>{if(S.checked[k]&&S.checked[k].on)set[k.split("#")[0]]=true;});return set;}
 function currentStreak(){
@@ -1963,10 +2060,10 @@ function currentStreak(){
   return n;
 }
 function subjectAllClear(sub){let total=0,done=0;
-  DATA.plan.forEach(d=>d.tasks.forEach(t=>{if(t.subject===sub){total++;if(isDone(d.date,t))done++;}}));
+  S.plan.forEach(d=>d.tasks.forEach(t=>{if(t.subject===sub){total++;if(isDone(d.date,t))done++;}}));
   return total>0&&total===done;}
 function allTasksClear(){let total=0,done=0;
-  DATA.plan.forEach(d=>d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}}));
+  S.plan.forEach(d=>d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}}));
   return total>0&&total===done;}
 function evalBadges(){
   const st=currentStreak();const r={};
@@ -1990,7 +2087,7 @@ function ocLevelInfo(){
 }
 function ocMood(){
   let total=0,done=0;
-  DATA.plan.forEach(d=>d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}}));
+  S.plan.forEach(d=>d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}}));
   const r=total?done/total:0;
   if(r>=0.9)return "🤩 状态爆棚，衔阳为你骄傲！";
   if(r>=0.6)return "😎 稳稳向前，继续保持～";
@@ -2001,7 +2098,7 @@ function weekStartMonday(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.set
 function weeklyStats(){
   const ws=weekStartMonday(dateObj(todayStr())),we=new Date(ws);we.setDate(we.getDate()+7);
   let done=0,total=0,early=0;
-  DATA.plan.forEach(d=>{const dd=dateObj(d.date);if(dd>=ws&&dd<we){
+  S.plan.forEach(d=>{const dd=dateObj(d.date);if(dd>=ws&&dd<we){
     d.tasks.forEach(t=>{if(t.task&&t.subject!=="—"){total++;if(isDone(d.date,t))done++;}});
     if(dd>=ws&&dd<we&&earlyDay(d.date)){d.tasks.forEach(t=>{if(isDone(d.date,t))early++;});}
   }});
