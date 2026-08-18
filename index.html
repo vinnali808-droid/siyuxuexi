@@ -424,10 +424,12 @@ html,body{overflow-x:clip}
 .pcell .pdot{height:12px;font-size:10px;line-height:12px;display:block}
 .pcell:active{transform:scale(.93)}
 /* 预测/排卵/易孕（安全期不着色，保持留白干净） */
-.period-alert{background:linear-gradient(135deg,#fdeef1,#fdf6e3);border:1px solid #f3d7de;border-radius:12px;padding:9px 13px;font-size:13px;color:#b05a70;margin-bottom:12px;font-weight:700;line-height:1.5}
+.period-alert{background:linear-gradient(135deg,#fdeef1,#fdf6e3);border:1px solid #f3d7de;border-radius:12px;padding:9px 13px;font-size:13px;color:#b05a70;margin:10px 0 12px;font-weight:700;line-height:1.5}
 .period-legend{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:11px;color:var(--sub);margin:10px 0 2px}
 .period-legend span{display:inline-flex;align-items:center;gap:5px}
 .period-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;flex:0 0 11px}
+#sec-period .set-row span{font-size:13px;color:var(--sub)}
+#sec-period .set-row input{font-size:14px}
 .pcell.pred-mark{background:#fdf1f3;color:#cf8fa0;border:1px dashed #f0c4cf}
 .pcell.ovu{background:#e7f4ea;color:#5c8f63;font-weight:800;border:1px solid #bcd9c2}
 .pcell.fert{background:#f0f7ea;color:#7c9a63;border:1px solid #dce8cd}
@@ -746,7 +748,7 @@ html,body{overflow-x:clip}
     <section class="section" id="sec-period">
       <div class="card">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <h2 style="margin:0"><span class="dot"></span>小花园 🌸</h2>
+          <h2 style="margin:0"><span class="dot"></span>生理期 🌸</h2>
           <div style="flex:1;text-align:right;display:flex;gap:8px;justify-content:flex-end">
             <button class="tbtn" onclick="periodShift(-1)">‹ 上月</button>
             <button class="tbtn" onclick="periodShift(1)">下月 ›</button>
@@ -762,9 +764,9 @@ html,body{overflow-x:clip}
       </div>
       <div class="card">
         <h2><span class="dot"></span>我的设置</h2>
-        <div class="set-row"><span>平均周期</span><input type="number" id="pCycle" min="21" max="45" style="width:80px;padding:8px;border:1px solid var(--line);border-radius:10px;font-family:inherit"><span>天（21–45）</span></div>
-        <div class="set-row"><span>经期时长</span><input type="number" id="pDur" min="1" max="10" style="width:80px;padding:8px;border:1px solid var(--line);border-radius:10px;font-family:inherit"><span>天（点开始日自动连标整段）</span></div>
-        <div class="set-row"><span>提前提醒</span><input type="number" id="pRemind" min="0" max="7" style="width:80px;padding:8px;border:1px solid var(--line);border-radius:10px;font-family:inherit"><span>天</span></div>
+        <div class="set-row"><span>平均周期</span><input type="number" id="pCycle" min="21" max="45" style="width:64px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;font-family:inherit"><span>天</span></div>
+        <div class="set-row"><span>经期时长</span><input type="number" id="pDur" min="1" max="10" style="width:64px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;font-family:inherit"><span>天</span></div>
+        <div class="set-row"><span>提前提醒</span><input type="number" id="pRemind" min="0" max="7" style="width:64px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;font-family:inherit"><span>天</span></div>
         <div class="set-row"><button class="tbtn rw-go" onclick="savePeriodPrefs()">保存设置</button></div>
       </div>
       <div class="card">
