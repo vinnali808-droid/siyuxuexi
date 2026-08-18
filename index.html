@@ -2703,7 +2703,7 @@ function mergeCloudIntoLocal(local, remote){
 function aggregateStates(rows){
   const out=applyDefaults({});
   const cfg={};                                   // field -> {at, val}
-  const SKIP=new Set(["checked","points","awarded","dayPoints","revoked","redemptions","periodDays","periodPrefs","_v","_ts"]);
+  const SKIP=new Set(["checked","points","awarded","dayPoints","revoked","redemptions","periodDays","periodPrefs","oc_img","oc_name","mascot","_v","_ts"]);
   for(const r of (rows||[])){
     const s=applyDefaults(r.state||{}); const at=r.updated_at? Date.parse(r.updated_at)||0 : 0;
     for(const k in (s.checked||{})){
@@ -2732,13 +2732,17 @@ function aggregateStates(rows){
       if(!ex || (r.mt||0)>(ex.mt||0)) out.redemptions=out.redemptions.filter(x=>x.id!==r.id).concat([r]);
     }
     out._v=Math.max(out._v||0, s._v||0);
+    /* OC 形象：非空/非默认优先（本地空头像不覆盖别的设备上传的头像），多设备都有则取 updated_at 最新 */
+    if(s.oc_img && at>=(out.__ocImgAt||0)){ out.oc_img=s.oc_img; out.__ocImgAt=at; }
+    if(s.oc_name && s.oc_name!=="衔阳" && at>=(out.__ocNameAt||0)){ out.oc_name=s.oc_name; out.__ocNameAt=at; }
+    if((s.mascot||0)!==0 && at>=(out.__ocMascotAt||0)){ out.mascot=s.mascot; out.__ocMascotAt=at; }
     for(const k in s){ if(SKIP.has(k)) continue; const v=s[k]; if(v!==undefined&&v!==null&&v!==""){ if(!cfg[k]||at>cfg[k].at) cfg[k]={at,val:v}; } }
   }
   /* 撤销账本：points 保持毛额（max 聚合、只增不减）；revoked 按任务累计。
      净积分由 netPoints() = max(0, points − Σrevoked) 在唯一位置计算 → 任何设备组合都不会重复扣。
      清理 awarded 仅限「当前未打卡」的任务（重新打卡的任务保留奖励，取消才能正确扣回） */
   for(const k in out.revoked){ const ck=out.checked[k]; if(!ck || !ck.on) delete out.awarded[k]; }
-  delete out._ppT;
+  delete out._ppT; delete out.__ocImgAt; delete out.__ocNameAt; delete out.__ocMascotAt;
   for(const k in cfg) out[k]=cfg[k].val;
   return out;
 }
