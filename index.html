@@ -1887,8 +1887,8 @@ function periodCalc(){
   const now=pDate(todayKey);
   let nextStart=null;
   if(starts.length){
-    let ns=pDate(starts[starts.length-1]);ns.setDate(ns.getDate()+avgCycle);
-    while(ns<=now)ns.setDate(ns.getDate()+avgCycle);
+    /* 下次开始 = 上次开始 + 平均周期。不跳过：若预测日已过，说明该段还没记录，应提示补记而不是跳到下一轮 */
+    const ns=pDate(starts[starts.length-1]);ns.setDate(ns.getDate()+avgCycle);
     nextStart=pDateKey(ns);
   }
   let nextEnd=null,ovuDay=null,fertS=null,fertE=null;
@@ -1942,7 +1942,7 @@ function renderPeriod(){
   if(al){
     let msg="";
     if(calc.daysLeft!==null){
-      if(calc.daysLeft<0) msg="预测经期已到/已过，更新一下记录让预测更准～";
+      if(calc.daysLeft<0) msg="预测经期 "+fmtIso(calc.nextStart)+" 已到/已过，点那天补记一下，预测就会更准～";
       else if(calc.daysLeft<=calc.prefs.remindDays) msg="🌸 距离下次经期还有 <b>"+calc.daysLeft+"</b> 天，提前准备一下吧";
       else if(calc.daysLeft<=7) msg="距离下次经期还有 <b>"+calc.daysLeft+"</b> 天";
     } else msg="记录一次经期开始日，就能预测下次啦～";
