@@ -1008,8 +1008,13 @@ const VIDEOS = {
     ["BV1iJ411W7RH","《闻王昌龄左迁龙标遥有此寄》·讲解（语文大师）"],
     ["BV1tJ411y7Nz","《次北固山下》·讲解（语文大师）"],
     ["BV1LJ411x7QC","《天净沙·秋思》·讲解（语文大师）"],
-    null,
-    null
+    ["BV1LW4y127Ho","《论语》十二章·课文讲解（七年级上册）"],
+    [
+      ["BV1Bw411G7tm","《咏雪》1 · 螺蛳古诗文·七上第8课"],
+      ["BV11SgfzJEcY","《咏雪》2 · 七上07"],
+      ["BV15UgZzwEHo","《陈太丘与友期》1 · 七上08"],
+      ["BV1UrgfzREWQ","《陈太丘与友期》2 · 七上09"]
+    ]
   ],
   essay: [
     ["BV1BL411f7Yp","《郑人买履》·小古文100课47（阿紫老师）"],
@@ -1065,7 +1070,10 @@ function jumpButtons(bvid,kw,title){
 }
 function jumpButtonsFor(kind,i,item){
   let v=(VIDEOS[kind]&&VIDEOS[kind][i])||null;
-  if(v)return jumpButtons(v[0],null,v[1]);
+  if(v){
+    if(Array.isArray(v[0])) return v.map(x=>jumpButtons(x[0],null,x[1])).join("");  /* 一篇多视频（如《世说新语》二则） */
+    return jumpButtons(v[0],null,v[1]);
+  }
   const teacher=VIDEO_TEACHER[kind]||"";
   const name=(item.title||item.name)||"";
   const kw=teacher? (teacher+" "+name+" 讲解") : (name+" 讲解");
