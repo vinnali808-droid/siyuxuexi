@@ -2640,7 +2640,7 @@ function mergeCloudIntoLocal(local, remote){
 function aggregateStates(rows){
   const out=applyDefaults({});
   const cfg={};                                   // field -> {at, val}
-  const SKIP=new Set(["checked","points","awarded","dayPoints","revoked","redemptions","periodDays","_v","_ts"]);
+  const SKIP=new Set(["checked","points","awarded","dayPoints","revoked","redemptions","periodDays","periodPrefs","_v","_ts"]);
   for(const r of (rows||[])){
     const s=applyDefaults(r.state||{}); const at=r.updated_at? Date.parse(r.updated_at)||0 : 0;
     for(const k in (s.checked||{})){
@@ -2654,6 +2654,10 @@ function aggregateStates(rows){
       const ex=out.periodDays[d];
       const e=ex?(typeof ex==="object"&&ex?(ex.v||0):0):-1;
       if(!ex || n>e) out.periodDays[d]=nv;
+    }
+    /* 小花园设置：仅「用户显式保存过（_t）」的行参与合并取最新，本地默认值不覆盖云端设置 */
+    if(s.periodPrefs && s.periodPrefs._t && (!out._ppT || s.periodPrefs._t>out._ppT)){
+      out._ppT=s.periodPrefs._t; out.periodPrefs=Object.assign({}, s.periodPrefs);
     }
     out.points=Math.max(out.points, s.points||0);
     if(s.awarded) Object.assign(out.awarded, s.awarded);
@@ -2671,6 +2675,7 @@ function aggregateStates(rows){
      净积分由 netPoints() = max(0, points − Σrevoked) 在唯一位置计算 → 任何设备组合都不会重复扣。
      清理 awarded 仅限「当前未打卡」的任务（重新打卡的任务保留奖励，取消才能正确扣回） */
   for(const k in out.revoked){ const ck=out.checked[k]; if(!ck || !ck.on) delete out.awarded[k]; }
+  delete out._ppT;
   for(const k in cfg) out[k]=cfg[k].val;
   return out;
 }
