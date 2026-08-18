@@ -143,6 +143,9 @@ html,body{overflow-x:clip}
 .task.done label{opacity:.6}
 .task .meta{color:var(--sub);font-size:12px}
 .tag{font-size:11px;padding:2px 8px;border-radius:8px;background:var(--green-l);color:var(--green-d);margin-left:6px}
+.tag.opt{background:#fff2dc;color:#c08a2d;font-weight:800;margin-left:4px}
+.tp-opt{display:inline-block;margin:2px 0 0 6px;font-size:10.5px;padding:1px 7px;border-radius:8px;background:#fff2dc;color:#c08a2d;font-weight:800}
+.td-opt{margin:8px 0 0;padding:8px 12px;border-radius:10px;background:#fff7e6;color:#a8781f;font-size:13px}
 
 /* 模块列表 */
 .mlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
@@ -1308,10 +1311,13 @@ function taskId(day,task){return day+"#"+task.time+"#"+task.task;}
 function isDone(day,task){const c=S.checked[taskId(day,task)];return !!(c&&c.on);}
 /* 休息/流程类任务（午休、休息、晚饭休息、结束）：不参与打卡、不计入完成度与逾期 */
 function isRestTask(task){return task&&(task.type==="午休"||task.type==="休息"||task.type==="晚饭休息"||task.type==="结束");}
-function realTasks(ts){return (ts||[]).filter(t=>!isRestTask(t));}
-/* B2：任务是否逾期。优先看「截止日 due」，否则看排期日是否已过且未完成（休息类永不逾期） */
+/* 选做任务（背单词 / 数学课）：不强制，完成度只按必做算；选做完成积分×2 */
+function isOptional(task){return !!(task&&(/^数学课/.test(task.task)||/^背单词/.test(task.task)));}
+/* 必做任务（完成度/统计/连续/庆祝只算必做）：排除休息类 + 选做类 */
+function realTasks(ts){return (ts||[]).filter(t=>!isRestTask(t)&&!isOptional(t));}
+/* B2：任务是否逾期。优先看「截止日 due」，否则看排期日是否已过且未完成（休息类/选做类永不逾期） */
 function taskOver(day,task){
-  if(isRestTask(task)) return false;
+  if(isRestTask(task)||isOptional(task)) return false;
   const now=dateObj(todayStr()); if(!now) return false;
   if(task.due){ const dt=dateObj(task.due); if(dt && dt<now) return !isDone(day,task); }
   const dt=dateObj(day); return !!(dt && dt<now && !isDone(day,task));
@@ -1320,10 +1326,13 @@ function taskOver(day,task){
 function fmtDue(s){ if(!s) return ""; const m=s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/); if(m) return (+m[2])+"月"+(+m[3])+"日";
   const m2=s.match(/(\d{1,2})月(\d{1,2})日/); if(m2) return s; return s; }
 
-/* 奖励积分：基础分 + 提前打卡双倍 */
+/* 奖励积分：基础分 + 提前打卡双倍；选做任务完成直接×2（不叠加提前加成） */
 const POINT_BASE = 10;
 function earlyDay(day){const t=dateObj(day),n=dateObj(todayStr());return !!(t&&n&&t>n);} /* 完成“未来某天”的任务 = 提前 */
-function taskPoints(day,task){return POINT_BASE*(earlyDay(day)?2:1);}
+function taskPoints(day,task){
+  if(isOptional(task)) return POINT_BASE*2;
+  return POINT_BASE*(earlyDay(day)?2:1);
+}
 /* 净积分 = 毛额 points（只增不减，max 聚合）− 撤销账本 revoked（只增不减）。
    同一笔积分只会被撤销一次，任何设备组合都不会重复扣。 */
 function netPoints(){let s=0;for(const k in (S.revoked||{}))s+=(S.revoked[k]||0);return Math.max(0,(S.points||0)-s);}
@@ -1453,6 +1462,7 @@ function taskRow(day,task,over,refreshHome){
   div.innerHTML='<label><span class="chk'+(isDone(day,task)?" on":"")+'">'+(isDone(day,task)?checkSvg:"")+'</span>'+
     '<span><b>'+task.time+'</b> <span class="tt">'+task.task+'</span>'+
     (task.subject&&task.subject!=="固定"?'<span class="tag">'+task.subject+'</span>':'')+
+    (isOptional(task)?'<span class="tag opt">选做·双倍</span>':'')+
     '<div class="meta">'+dueMeta+(task.standard?("完成标准："+task.standard+" ｜ "):"")+(task.note||"")+'</div></span></label>'+
     '<button class="gostudy" type="button">去学习 ›</button>';
   const span=div.querySelector(".chk");
@@ -1487,6 +1497,7 @@ function taskPill(day,task,over){
     '<span class="tp-dot" style="background:'+color+'"></span>'+
     '<span class="tp-main">'+
       '<span class="tp-title">'+shortTitle(task.task)+(isRest?"":(" · "+sub))+'</span>'+
+      (isOptional(task)?'<span class="tp-opt">选做·×2</span>':'')+
       (dueTag?'<span class="tp-sub">'+dueTag+'</span>':'')+
     '</span>'+
     '<span class="tp-chk'+(done?" on":"")+'">'+(done?checkSvg:"")+'</span>';
@@ -1507,6 +1518,7 @@ function openTaskDetail(day,task){
   let h='<button class="close" onclick="closeSheet()">×</button>'+
     '<div class="td-head"><span class="tp-dot" style="background:'+color+'"></span><h3 style="margin:0;font-size:19px">'+task.task+'</h3></div>'+
     '<div class="au">'+task.time+' · '+sub+' · '+task.duration+(over?' · <span style="color:var(--red);font-weight:700">已逾期</span>':'')+'</div>'+
+    (isOptional(task)?'<div class="td-opt">⭐ 选做任务：不强制完成，做了得 <b>双倍积分</b></div>':'')+
     '<div class="task-detail-card">'+
       (task.standard?'<div class="td-row"><b>完成标准</b><p>'+task.standard+'</p></div>':'')+
       (task.note?'<div class="td-row"><b>备注</b><p>'+task.note+'</p></div>':'')+
