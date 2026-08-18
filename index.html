@@ -1892,8 +1892,8 @@ function periodCalc(){
   if(nextStart){
     const ne=pDate(nextStart);ne.setDate(ne.getDate()+avgDur-1);nextEnd=pDateKey(ne);
     const ov=pDate(nextStart);ov.setDate(ov.getDate()-14);ovuDay=pDateKey(ov);
-    const fs=pDate(ov);fs.setDate(fs.getDate()-5);fertS=pDateKey(fs);
-    const fe=pDate(ov);fe.setDate(fe.getDate()+1);fertE=pDateKey(fe);
+    const fs=new Date(ov);fs.setDate(fs.getDate()-5);fertS=pDateKey(fs);
+    const fe=new Date(ov);fe.setDate(fe.getDate()+1);fertE=pDateKey(fe);
   }
   const daysLeft=nextStart?Math.round((pDate(nextStart)-now)/86400000):null;
   const days=S.periodDays||{};
