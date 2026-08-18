@@ -437,7 +437,8 @@ html,body{overflow-x:clip}
 .period-stats b{color:var(--green-d)}
 /* OC 角色与装扮 */
 .avatar-top,.buddy .face{position:relative;overflow:hidden;border-radius:50%}
-.avatar-top img,.buddy .face img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.avatar-top img{width:100%;height:100%;object-fit:cover;border-radius:14px;display:block}
+.buddy .face img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 .buddy .face{width:48px;height:48px;flex:0 0 48px}
 .oc-wrap{position:absolute;inset:0;border-radius:50%;overflow:hidden}
 .oc-wrap>svg,.oc-wrap>img{width:100%;height:100%;display:block;border-radius:50%}
@@ -1109,7 +1110,7 @@ function ocFaceHtml(withOutfit){
   return '<div class="oc-wrap">'+base+'<svg class="oc-outfit" viewBox="0 0 100 100">'+layer+'</svg></div>';
 }
 /* 正常版（全身立绘）装扮：把 Q版头像里的配饰 SVG，按头部在全身图里的位置整体平移缩放后叠加 */
-const FULL_HEAD_T = "translate(330,30) scale(1.8)";
+const FULL_HEAD_T = "translate(290,155) scale(2.7)";
 function ocFullLayer(){
   let layer="";
   ["head","neck","hand"].forEach(slot=>{
@@ -1208,7 +1209,7 @@ function outfitHtml(){
   OC_OUTFITS.forEach(o=>{
     const owned=!!S.owned[o.id], wearing=S.wearing[o.slot]===o.id;
     let btn;
-    if(owned) btn = wearing? '<button class="tbtn rs-btn off">穿着中</button>' : '<button class="tbtn rs-btn" onclick="wearOutfit(\''+o.id+'\')">穿上</button>';
+    if(owned) btn = wearing? '<button class="tbtn rs-btn" onclick="unwearOutfit(\''+o.slot+'\')">脱下</button>' : '<button class="tbtn rs-btn" onclick="wearOutfit(\''+o.id+'\')">穿上</button>';
     else btn = netPoints()>=o.cost? '<button class="tbtn rs-btn" onclick="buyOutfit(\''+o.id+'\')">用 '+o.cost+' 分换</button>' : '<button class="tbtn rs-btn off">'+o.cost+' 分</button>';
     s+='<div class="rs-item"><div class="rs-name">'+escapeHtml(o.name)+'</div><div class="rs-cost">'+(owned?'已拥有':(o.cost+' 分'))+'</div>'+btn+'</div>';
   });
@@ -1233,6 +1234,9 @@ function buyOutfit(id){const o=OC_OUTFITS.find(x=>x.id===id);if(!o)return;
   if(netPoints()<o.cost){toast("积分不够，再攒攒～");return;}
   S.points-=o.cost;S.owned[id]=true;S.wearing[o.slot]=id;save(S);
   toast("给"+S.oc_name+"换上了"+o.name+"！✨");confetti();renderPoints();paintMascot();openOutfitStore();
+}
+function unwearOutfit(slot){if(!S.wearing[slot])return;delete S.wearing[slot];save(S);
+  toast("已脱下～");paintMascot();openOutfitStore();
 }
 function wearOutfit(id){const o=OC_OUTFITS.find(x=>x.id===id);if(!o)return;S.wearing[o.slot]=id;save(S);paintMascot();toast("穿上啦～");openOutfitStore();}
 function applyDefaults(o){   o=o||{}; o._v=(typeof o._v==="number")?o._v:0;
