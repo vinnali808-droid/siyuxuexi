@@ -1911,7 +1911,7 @@ $("#btnSet").onclick=()=>{
   '<div class="set-row"><span>同步密钥（可选·已内置）</span><input type="text" id="suTok" value="'+escapeHtml(localStorage.getItem(SB_KEY_LOCAL)||"")+'" placeholder="已内置，可留空"><button class="tbtn" onclick="localStorage.setItem(SB_KEY_LOCAL,document.getElementById(\'suTok\').value.trim());CLOUD.sbKey=localStorage.getItem(SB_KEY_LOCAL)||CLOUD.sbKey;initCloud();if(CAN_PUSH&&familyCode()){pullCloud();}updateSyncStatus();toast(\'同步密钥已保存，\'+(CLOUD_READY?\'云端已连 ✓\':\'未连接\'))">保存</button></div>'+
   '<div class="set-row"><span>家庭码</span><input type="text" id="suCode" value="'+escapeHtml(familyCode())+'" placeholder="未设置"><button class="tbtn" onclick="setFamilyCode(document.getElementById(\'suCode\').value.trim());initCloud();if(familyCode()){if(CAN_PULL){pullCloud();}else{S=applyDefaults(loadLocal());renderAll();}}updateSyncStatus();toast(\'家庭码已保存，\'+(CAN_PULL?\'已同步云端 ✓\':\'未配置 Token，仅本机\'))">保存</button></div>'+
   '<div class="set-row"><span>同步状态</span><span id="syncStatus" style="flex:1;font-size:13px;color:#0a7">—</span></div>'+
-  '<div class="set-row"><span>版本</span><span style="flex:1;font-size:13px;color:var(--sub)">v3.0 · 2026-08-18（撤销积分修复版）</span></div>'+
+  '<div class="set-row"><span>版本</span><span style="flex:1;font-size:13px;color:var(--sub)">v3.1 · 2026-08-18（撤销积分修复版）</span></div>'+
   '<div class="set-row"><button class="tbtn" onclick="doSyncNow()">立即同步</button><button class="tbtn" onclick="updateSyncStatus()">刷新状态</button></div>'+
   '<div class="hint" style="margin-top:10px">手机使用：浏览器打开本页 → 点右上角 ⋮ → 「添加到主屏幕」，即可像 APP 一样使用。<br>多设备同步：4 台设备输入<strong>同一个家庭码</strong>，云端自动实时同步（约 5 秒刷一次），无需任何令牌。家庭码就是各设备数据的「房间号」，换设备只要填同一个家庭码即可看到相同进度。</div>');setTimeout(updateSyncStatus,30);};
 
@@ -2424,8 +2424,9 @@ function aggregateStates(rows){
     for(const k in s){ if(SKIP.has(k)) continue; const v=s[k]; if(v!==undefined&&v!==null&&v!==""){ if(!cfg[k]||at>cfg[k].at) cfg[k]={at,val:v}; } }
   }
   /* 撤销账本：points 保持毛额（max 聚合、只增不减）；revoked 按任务累计。
-     净积分由 netPoints() = max(0, points − Σrevoked) 在唯一位置计算 → 任何设备组合都不会重复扣 */
-  for(const k in out.revoked){ delete out.awarded[k]; }
+     净积分由 netPoints() = max(0, points − Σrevoked) 在唯一位置计算 → 任何设备组合都不会重复扣。
+     清理 awarded 仅限「当前未打卡」的任务（重新打卡的任务保留奖励，取消才能正确扣回） */
+  for(const k in out.revoked){ const ck=out.checked[k]; if(!ck || !ck.on) delete out.awarded[k]; }
   for(const k in cfg) out[k]=cfg[k].val;
   return out;
 }
