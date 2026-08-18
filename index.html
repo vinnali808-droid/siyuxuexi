@@ -409,6 +409,19 @@ html,body{overflow-x:clip}
 .aw-cap{font-size:13px;color:var(--sub);margin-top:6px}
 .aw-cap b{color:var(--green-d)}
 @media(max-width:420px){.aw-grid{grid-template-columns:repeat(3,1fr)}}
+/* 小花园（经期记录） */
+.period-title{font-size:17px;font-weight:800;color:var(--green-d);margin:12px 0 8px}
+.period-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;color:var(--sub);margin-bottom:6px}
+.period-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.pcell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;font-size:13px;color:var(--ink);
+  background:var(--cream);border:1px solid transparent;cursor:pointer;user-select:none;transition:.15s;line-height:1.1}
+.pcell.blank{background:transparent;cursor:default}
+.pcell.today{border-color:var(--green)}
+.pcell.mark{background:linear-gradient(135deg,#ffd6dc,#ffc2cc);border-color:#f0a8b8;font-weight:800}
+.pcell .pdot{height:13px;font-size:11px;line-height:13px;display:block}
+.pcell:active{transform:scale(.94)}
+.period-stats{margin-top:12px;font-size:13px;color:var(--sub);background:var(--green-l);border-radius:12px;padding:10px 12px;line-height:1.7}
+.period-stats b{color:var(--green-d)}
 /* OC 角色与装扮 */
 .avatar-top,.buddy .face{position:relative;overflow:hidden;border-radius:50%}
 .avatar-top img,.buddy .face img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
@@ -534,6 +547,7 @@ html,body{overflow-x:clip}
     <button class="nav-btn" data-sec="english"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></span>英语</button>
     <button class="nav-btn" data-sec="film"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M7 4v16M17 4v16M2 9h5M2 15h5M17 9h5M17 15h5"/></svg></span>纪录片</button>
     <button class="nav-btn" data-sec="reward"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>奖励</button>
+    <button class="nav-btn" data-sec="period"><span class="ic" style="font-size:17px">🌸</span>小花园</button>
     <button class="nav-btn" data-sec="parent"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>家长</button>
     <button class="nav-btn" data-sec="set"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>设置</button>
   </div>
@@ -714,6 +728,28 @@ html,body{overflow-x:clip}
       <div class="card">
         <h2><span class="dot"></span>兑换记录</h2>
         <div id="rewardHistory" style="font-size:14px;color:var(--sub)">还没有兑换记录哦～</div>
+      </div>
+    </section>
+
+    <!-- 小花园（经期记录） -->
+    <section class="section" id="sec-period">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <h2 style="margin:0"><span class="dot"></span>小花园 🌸</h2>
+          <div style="flex:1;text-align:right;display:flex;gap:8px;justify-content:flex-end">
+            <button class="tbtn" onclick="periodShift(-1)">‹ 上月</button>
+            <button class="tbtn" onclick="periodShift(1)">下月 ›</button>
+            <button class="tbtn" onclick="periodToday()">今天</button>
+          </div>
+        </div>
+        <div class="period-title" id="periodTitle">--年--月</div>
+        <div class="period-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="period-grid" id="periodGrid"></div>
+        <div class="period-stats" id="periodStats">加载中…</div>
+      </div>
+      <div class="card">
+        <h2><span class="dot"></span>使用说明</h2>
+        <div class="hint">点日期标记或取消记录。花花是女孩自己的小秘密，家长同家庭码也能看到，方便关心身体～</div>
       </div>
     </section>
   </main>
@@ -1211,6 +1247,7 @@ function applyDefaults(o){   o=o||{}; o._v=(typeof o._v==="number")?o._v:0;
   o.firstEarly = o.firstEarly||false;/* 是否完成过提前打卡 */
   o.dream = o.dream||{text:"", target:300}; /* 梦想板 */
   o.eggs = o.eggs||[];              /* 彩蛋任务 [{id,text,pts,done}] */
+  o.periodDays = o.periodDays||{};  /* 小花园（经期记录）："YYYY-MM-DD" -> true，配置字段 last-write-wins */
   o.plan = o.plan || JSON.parse(JSON.stringify(DATA.plan)); /* 可编辑课表：自定义任务/排期（默认种子为内置课表）；作为配置字段走聚合 last-write-wins，与 rewards 一致 */
   return o;
 }
@@ -1785,6 +1822,60 @@ function renderFilm(){
   box.insertAdjacentHTML("beforeend",'<div style="margin-top:8px;font-weight:700">全部推荐国宝（点开看）：</div>'+all);
 }
 
+/* 小花园（经期记录）：月份标记 + 周期统计 */
+let __periodYm=null;
+function periodYM(){ if(!__periodYm){const d=new Date();__periodYm={y:d.getFullYear(),m:d.getMonth()};} return __periodYm; }
+function periodYmd(y,m,d){return y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
+function periodShift(delta){const p=periodYM();p.m+=delta;if(p.m<0){p.m=11;p.y--;}if(p.m>11){p.m=0;p.y++;}renderPeriod();}
+function periodToday(){const d=new Date();__periodYm={y:d.getFullYear(),m:d.getMonth()};renderPeriod();}
+function periodStarts(){
+  const ds=Object.keys(S.periodDays||{}).sort();
+  const starts=[];
+  for(const d of ds){
+    const prev=new Date(d);prev.setDate(prev.getDate()-1);
+    const pk=prev.getFullYear()+"-"+String(prev.getMonth()+1).padStart(2,"0")+"-"+String(prev.getDate()).padStart(2,"0");
+    if(!S.periodDays[pk]) starts.push(d);
+  }
+  return starts;
+}
+function renderPeriod(){
+  const grid=$("#periodGrid");if(!grid)return;
+  const p=periodYM(),y=p.y,m=p.m;
+  const t=$("#periodTitle");if(t)t.textContent=y+"年"+(m+1)+"月";
+  const startWeekday=(new Date(y,m,1).getDay()+6)%7;
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const now=new Date();
+  const todayKey=periodYmd(now.getFullYear(),now.getMonth(),now.getDate());
+  let html="";
+  for(let i=0;i<startWeekday;i++)html+='<div class="pcell blank"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const key=periodYmd(y,m,d);
+    const marked=!!(S.periodDays||{})[key];
+    html+='<div class="pcell'+(marked?' mark':'')+(key===todayKey?' today':'')+'" onclick="togglePeriodDay(\''+key+'\')">'+d+'<span class="pdot">'+(marked?'🌸':'')+'</span></div>';
+  }
+  grid.innerHTML=html;
+  const days=S.periodDays||{};
+  const mk=String(m+1).padStart(2,"0");
+  const monthCnt=Object.keys(days).filter(k=>k.startsWith(y+"-"+mk)).length;
+  const starts=periodStarts();
+  let txt="本月已记录 <b>"+monthCnt+"</b> 天";
+  if(starts.length){
+    const ls=starts[starts.length-1];
+    txt+=" · 上次开始 "+(+ls.slice(5,7))+"月"+(+ls.slice(8,10))+"日";
+    if(starts.length>1){
+      const a=new Date(starts[starts.length-2]),b=new Date(starts[starts.length-1]);
+      const gap=Math.round((b-a)/86400000);
+      if(gap>0)txt+=" · 最近周期 <b>"+gap+"</b> 天";
+    }
+  } else txt+=" · 还没有记录，点日期开始吧";
+  const st=$("#periodStats");if(st)st.innerHTML=txt;
+}
+function togglePeriodDay(key){
+  S.periodDays=S.periodDays||{};
+  if(S.periodDays[key]) delete S.periodDays[key]; else S.periodDays[key]=true;
+  save(S);renderPeriod();
+}
+
 /* 打开某天（二级页：按语数英分组，清晰分界） */
 function openDay(dateStr,subj){
   const day=S.plan.find(d=>d.date===dateStr);if(!day)return;
@@ -1863,9 +1954,9 @@ function goto(sec){
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   const el=$("#sec-"+sec); if(!el)return;
   el.classList.add("active");
-  const names={home:"今日概览",chinese:"语文",math:"数学",english:"英语",film:"纪录片",reward:"我的奖励"};
+  const names={home:"今日概览",chinese:"语文",math:"数学",english:"英语",film:"纪录片",reward:"我的奖励",period:"小花园"};
   $("#pageTitle").textContent=names[sec]||"学习台";
-  if(sec==="chinese")renderChinese();if(sec==="math")renderMath();if(sec==="english")renderEnglish();if(sec==="reward")renderReward();if(sec==="film")renderFilm();
+  if(sec==="chinese")renderChinese();if(sec==="math")renderMath();if(sec==="english")renderEnglish();if(sec==="reward")renderReward();if(sec==="film")renderFilm();if(sec==="period")renderPeriod();
   window.scrollTo(0,0);
   }
 document.querySelectorAll(".nav-btn,.bottom-tab button").forEach(b=>b.onclick=()=>goto(b.dataset.sec));
