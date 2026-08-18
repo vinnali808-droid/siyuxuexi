@@ -1144,7 +1144,7 @@ function outfitHtml(){
     const owned=!!S.owned[o.id], wearing=S.wearing[o.slot]===o.id;
     let btn;
     if(owned) btn = wearing? '<button class="tbtn rs-btn off">穿着中</button>' : '<button class="tbtn rs-btn" onclick="wearOutfit(\''+o.id+'\')">穿上</button>';
-    else btn = S.points>=o.cost? '<button class="tbtn rs-btn" onclick="buyOutfit(\''+o.id+'\')">用 '+o.cost+' 分换</button>' : '<button class="tbtn rs-btn off">'+o.cost+' 分</button>';
+    else btn = netPoints()>=o.cost? '<button class="tbtn rs-btn" onclick="buyOutfit(\''+o.id+'\')">用 '+o.cost+' 分换</button>' : '<button class="tbtn rs-btn off">'+o.cost+' 分</button>';
     s+='<div class="rs-item"><div class="rs-name">'+escapeHtml(o.name)+'</div><div class="rs-cost">'+(owned?'已拥有':(o.cost+' 分'))+'</div>'+btn+'</div>';
   });
   return s+'</div>';
@@ -1160,12 +1160,12 @@ function openOutfitStore(){
       '<button class="tbtn '+(view==="q"?"on":"")+'" onclick="S.oc_view=\'q\';save(S);openOutfitStore()">Q版头像</button>'+
     '</div>'+
     '<div class="oc-prev">'+prev+'</div>'+
-    '<div class="rs-top">我的积分：<b>'+S.points+'</b> 分</div>'+
+    '<div class="rs-top">我的积分：<b>'+netPoints()+'</b> 分</div>'+
     '<div class="hint">用积分给 '+escapeHtml(S.oc_name)+' 换点小配饰，点「穿上」就能装扮到身上～</div>'+
     outfitHtml());
 }
 function buyOutfit(id){const o=OC_OUTFITS.find(x=>x.id===id);if(!o)return;
-  if(S.points<o.cost){toast("积分不够，再攒攒～");return;}
+  if(netPoints()<o.cost){toast("积分不够，再攒攒～");return;}
   S.points-=o.cost;S.owned[id]=true;S.wearing[o.slot]=id;save(S);
   toast("给"+S.oc_name+"换上了"+o.name+"！✨");confetti();renderPoints();paintMascot();openOutfitStore();
 }
@@ -1240,18 +1240,20 @@ function fmtDue(s){ if(!s) return ""; const m=s.match(/(\d{4})-(\d{1,2})-(\d{1,2
 const POINT_BASE = 10;
 function earlyDay(day){const t=dateObj(day),n=dateObj(todayStr());return !!(t&&n&&t>n);} /* 完成“未来某天”的任务 = 提前 */
 function taskPoints(day,task){return POINT_BASE*(earlyDay(day)?2:1);}
+/* 净积分 = 毛额 points（只增不减，max 聚合）− 撤销账本 revoked（只增不减）。
+   同一笔积分只会被撤销一次，任何设备组合都不会重复扣。 */
+function netPoints(){let s=0;for(const k in (S.revoked||{}))s+=(S.revoked[k]||0);return Math.max(0,(S.points||0)-s);}
 function setDone(id,day,task,on){
   S._v = Math.max(S._v||0, Date.now()); S._v=(S._v||0)+1; S.checked[id]={on:on, v:S._v, dev:DEV_ID, t:Date.now()};
   if(on){
     const pts=taskPoints(day,task);
-    delete S.revoked[id];                    /* 重新勾选 = 撤销「已取消」墓碑，积分恢复正常累计 */
-    S.points+=pts;S.awarded[id]=pts;
+    S.points+=pts;S.awarded[id]=pts;           /* 毛额只增不减；revoked 不清除（持久抵消历史加分） */
     S.dayPoints[day]=(S.dayPoints[day]||0)+pts;
     if(earlyDay(day)&&!S.firstEarly)S.firstEarly=true;
   } else if(S.awarded[id]){
-    const pts=S.awarded[id];                 /* 先取值再删除，避免 dayPoints 减到 undefined→NaN */
-    S.points=Math.max(0,S.points-pts);delete S.awarded[id];
-    S.revoked[id]=pts;                       /* 墓碑：跨设备聚合时把别设备残留的这笔积分扣回 */
+    const pts=S.awarded[id];
+    S.revoked[id]=(S.revoked[id]||0)+pts;      /* 撤销账本按任务累计（支持多次勾选/取消循环） */
+    delete S.awarded[id];
     S.dayPoints[day]=Math.max(0,(S.dayPoints[day]||0)-pts);
   }
   save(S);
@@ -1932,7 +1934,7 @@ function openParentView(){
     '<div class="pv-grid"><div class="pv-stat"><b>'+done+'/'+total+'</b><span>已完成任务</span></div>'+
     '<div class="pv-stat"><b>'+pct+'%</b><span>总进度</span></div>'+
     '<div class="pv-stat"><b>'+w.streak+'</b><span>连续打卡(天)</span></div>'+
-    '<div class="pv-stat"><b>'+S.points+'</b><span>累计积分</span></div></div>'+
+    '<div class="pv-stat"><b>'+netPoints()+'</b><span>累计积分</span></div></div>'+
     '<div class="pv-bar"><i style="width:'+pct+'%"></i></div>'+
     '<div class="note">本周完成 '+w.done+' 项 · 提前 '+w.early+' 天 · 本周积分 '+w.pts+'</div>'+
     (over.length?'<div class="note" style="background:#fff0f2"><b>逾期未完成的日期</b>：'+[...new Set(over)].join("、")+'</div>':'<div class="note">全部日期按时完成，太棒了！</div>')+
@@ -1960,7 +1962,7 @@ function resetData(){if(confirm("确定清空所有学习进度？已勾选的�
 
 /* ===== 奖励机制 ===== */
 function renderPoints(){
-  const p=S.points|0;
+  const p=netPoints();
   const a=$("#ptsPill");if(a)a.textContent="🌟 "+p;
   const b=$("#rwPoints");if(b)b.textContent=p;
 }
@@ -1977,12 +1979,12 @@ function renderReward(){
 }
 function openRewardStore(){
   let h='<button class="close" onclick="closeSheet()">×</button><h3>奖励柜 🌟</h3>'+
-    '<div class="rs-top">我的积分：<b id="rsPts">'+S.points+'</b> 分</div>'+
+    '<div class="rs-top">我的积分：<b id="rsPts">'+netPoints()+'</b> 分</div>'+
     '<div class="hint">积分靠每天打卡积累，攒够就能给 <b>'+S.oc_name+'</b> 换装扮，或兑换你喜欢的东西～</div>'+
     '<div class="rs-list">';
   if(!S.rewards.length){h+='<div class="hint">还没有奖励，去「设置 → 管理奖励目录」添加吧～</div>';}
   S.rewards.forEach((r,i)=>{
-    const can=S.points>=r.cost;
+    const can=netPoints()>=r.cost;
     h+='<div class="rs-item"><div class="rs-name">'+escapeHtml(r.name)+'</div>'+
        '<div class="rs-cost"><b>'+r.cost+'</b> 分</div>'+
        '<button class="tbtn rs-btn'+(can?'':' off')+'" onclick="redeemReward('+i+')">申请兑换</button></div>';
@@ -1999,7 +2001,7 @@ function openRewardStore(){
   showSheet(h);
 }
 function redeemReward(i){const r=S.rewards[i];if(!r)return;
-  if(S.points<r.cost){toast("积分不够，再攒攒～");return;}
+  if(netPoints()<r.cost){toast("积分不够，再攒攒～");return;}
   const id="rd"+Date.now()+Math.floor(Math.random()*999);
   S.redemptions.push({id,name:r.name,cost:r.cost,t:Date.now(),mt:Date.now(),status:"pending"});
   save(S);
@@ -2129,7 +2131,7 @@ function checkBadges(){
   BADGES.forEach(b=>{ if(r[b.id]&&!S.badges[b.id]){S.badges[b.id]=true;save(S);toast("🏅 解锁成就："+b.name+"！");confetti();} });
 }
 function ocLevelInfo(){
-  const p=S.points;let idx=0;
+  const p=netPoints();let idx=0;
   for(let i=0;i<OC_LEVELS.length;i++){if(p>=OC_LEVELS[i].min)idx=i;}
   const cur=OC_LEVELS[idx],nxt=OC_LEVELS[idx+1]||null;
   const span=nxt?(nxt.min-cur.min):1;
@@ -2162,7 +2164,7 @@ function fmtDate(s){const m=s&&s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);return m?(
 function renderOcGrow(){
   const el=$("#ocGrowCard");if(!el)return;
   const info=ocLevelInfo(),mood=ocMood(),pct=Math.round(info.prog*100);
-  const nextTxt=info.next?("还差 <b>"+(info.next.min-S.points)+"</b> 分升到「"+info.next.name+"」"):"已是最高级啦，衔阳永远陪你 💛";
+  const nextTxt=info.next?("还差 <b>"+(info.next.min-netPoints())+"</b> 分升到「"+info.next.name+"」"):"已是最高级啦，衔阳永远陪你 💛";
   el.innerHTML='<div class="og-top"><div class="og-avatar">'+ocFaceHtml(false)+'</div>'+
     '<div class="og-info"><div class="og-name">'+escapeHtml(S.oc_name)+' · Lv.'+info.lv+'<span class="og-tag">'+info.name+'</span></div>'+
     '<div class="og-mood">'+mood+'</div></div></div>'+
@@ -2327,14 +2329,14 @@ function openAchievements(){
 }
 function renderDream(){
   const el=$("#dreamCard");if(!el)return;const d=S.dream||{text:"",target:300};
-  const tgt=d.target>0?d.target:1,pct=Math.min(100,Math.round(S.points/tgt*100)),reached=S.points>=tgt;
+  const tgt=d.target>0?d.target:1,pct=Math.min(100,Math.round(netPoints()/tgt*100)),reached=netPoints()>=tgt;
   el.innerHTML='<div class="dm-inputs">'+
     '<input id="dreamText" class="re-name" placeholder="我最想兑换的大奖励，比如…" value="'+escapeHtml(d.text)+'">'+
     '<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span>目标</span>'+
     '<input id="dreamTarget" type="number" min="0" value="'+d.target+'" class="re-cost"><span>分</span></div>'+
     '<button class="tbtn" style="margin-top:8px" onclick="saveDream()">保存梦想</button></div>'+
     '<div class="dm-bar"><div class="dm-fill" style="width:'+pct+'%"></div></div>'+
-    '<div class="dm-cap">'+(reached?('🎉 积分已攒够「'+(d.text||'大奖励')+'」，可以实现啦！'):('已攒 '+S.points+' / '+d.target+' 分（'+pct+'%）'))+'</div>';
+    '<div class="dm-cap">'+(reached?('🎉 积分已攒够「'+(d.text||'大奖励')+'」，可以实现啦！'):('已攒 '+netPoints()+' / '+d.target+' 分（'+pct+'%）'))+'</div>';
 }
 function renderEggs(){
   const el=$("#eggList");if(!el)return;
@@ -2420,16 +2422,9 @@ function aggregateStates(rows){
     out._v=Math.max(out._v||0, s._v||0);
     for(const k in s){ if(SKIP.has(k)) continue; const v=s[k]; if(v!==undefined&&v!==null&&v!==""){ if(!cfg[k]||at>cfg[k].at) cfg[k]={at,val:v}; } }
   }
-  /* 撤销墓碑：仅当该任务积分在聚合结果中仍“活着”（别的设备还记着）才扣回，避免重复扣除 */
-  let revSum=0;
-  for(const k in out.revoked){
-    if(out.awarded[k]){
-      revSum+=out.revoked[k]; delete out.awarded[k];
-      const day=k.split("#")[0];
-      if(out.dayPoints[day]) out.dayPoints[day]=Math.max(0,out.dayPoints[day]-out.revoked[k]);
-    }
-  }
-  if(revSum>0) out.points=Math.max(0,(out.points||0)-revSum);
+  /* 撤销账本：points 保持毛额（max 聚合、只增不减）；revoked 按任务累计。
+     净积分由 netPoints() = max(0, points − Σrevoked) 在唯一位置计算 → 任何设备组合都不会重复扣 */
+  for(const k in out.revoked){ delete out.awarded[k]; }
   for(const k in cfg) out[k]=cfg[k].val;
   return out;
 }
