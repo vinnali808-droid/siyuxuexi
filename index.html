@@ -1012,10 +1012,14 @@ const VIDEOS = {
     null
   ],
   essay: [
-    ["BV1BL411f7Yp","《郑人买履》·小古文精讲（阿紫老师）"],
-    null,null,null,null,
+    ["BV1BL411f7Yp","《郑人买履》·小古文100课47（阿紫老师）"],
+    ["BV1fY4y1c7Ma","《道旁苦李》·世说新语·道边李苦（小古文）"],
+    ["BV1fu411B7cw","《枭逢鸠》·走进文言文111讲·枭将东徙"],
+    ["BV1Ra411t7dK","《神农尝百草》·初级小古文精讲"],
+    ["BV1dg41127pt","《画蛇添足》·小古文学习打卡·成语故事篇"],
     ["BV1fv4y1J7vB","《自相矛盾》·小古文精讲（阿紫老师）"],
-    null,null
+    ["BV1RM41157yv","《买椟还珠》·小古文100课48（阿紫老师）"],
+    ["BV1YY4y187sS","《望梅止渴》·初级小古文精讲"]
   ],
   zhax: [
     ["BV1UE411r79X","《狗·猫·鼠》导读（皮皮老师）"],
@@ -1405,6 +1409,8 @@ function renderDtable(){
 
 const checkSvg="<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='4,12 10,18 20,6'/></svg>";
 /* 任务 → 对应学习内容（点「去学习」跳转） */
+function essayIdsIn(t){const r=[];for(let i=0;i<DATA.essays.length;i++)if(t.includes(DATA.essays[i].title))r.push(i);return r;}
+function poemIdsIn(t){const r=[];for(let i=0;i<DATA.poems.length;i++)if(t.includes(DATA.poems[i].title))r.push(i);return r;}
 function taskTarget(task){
   const t=task.task||"";
   if(task.subject==="数学"){
@@ -1416,12 +1422,15 @@ function taskTarget(task){
     return ()=>{goto("english");renderEnglish();openEnGrammar();};
   }
   if(task.subject==="语文"){
-    for(let i=0;i<DATA.poems.length;i++) if(t.includes(DATA.poems[i].title)) return ()=>openPoem(i);
-    for(let i=0;i<DATA.essays.length;i++) if(t.includes(DATA.essays[i].title)) return ()=>openEssay(i);
+    const es=essayIdsIn(t), ps=poemIdsIn(t);
+    if(es.length>=2) return ()=>openEssayBatch(es);   /* 一个任务含多篇文言文 → 列表页逐篇学习 */
+    if(es.length===1) return ()=>openEssay(es[0]);
+    if(ps.length>=2) return ()=>openPoemBatch(ps);    /* 一个任务含多首古诗 → 列表页逐首学习 */
+    if(ps.length===1) return ()=>openPoem(ps[0]);
     for(let i=0;i<DATA.zhax_book.length;i++) if(t.includes(DATA.zhax_book[i].title)) return ()=>openZhax(i);
     if(/朝花夕拾/.test(t)) return ()=>openCnList("zhax");
     if(/文言文/.test(t)) return ()=>openCnList("essay");
-    if(/默写/.test(t)){for(let i=0;i<DATA.poems.length;i++) if(t.includes(DATA.poems[i].title)) return ()=>openPoem(i);}
+    if(/默写/.test(t)){const ps2=poemIdsIn(t);if(ps2.length===1)return ()=>openPoem(ps2[0]);}
     return ()=>openCnList("poem");
   }
   return null;
@@ -1662,8 +1671,37 @@ function openPoem(i){const p=DATA.poems[i];
     '<div class="note"><b>注释</b><br>'+notes+'</div>'+
     jumpButtonsFor('poem',i,p));
 }
+/* 一个任务含多篇文言文时：列出当天全部篇目，逐篇直达（每篇都有视频） */
+function openEssayBatch(ids){
+  const items=ids.map(i=>DATA.essays[i]);
+  const body='<div class="mlist">'+ids.map((i,idx)=>{
+    const e=items[idx];
+    return '<div class="mitem" data-i="'+i+'"><div class="t">'+(idx+1)+'. '+e.title+'</div><div class="s">'+e.from+' · 逐词翻译＋寓意</div><div class="go">查看 →</div></div>';
+  }).join("")+'</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>文言文 · 今天 '+ids.length+' 篇</h3>'+
+    '<div style="font-size:13px;color:var(--sub);margin-bottom:10px">今天的文言文任务有 '+ids.length+' 篇，点开逐篇学习（每篇都有视频）：</div>'+body);
+  document.querySelectorAll("#sheet .mitem").forEach(el=>el.onclick=()=>openEssay(+el.dataset.i));
+}
+/* 一个任务含多首古诗时：同样列出逐首直达 */
+function openPoemBatch(ids){
+  const items=ids.map(i=>DATA.poems[i]);
+  const body='<div class="mlist">'+ids.map((i,idx)=>{
+    const p=items[idx];
+    return '<div class="mitem" data-i="'+i+'"><div class="t">'+(idx+1)+'. '+p.title+'</div><div class="s">'+p.author+' · 全文/注释</div><div class="go">查看 →</div></div>';
+  }).join("")+'</div>';
+  showSheet('<button class="close" onclick="closeSheet()">×</button><h3>古诗文 · 今天 '+ids.length+' 首</h3>'+
+    '<div style="font-size:13px;color:var(--sub);margin-bottom:10px">今天的任务有 '+ids.length+' 首，点开逐首学习：</div>'+body);
+  document.querySelectorAll("#sheet .mitem").forEach(el=>el.onclick=()=>openPoem(+el.dataset.i));
+}
+
 function openEssay(i){const e=DATA.essays[i];
+  const nav=(i>0||i+1<DATA.essays.length)?'<div style="display:flex;gap:8px;margin:2px 0 10px">'+
+    (i>0?'<button class="tbtn" style="padding:4px 10px;font-size:12px" onclick="openEssay('+(i-1)+')">‹ 上一篇</button>':'<span></span>')+
+    '<span style="flex:1"></span>'+
+    (i+1<DATA.essays.length?'<button class="tbtn" style="padding:4px 10px;font-size:12px" onclick="openEssay('+(i+1)+')">下一篇 ›</button>':'')+
+    '</div>':'';
   showSheet('<button class="close" onclick="closeSheet()">×</button><button class="back" onclick="openCnList(\'essay\')">← 返回列表</button><h3>'+e.title+'</h3><div class="au">'+e.from+'</div>'+
+    nav+
     '<div class="note" style="background:#eef3ff"><b>原文</b><div class="poem" style="background:#fff">'+e.orig+'</div></div>'+
     '<div class="note"><b>逐词翻译</b><br>'+e.trans+'</div>'+
     '<div class="note" style="background:#fff0f7"><b>寓意 / 启示</b><br>'+e.moral+'</div>'+
